@@ -5,5 +5,10 @@ export const setStorageIsFirstEnter = async (isFirstEnter: boolean) => {
 }
 
 export const getStorageIsFirstEnter = async () => {
-    return await AsyncStorage.getItem('isFirstEnter');
+    const isFirstEnter = await AsyncStorage.getItem('isFirstEnter');
+
+    if (isFirstEnter === null) {
+        return true;
+    }
+    return isFirstEnter;
 }   

@@ -1,17 +1,23 @@
 import { AppointmentsIcon } from "@/src/shared/components/icons/tabs-icon/apoitments-icon";
-import { FavoriteIcon } from "@/src/shared/components/icons/tabs-icon/favorite-icon";
 import { HomeIcon } from "@/src/shared/components/icons/tabs-icon/home-icon";
 import { ProfileIcon } from "@/src/shared/components/icons/tabs-icon/profile-icon";
+import useTheme from "@/src/shared/use-theme/use-theme";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs } from "expo-router";
-import { Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProtectedLayout() {
   const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
 
   return (
     <Tabs
@@ -24,7 +30,7 @@ export default function ProtectedLayout() {
             style={{ position: "relative", backgroundColor: "transparent" }}
           >
             <LinearGradient
-              colors={["rgba(25, 167, 233, 0.12)", "rgba(25, 167, 233, 0.16)"]}
+              colors={[String(theme.colors.primary500_12), `${String(theme.colors.primary500)}26`]}
             >
               <BlurView
                 intensity={20}
@@ -37,7 +43,7 @@ export default function ProtectedLayout() {
             </LinearGradient>
             <View
               style={{
-                backgroundColor: "white",
+                backgroundColor: theme.colors.white,
                 zIndex: 1000,
                 boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
                 position: "absolute",
@@ -77,13 +83,13 @@ export default function ProtectedLayout() {
                     >
                       {options.tabBarIcon?.({
                         focused: isFocused,
-                        color: isFocused ? "#19A7E9" : "#7D8EAA",
+                        color: isFocused ? String(theme.colors.primary500) : String(theme.colors.grey500),
                         size: 24,
                       })}
                     </View>
                     <Text
                       style={{
-                        color: isFocused ? "#19A7E9" : "#7D8EAA",
+                        color: isFocused ? String(theme.colors.primary500) : String(theme.colors.grey500),
                         fontSize: 10,
                         lineHeight: 16,
                         fontWeight: "500",
@@ -107,17 +113,10 @@ export default function ProtectedLayout() {
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="orders"
         options={{
-          title: "Search",
+          title: "Orders",
           tabBarIcon: ({ color, size }) => <AppointmentsIcon color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="favorite"
-        options={{
-          title: "Favorite",
-          tabBarIcon: ({ color, size }) => <FavoriteIcon color={color} />,
         }}
       />
       <Tabs.Screen

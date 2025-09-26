@@ -6,7 +6,7 @@ export default function AuthLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="onboarding" />
-      <Stack.Screen name="registration-city" />
+      <Stack.Screen name="confirm-code" />
       <Stack.Screen name="registration-role" />
       <Stack.Screen name="registration-profile" />
       <Stack.Screen name="(forgot-password)" />

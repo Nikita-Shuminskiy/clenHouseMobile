@@ -30,7 +30,7 @@ import Logo from "../../../assets/images/logo.png";
 
 const AuthScreen: React.FC = () => {
   const { colors, sizes, fonts, weights } = useTheme();
-  const { isPending } = useSendSms()
+  const { mutateAsync: signInWithSms, isPending } = useSendSms()
 
   const {
     control,
@@ -46,11 +46,19 @@ const AuthScreen: React.FC = () => {
 
   const onSubmit = async (data: SignInSoftFormData) => {
     try {
-      // const res = await signInWithEmail(data);
-      // setAuth(res.user);
-      console.log("aaa");
+      // Формируем номер телефона в правильном формате
+      const phoneNumber = `+7${data.phone}`;
       
-      router.push("/confirm-code");
+      const res = await signInWithSms({
+        phoneNumber: phoneNumber,
+        isDev: true,
+      });
+
+      console.log(res);
+      router.push({
+        pathname: "/(auth)/confirm-code",
+        params: { phoneNumber: phoneNumber }
+      });
     } catch (error) {
       console.error("Ошибка входа:", error);
     }

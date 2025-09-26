@@ -1,23 +1,24 @@
-import { router } from 'expo-router';
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Alert,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
-  Alert
+  View
 } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Clipboard from 'expo-clipboard';
 
-import OtpInputs from "react-native-otp-inputs";
-import Button from '@/src/shared/components/ui-kit/button';
-import { ThemeColors, ThemeFonts, ThemeWeights, useTheme } from '@/src/shared/use-theme';
+import { useVerifySms } from '@/src/modules/auth/hooks/useVerifySms';
 import { TopBar } from '@/src/shared/components/molecules/TopBar';
+import Button from '@/src/shared/components/ui-kit/button';
+import { useLocalSearchParams } from 'expo-router';
+import OtpInputs from "react-native-otp-inputs";
 
 const ConfirmCodeScreen: React.FC = () => {
-  const { colors, sizes, fonts, weights } = useTheme();
-  const styles = createStyles({ colors, sizes, fonts, weights });
+  const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
+
+  const { mutateAsync: verifySms } = useVerifySms();
   const [, setOtpCode] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,7 +29,7 @@ const ConfirmCodeScreen: React.FC = () => {
     setOtpCode(code);
     setIsError(false);
     
-    if (code.length === 4) {
+    if (code.length === 6) {
       handleVerifyCode(code);
     }
   };
@@ -36,19 +37,21 @@ const ConfirmCodeScreen: React.FC = () => {
   const handleVerifyCode = async (code: string) => {
     setIsLoading(true);
     try {
-      // Здесь должна быть логика проверки кода
-      // Например, вызов API для верификации
       console.log('Verifying code:', code);
+      console.log(phoneNumber, "phoneNumber");
       
-      // Имитация API вызова
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Если код верный, переходим к следующему экрану
-      router.push('/(auth)/registration-role' as any);
-    } catch {
+      const res = await verifySms({
+        phoneNumber: phoneNumber, // Номер уже в правильном формате +7XXXXXXXXXX
+        code: code,
+      });
+      console.log(res);
+      // Успешная верификация - пользователь будет перенаправлен автоматически
+    } catch (error: any) {
+      console.error('Ошибка верификации SMS:', error);
       setIsError(true);
+      // Очищаем буфер обмена и сбрасываем OTP поле при ошибке
+      await Clipboard.setStringAsync('');
       setKey(prevKey => prevKey + 1);
-      Alert.alert('Ошибка', 'Неверный код подтверждения');
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +81,7 @@ const ConfirmCodeScreen: React.FC = () => {
               Введите код{'\n'}подтверждения
             </Text>
             <Text style={styles.subtitle}>
-              Мы отправили SMS с кодом{'\n'}на номер +7 (***) ***-**-**
+              Мы отправили SMS с кодом{'\n'}на номер {phoneNumber}
             </Text>
           </View>
 
@@ -88,16 +91,16 @@ const ConfirmCodeScreen: React.FC = () => {
               key={key}
               ref={otpRef}
               isRTL={false}
-              onTouchStart={() => {
+              onTouchStart={async () => {
                 if (isError) {
-                  Clipboard.setString('');
+                  await Clipboard.setStringAsync('');
                   setIsError(false);
                   setKey(prevKey => prevKey + 1);
                 }
               }}
               handleChange={handleOtpChange}
               keyboardType="phone-pad"
-              numberOfInputs={4}
+              numberOfInputs={6}
               autofillFromClipboard
               style={styles.otpInputContainer}
               inputStyles={[
@@ -140,20 +143,9 @@ const ConfirmCodeScreen: React.FC = () => {
   );
 };
 
-const createStyles = ({
-  colors,
-  sizes,
-  fonts,
-  weights
-}: {
-  colors: ThemeColors;
-  sizes: any;
-  fonts: ThemeFonts;
-  weights: ThemeWeights;
-}) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -173,26 +165,34 @@ const createStyles = ({
     gap: 8,
   },
   title: {
-    fontFamily: fonts.h2,
-    fontWeight: weights.h2,
     fontSize: 20,
     lineHeight: 28,
     letterSpacing: -0.5,
-    color: colors.black,
+    color: '#000',
     textAlign: 'center',
   },
   subtitle: {
-    fontFamily: fonts.text2,
-    fontWeight: weights.text2,
     fontSize: 16,
     lineHeight: 24,
     letterSpacing: -0.5,
-    color: colors.grey900,
+    color: '#000',
     textAlign: 'center',
   },
   otpContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 20,
+    marginHorizontal: 20,
   },
   otpInputContainer: {
     flexDirection: 'row',
@@ -200,33 +200,32 @@ const createStyles = ({
     gap: 12,
   },
   otpInput: {
-    width: 56,
+    width: 40,
     height: 56,
-    borderRadius: 16,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.grey300,
-    backgroundColor: colors.white,
+    borderColor: '#E1EAF0',
+    backgroundColor: '#fff',
     textAlign: 'center',
-    fontFamily: fonts.text1,
-    fontWeight: weights.medium,
     fontSize: 18,
-    color: colors.black,
+    color: '#000',
   },
   otpInputFocus: {
-    borderColor: colors.primary500,
-    borderWidth: 2,
+    borderColor: '#FC712C',
+    borderWidth: 1,
+    borderRadius: 12,
   },
   otpInputError: {
-    borderColor: colors.red,
-    borderWidth: 2,
+    borderColor: '#FF0000',
+    borderWidth: 1,
+    borderRadius: 12,
   },
   errorText: {
-    fontFamily: fonts.text3,
-    fontWeight: weights.medium,
     fontSize: 14,
     lineHeight: 20,
-    color: colors.red,
+    color: '#FF0000',
     textAlign: 'center',
+    fontWeight: '500',
   },
   resendContainer: {
     flexDirection: 'row',
@@ -235,19 +234,15 @@ const createStyles = ({
     gap: 4,
   },
   resendText: {
-    fontFamily: fonts.text3,
-    fontWeight: weights.text3,
     fontSize: 14,
     lineHeight: 20,
-    color: colors.grey700,
+    color: '#000',
   },
   resendButtonText: {
-    fontFamily: fonts.text3,
-    fontWeight: weights.medium,
     fontSize: 14,
     lineHeight: 20,
-    color: colors.primary500,
+    color: '#000',
   },
-});
+})
 
 export default ConfirmCodeScreen;

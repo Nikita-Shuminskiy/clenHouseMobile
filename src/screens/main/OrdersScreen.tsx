@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 
-const HomeScreen: React.FC = () => {
+const OrdersScreen: React.FC = () => {
   const { data: user } = useGetMe();
   return (
     <SafeAreaView style={styles.container}>
@@ -280,4 +280,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default OrdersScreen;

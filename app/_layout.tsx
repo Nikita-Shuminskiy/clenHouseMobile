@@ -1,13 +1,16 @@
 import { ErrorBoundary } from "@components/ui-kit/error-boundary";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { queryClient } from "@/src/shared/api/configs/query-client-config";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
 import { ThemeProvider } from "../src/shared/use-theme";
+import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
+import { useEffect } from "react";
+import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 
 const RootStack = () => {
   // const {
@@ -22,43 +25,25 @@ const RootStack = () => {
   //   user
   // } = useAuthStore();
 
-  // const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
+  const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
+  const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
+    queryKey: ["isFirstEnter"],
+    queryFn: () => getStorageIsFirstEnter(),
+  });
 
-  // useEffect(() => {
-  //   if (!isInitialized || isLoading) {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (isLoadingGetMe || isLoadingGetIsFirstEnter) {
+      return;
+    }
 
-  //   if (userMe) {
-  //     setAuth(userMe);
-  //   } else if (!isLoadingGetMe) {
-  //     setCheckingAuth(false);
-  //   }
-
-  //   if (isAuthenticated) {
-  //     console.log(user?.cityId, "user?.cityIduser?.cityIduser?.cityIduser?.cityIduser?.cityId");
-
-  //     if (!user?.cityId) {
-  //       router.replace("/(auth)/registration-city");
-  //     } else {
-  //       router.replace("/(protected-tabs)");
-  //     }
-  //   } else if (isFirstEnter && !isCheckingAuth) {
-  //     router.replace("/(auth)/onboarding");
-  //   } else if (!isCheckingAuth) {
-  //     router.replace("/(auth)");
-  //   }
-  // }, [isAuthenticated, isLoading, isFirstEnter, user, setAuth, isInitialized, userMe, isLoadingGetMe, isCheckingAuth, setCheckingAuth]);
-
-  // useEffect(() => {
-  //   if (!isInitialized) {
-  //     setIsInitialized();
-  //   }
-  // }, []);
-
-  // if (isCheckingAuth) {
-  //   return <Loading />;
-  // }
+    if (userMe?.role) {
+      router.replace("/(protected-tabs)");
+    } else if (isFirstEnter === "true") {
+      router.replace("/(auth)/onboarding");
+    } else {
+      router.replace("/(auth)");
+    }
+  }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

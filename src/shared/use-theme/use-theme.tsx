@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { ITheme, IThemeProvider } from "./types/theme";
 import { LIGHT } from "./light";
 
@@ -15,7 +15,7 @@ export const ThemeProvider = ({ children }: IThemeProvider) => {
     themeType: "LIGHT",
   });
 
-  const setThemeHandler = () => {
+  const setThemeHandler = useCallback(() => {
     if (themeState.themeType !== 'LIGHT') {
       setTheme({
         theme: LIGHT,
@@ -23,16 +23,16 @@ export const ThemeProvider = ({ children }: IThemeProvider) => {
       })
       return
     }
+  }, [themeState.themeType]);
 
-  };
+  const contextValue = useMemo(() => ({
+    theme: themeState.theme,
+    themeType: themeState.themeType,
+    setTheme: setThemeHandler,
+  }), [themeState.theme, themeState.themeType, setThemeHandler]);
+
   return (
-    <ThemeContext.Provider
-      value={{
-        theme: themeState.theme,
-        themeType: themeState.themeType,
-        setTheme: setThemeHandler,
-      }}
-    >
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );

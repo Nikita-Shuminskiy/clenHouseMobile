@@ -19,6 +19,7 @@ import { router } from 'expo-router';
 import imgCard1 from '@/assets/images/onboaring/bucket-onboarding.png';
 import imgCard2 from '@/assets/images/onboaring/enter-onboaring.png';
 import imgCard3 from '@/assets/images/onboaring/third-onboaring.png';
+import { setStorageIsFirstEnter } from '@/src/shared/utils/isFirstEnter';
 
 const { width } = Dimensions.get('window');
 
@@ -64,12 +65,14 @@ const OnboardingScreen: React.FC = () => {
       }, 300);
     } else {
       // setIsFirstEnter(true);
+      setStorageIsFirstEnter(false);
       router.replace("/(auth)");
     }
   };
 
   const handleSkip = () => {
     // setIsFirstEnter(true);
+    setStorageIsFirstEnter(false);
     router.replace("/(auth)");
   };
 
