@@ -1,41 +1,116 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { UserRole } from "@/src/shared/api/types/data-contracts";
-import { ArrowBackIcon } from "../../shared/components/icons";
+import { ArrowBackIcon } from "../../../shared/components/icons";
 import { queryClient } from "@/src/shared/api/configs/query-client-config";
 import { QueryKey } from "@/src/shared/api/constants/api-keys/query-key";
 import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
+import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+
+// UI Components
+import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
 
 const ProfileScreen: React.FC = () => {
   const { data: user } = useGetMe();
+  
+  // Получаем статистику заказов пользователя
+  const { data: ordersData } = useOrders({
+    currierId: user?.id,
+  });
+
+  // Вычисляем статистику
+  const totalOrders = ordersData?.orders?.length || 0;
+  const completedOrders = ordersData?.orders?.filter(order => order.status === 'done').length || 0;
+  const rating = 4.8; // Можно добавить реальный рейтинг из API
 
   const handleBack = () => {
     console.log("Назад");
   };
 
   const handleLogout = async () => {
-    try {
-      // logout
-      await removeToken();
-      await removeRefreshToken();
-      queryClient.invalidateQueries({ queryKey: [QueryKey.GET_ME] });
-      console.log("Выход выполнен");
-      router.replace("/(auth)");
-    } catch (error) {
-      console.error("Ошибка выхода:", error);
-    }
+    Alert.alert(
+      'Выход',
+      'Вы уверены, что хотите выйти из аккаунта?',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        { 
+          text: 'Выйти', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removeToken();
+              await removeRefreshToken();
+              queryClient.invalidateQueries({ queryKey: [QueryKey.GET_ME] });
+              router.replace("/(auth)");
+            } catch (error) {
+              console.error("Ошибка выхода:", error);
+            }
+          }
+        }
+      ]
+    );
   };
 
+  // Обработчики для настроек
+  const handleEditProfile = useCallback(() => {
+    Alert.alert('Редактирование профиля', 'Функция в разработке');
+  }, []);
+
+  const handleChangePassword = useCallback(() => {
+    Alert.alert('Смена пароля', 'Функция в разработке');
+  }, []);
+
+  const handleNotifications = useCallback(() => {
+    Alert.alert('Уведомления', 'Функция в разработке');
+  }, []);
+
+  const handlePrivacy = useCallback(() => {
+    Alert.alert('Конфиденциальность', 'Функция в разработке');
+  }, []);
+
+  const handleSupport = useCallback(() => {
+    Alert.alert('Поддержка', 'Функция в разработке');
+  }, []);
+
+  // Обработчики для верификации
+  const handleVerifyPhone = useCallback(() => {
+    Alert.alert('Верификация телефона', 'Функция в разработке');
+  }, []);
+
+  const handleVerifyEmail = useCallback(() => {
+    Alert.alert('Верификация email', 'Функция в разработке');
+  }, []);
+
+  // Обработчики для быстрых действий
+  const handleViewOrders = useCallback(() => {
+    router.push('/(protected-tabs)/orders');
+  }, []);
+
+  const handleCreateOrder = useCallback(() => {
+    Alert.alert('Создание заказа', 'Функция в разработке');
+  }, []);
+
+  const handleViewHistory = useCallback(() => {
+    Alert.alert('История', 'Функция в разработке');
+  }, []);
+
+  const handleInviteFriends = useCallback(() => {
+    Alert.alert('Пригласить друзей', 'Функция в разработке');
+  }, []);
+
+  console.log(user, "user?.createdAt");
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -74,22 +149,40 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Меню */}
-        {/* <View style={styles.menuContainer}>
-          {menuItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.menuItem}
-              onPress={item.onPress}
-            >
-              <View style={styles.menuItemContent}>
-                <item.icon style={styles.menuIcon} />
-                <Text style={styles.menuTitle}>{item.title}</Text>
-              </View>
-              <ArrowBackIcon style={styles.arrowIcon} />
-            </TouchableOpacity>
-          ))}
-        </View> */}
+        {/* Статистика пользователя */}
+        <UserStats
+          totalOrders={totalOrders}
+          completedOrders={completedOrders}
+          rating={rating}
+          joinDate={user?.createdAt?.toString()}
+        />
+
+        {/* Статус верификации */}
+        <VerificationStatus
+          isPhoneVerified={user?.isPhoneVerified}
+          isEmailVerified={user?.isEmailVerified}
+          phone={user?.phone}
+          email={user?.email}
+          onVerifyPhone={handleVerifyPhone}
+          onVerifyEmail={handleVerifyEmail}
+        />
+
+        {/* Быстрые действия */}
+        <QuickActions
+          onViewOrders={handleViewOrders}
+          onCreateOrder={handleCreateOrder}
+          onViewHistory={handleViewHistory}
+          onInviteFriends={handleInviteFriends}
+        />
+
+        {/* Настройки профиля */}
+        <ProfileSettings
+          onEditProfile={handleEditProfile}
+          onChangePassword={handleChangePassword}
+          onNotifications={handleNotifications}
+          onPrivacy={handlePrivacy}
+          onSupport={handleSupport}
+        />
 
         {/* Кнопка выхода */}
         <View style={styles.logoutContainer}>
