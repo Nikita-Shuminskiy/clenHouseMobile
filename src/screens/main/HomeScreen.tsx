@@ -1,48 +1,12 @@
-import { router } from 'expo-router';
 import React from 'react';
 import {
-  ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-import { useAuthStore } from '@/src/modules/auth/stores/auth.store';
-
 
 const HomeScreen: React.FC = () => {
-  const { user } = useAuthStore();
-
-  const handleSearch = () => {
-    router.push('/search' as any);
-  };
-
-  const handleFavorites = () => {
-    router.push('/favorites' as any);
-  };
-
-  const handleProfile = () => {
-    router.push('/profile' as any);
-  };
-
-  const handleNotifications = () => {
-    console.log('Уведомления');
-  };
-
-  const handleCityChange = () => {
-    console.log('Смена города');
-  };
-
-  const handleClubPress = (clubId: string) => {
-    console.log('Клуб:', clubId);
-  };
-
-  const handleBooking = () => {
-    console.log('Бронирование');
-  };
 
   return (
     <SafeAreaView style={styles.container}>

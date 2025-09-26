@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useResetPasswordRequest } from '@/src/modules/auth/api/use-reset-password-request';
+// import { useResetPasswordRequest } from '@/src/modules/auth/api/use-reset-password-request';
 import Button from '@/src/shared/components/ui-kit/button';
 import ControlledInput from '@/src/shared/components/ui-kit/controlled-input';
 import { ResetPasswordRequestFormData, resetPasswordRequestSchema } from '@/src/shared/schemas/auth-schemas';
@@ -20,7 +20,7 @@ import { KeyboardScrollView } from './ui/KeyboardScrollView';
 const ForgotPasswordScreen: React.FC = () => {
   const { colors, sizes, fonts, weights } = useTheme();
 
-  const { mutateAsync: resetPasswordRequest, isPending } = useResetPasswordRequest();
+  // const { mutateAsync: resetPasswordRequest, isPending } = useResetPasswordRequest();
 
   const {
     control,
@@ -36,7 +36,7 @@ const ForgotPasswordScreen: React.FC = () => {
 
   const onSubmit = async (data: ResetPasswordRequestFormData) => {
     try {
-      await resetPasswordRequest(data);
+      // await resetPasswordRequest(data);
 
       router.push(`/(auth)/(forgot-password)/forgot-password-confirmation?email=${encodeURIComponent(data.email)}` as any);
     } catch (error) {
@@ -70,11 +70,11 @@ const ForgotPasswordScreen: React.FC = () => {
         <Button
           type="primary"
           onPress={handleSubmit(onSubmit)}
-          disabled={isPending || !isValid}
-          isLoading={isPending}
+          disabled={false || !isValid}
+          isLoading={false}
           containerStyle={styles.continueButton}
         >
-          {isPending ? 'Отправка...' : 'Сбросить пароль'}
+          {false ? 'Отправка...' : 'Сбросить пароль'}
         </Button>
       </KeyboardScrollView>
     </SafeAreaView>

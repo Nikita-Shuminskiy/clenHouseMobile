@@ -1,23 +1,4 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import {
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-import { useSignInWithEmail } from "@/src/modules/auth/api/use-sign-in-with-email";
-import { useAuthStore } from "@/src/modules/auth/stores/auth.store";
-import { RegisterResponseDto } from "@/src/shared/api/types/data-contracts";
+import { useSendSms } from "@/src/modules/auth/hooks/useSendSms";
 import PhoneInput from "@/src/shared/components/ui-kit/phone-input";
 import {
   SignInSoftFormData,
@@ -29,32 +10,37 @@ import {
   ThemeWeights,
   useTheme,
 } from "@/src/shared/use-theme";
-import { setRefreshToken, setToken } from "@/src/shared/utils/token";
 import Button from "@components/ui-kit/button";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Logo from "../../../assets/images/logo.png";
 
 const AuthScreen: React.FC = () => {
   const { colors, sizes, fonts, weights } = useTheme();
-  const { height: screenHeight } = Dimensions.get("window");
-  const { mutateAsync: signInWithEmail, isPending } = useSignInWithEmail();
+  const { isPending } = useSendSms()
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isSubmitted },
+    formState: { errors },
   } = useForm<SignInSoftFormData>({
     resolver: yupResolver(signInSoftSchema),
     mode: "onSubmit", // Валидация только при отправке
     reValidateMode: "onBlur", // Перевалидация при потере фокуса
   });
-
-  const { setAuth, user } = useAuthStore();
-
-  const initSocialAuth = async (data: RegisterResponseDto) => {
-    setAuth(data.user);
-    await setToken(data.accessToken);
-    await setRefreshToken(data.refreshToken);
-  };
 
   const styles = createStyles({ colors, sizes, fonts, weights });
 

@@ -1,5 +1,3 @@
-import { useSignUpWithEmail } from "@/src/modules/auth/api/use-sign-up-with-email";
-import { useAuthStore } from "@/src/modules/auth/stores/auth.store";
 import { TopBar } from '@/src/shared/components/molecules/TopBar';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
@@ -8,7 +6,6 @@ import { useForm } from "react-hook-form";
 import {
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   Linking,
   Pressable
@@ -32,8 +29,6 @@ export const RegistrationDataScreen: React.FC = () => {
   const { colors, fonts, weights, sizes } = useTheme();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  const { mutateAsync: signUpWithEmail, isPending } = useSignUpWithEmail();
-  const { setRegistrationData, registrationData } = useAuthStore();
   const styles = createStyles({ colors, fonts, weights, sizes });
 
   const {
@@ -41,7 +36,7 @@ export const RegistrationDataScreen: React.FC = () => {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<RegistrationDataFormData>({
     resolver: yupResolver(registrationDataSchema) as any,
     mode: "onChange",
@@ -69,9 +64,9 @@ export const RegistrationDataScreen: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      await signUpWithEmail(data);
+      // await signUpWithEmail(data);
       console.log("Регистрация успешна");
-      setRegistrationData({ ...data, role: registrationData?.role });
+      // setRegistrationData({ ...data, role: registrationData?.role });
       router.push("/(auth)/registration-role");
     } catch (error) {
       console.log("Регистрация не успешна");
@@ -251,7 +246,7 @@ export const RegistrationDataScreen: React.FC = () => {
               console.log("Form errors:", errors);
               handleSubmit(onSubmit)();
             }}
-            isLoading={isPending}
+            isLoading={false}
             disabled={!isFormValid}
             style={!isFormValid ?
               { ...styles.continueButton, ...styles.disabledButton } :

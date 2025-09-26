@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useForgotPassword } from '@/src/modules/auth/api/use-forgot-password';
+// import { useForgotPassword } from '@/src/modules/auth/api/use-forgot-password';
 import Button from '@/src/shared/components/ui-kit/button';
 import Input from '@/src/shared/components/ui-kit/input';
 import { ThemeColors, ThemeFonts, ThemeWeights, useTheme } from '@/src/shared/use-theme';
@@ -18,7 +18,7 @@ const ResetPasswordSuccessScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { mutateAsync: forgotPassword } = useForgotPassword();
+  // const { mutateAsync: forgotPassword } = useForgotPassword();
   
   const styles = createStyles({ colors, sizes, fonts, weights });
 
@@ -28,7 +28,7 @@ const ResetPasswordSuccessScreen: React.FC = () => {
     setIsLoading(true);
     try {
       // Используем заглушку API
-      await forgotPassword({ email });
+      // await forgotPassword({ email });
       
       // Переходим на экран подтверждения с переданным email
       router.push(`/(auth)/(forgot-password)/forgot-password-confirmation?email=${encodeURIComponent(email)}` as any);
@@ -68,10 +68,10 @@ const ResetPasswordSuccessScreen: React.FC = () => {
         <Button
           type="primary"
           onPress={handleContinue}
-          disabled={!email || isLoading}
+          disabled={!email || false}
           containerStyle={styles.continueButton}
         >
-          {isLoading ? 'Отправка...' : 'Продолжить'}
+          {false ? 'Отправка...' : 'Продолжить'}
         </Button>
       </View>
     </SafeAreaView>

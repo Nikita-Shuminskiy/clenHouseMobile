@@ -13,7 +13,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import OtpInputs from "react-native-otp-inputs";
 import Button from '@/src/shared/components/ui-kit/button';
 import { ThemeColors, ThemeFonts, ThemeWeights, useTheme } from '@/src/shared/use-theme';
-import { useAuthStore } from '@/src/modules/auth/stores/auth.store';
 import { TopBar } from '@/src/shared/components/molecules/TopBar';
 
 const ConfirmCodeScreen: React.FC = () => {
@@ -24,7 +23,6 @@ const ConfirmCodeScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [key, setKey] = useState<number>(0);
   const otpRef = useRef<any>(null);
-  const { registrationData } = useAuthStore();
 
   const handleOtpChange = (code: string) => {
     setOtpCode(code);
@@ -80,7 +78,7 @@ const ConfirmCodeScreen: React.FC = () => {
               Введите код{'\n'}подтверждения
             </Text>
             <Text style={styles.subtitle}>
-              Мы отправили SMS с кодом{'\n'}на номер {registrationData?.email || '+7 (***) ***-**-**'}
+              Мы отправили SMS с кодом{'\n'}на номер +7 (***) ***-**-**
             </Text>
           </View>
 

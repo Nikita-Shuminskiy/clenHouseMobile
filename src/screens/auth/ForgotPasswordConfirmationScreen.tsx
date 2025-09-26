@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useResetPasswordRequest } from "@/src/modules/auth/api/use-reset-password-request";
-import { useVerifyResetCode } from "@/src/modules/auth/api/use-verify-reset-code";
+// import { useResetPasswordRequest } from "@/src/modules/auth/api/use-reset-password-request";
+// import { useVerifyResetCode } from "@/src/modules/auth/api/use-verify-reset-code";
 import { PenIcon } from "@/src/shared/components/icons";
 import Button from "@/src/shared/components/ui-kit/button";
 import ControlledInput from "@/src/shared/components/ui-kit/controlled-input";
@@ -35,8 +35,8 @@ const ForgotPasswordConfirmationScreen: React.FC = () => {
   const [codeError, setCodeError] = useState<string>("");
   const [isResending, setIsResending] = useState(false);
 
-  const { mutateAsync: verifyResetCode, isPending } = useVerifyResetCode();
-  const { mutateAsync: resendCode } = useResetPasswordRequest();
+  // const { mutateAsync: verifyResetCode, isPending } = useVerifyResetCode();
+  // const { mutateAsync: resendCode } = useResetPasswordRequest();
 
   const {
     control,
@@ -72,7 +72,7 @@ const ForgotPasswordConfirmationScreen: React.FC = () => {
 
     setIsResending(true);
     try {
-      await resendCode({ email });
+      // await resendCode({ email });
       setCodeError("");
     } catch (error) {
       console.error("Ошибка при повторной отправке кода:", error);
@@ -144,11 +144,11 @@ const ForgotPasswordConfirmationScreen: React.FC = () => {
         <Button
           type="primary"
           onPress={handleSubmit(onSubmit)}
-          disabled={isPending}
-          isLoading={isPending}
+          disabled={false}
+          isLoading={false}
           containerStyle={styles.continueButton}
         >
-          {isPending ? "Проверка..." : "Подтвердить"}
+          {false ? "Проверка..." : "Подтвердить"}
         </Button>
       </KeyboardScrollView>
     </SafeAreaView>

@@ -1,14 +1,12 @@
 import React, { useRef, useState } from 'react';
 import {
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAuthStore } from '@/src/modules/auth/stores/auth.store';
 import { OnboardingSlideType } from '@/src/shared/types/onboarding';
 import { useTheme } from '@/src/shared/use-theme';
 import BackgroundCircles from '@components/ui-kit/background-circles';
@@ -27,8 +25,7 @@ const { width } = Dimensions.get('window');
 
 
 const OnboardingScreen: React.FC = () => {
-  const { colors, fonts, weights, sizes } = useTheme();
-  const { setIsFirstEnter } = useAuthStore();
+  const { colors } = useTheme();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isProgrammaticScroll, setIsProgrammaticScroll] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -66,13 +63,13 @@ const OnboardingScreen: React.FC = () => {
         setIsProgrammaticScroll(false);
       }, 300);
     } else {
-      setIsFirstEnter(true);
+      // setIsFirstEnter(true);
       router.replace("/(auth)");
     }
   };
 
   const handleSkip = () => {
-    setIsFirstEnter(true);
+    // setIsFirstEnter(true);
     router.replace("/(auth)");
   };
 

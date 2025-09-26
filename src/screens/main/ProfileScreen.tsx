@@ -8,22 +8,17 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAuthStore } from '@/src/modules/auth/stores/auth.store';
 import { UserRole } from '@/src/shared/api/types/data-contracts';
 import {
   ArrowBackIcon,
-  CalendarIcon,
-  HeartIcon,
-  NotificationIcon,
-  ShipIcon,
-  UserIcon
 } from '../../shared/components/icons';
 import { queryClient } from '@/src/shared/api/configs/query-client-config';
 import { QueryKey } from '@/src/shared/api/constants/api-keys/query-key';
 import { router } from 'expo-router';
+import { useGetMe } from '@/src/modules/auth/hooks/useGetMe';
 
 const ProfileScreen: React.FC = () => {
-  const { user, logout } = useAuthStore();
+  const { data: user } = useGetMe();
 
   const handleBack = () => {
     console.log('Назад');
@@ -31,7 +26,7 @@ const ProfileScreen: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      // logout
       queryClient.invalidateQueries({ queryKey: [QueryKey.GET_ME] });
       console.log('Выход выполнен');
       router.replace('/(auth)');
@@ -40,13 +35,6 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  const menuItems = [
-    { icon: UserIcon, title: 'Персональные данные', onPress: () => console.log('Персональные данные') },
-    { icon: CalendarIcon, title: 'Мои брони', onPress: () => console.log('Мои брони') },
-    { icon: HeartIcon, title: 'Избранное', onPress: () => console.log('Избранное') },
-    { icon: NotificationIcon, title: 'Уведомления', onPress: () => console.log('Уведомления') },
-    { icon: ShipIcon, title: 'Мои суда', onPress: () => console.log('Мои суда') },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>

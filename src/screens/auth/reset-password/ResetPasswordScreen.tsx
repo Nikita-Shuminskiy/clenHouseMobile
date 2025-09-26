@@ -11,8 +11,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useResetPassword } from '@/src/modules/auth/api/use-reset-password';
-import { useVerifyResetCode } from '@/src/modules/auth/api/use-verify-reset-code';
 import { CheckIcon, ErrorIcon, InfoCircleIcon } from '@/src/shared/components/icons';
 import PasswordResetSuccessModal from '@/src/shared/components/modals/PasswordResetSuccessModal';
 import Button from '@/src/shared/components/ui-kit/button';
@@ -27,8 +25,8 @@ const ResetPasswordScreen: React.FC = () => {
   
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   
-  const { mutateAsync: resetPassword, isPending } = useResetPassword();
-  const { mutateAsync: verifyCode } = useVerifyResetCode();
+  // const { mutateAsync: resetPassword, isPending } = useResetPassword();
+  // const { mutateAsync: verifyCode } = useVerifyResetCode();
   
   const {
     control,
@@ -81,7 +79,7 @@ const ResetPasswordScreen: React.FC = () => {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
-      await resetPassword(data);
+      // await resetPassword(data);
       // Показываем модалку успеха вместо перехода на другой экран
       setShowSuccessModal(true);
     } catch (error) {
@@ -177,10 +175,10 @@ const ResetPasswordScreen: React.FC = () => {
           <Button
             type="primary"
             onPress={handleSubmit(onSubmit)}
-            disabled={isPending}
+            disabled={false}
             containerStyle={styles.updateButton}
           >
-            {isPending ? 'Обновление...' : 'Обновить пароль'}
+            {false ? 'Обновление...' : 'Обновить пароль'}
           </Button>
           
           <View style={styles.signInContainer}>
