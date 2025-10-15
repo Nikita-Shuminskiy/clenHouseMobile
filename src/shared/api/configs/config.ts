@@ -42,20 +42,24 @@ instance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = await getRefreshToken();
-        if (!refreshToken) {
+        const accessToken = await getToken();
+        
+        if (!refreshToken || !accessToken) {
           await removeToken();
+          await removeRefreshToken();
           return Promise.reject(error);
         }
 
         const response = await axios.post(`${API_URL}auth/refresh`, {
+          accessToken,
           refreshToken,
         });
 
-        const { access_token, refresh_token } = response.data;
-        await setToken(access_token);
-        await setRefreshToken(refresh_token);
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+        await setToken(newAccessToken);
+        await setRefreshToken(newRefreshToken);
 
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return instance(originalRequest);
       } catch (e) {
         await removeToken();

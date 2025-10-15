@@ -11,20 +11,10 @@ import { ThemeProvider } from "../src/shared/use-theme";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useEffect } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
+import { useAuth } from "@/src/shared/hooks/useAuth";
 
 const RootStack = () => {
-  // const {
-  //   isAuthenticated,
-  //   isLoading,
-  //   isCheckingAuth,
-  //   isFirstEnter,
-  //   isInitialized,
-  //   setIsInitialized,
-  //   setAuth,
-  //   setCheckingAuth,
-  //   user
-  // } = useAuthStore();
-
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
   const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
     queryKey: ["isFirstEnter"],
@@ -32,23 +22,24 @@ const RootStack = () => {
   });
 
   useEffect(() => {
-    if (isLoadingGetMe || isLoadingGetIsFirstEnter) {
+    if (isAuthLoading || isLoadingGetMe || isLoadingGetIsFirstEnter) {
       return;
     }
 
-    if (userMe?.role) {
+    if (isAuthenticated && userMe?.role) {
       router.replace("/(protected-tabs)");
     } else if (isFirstEnter === "true") {
       router.replace("/(auth)/onboarding");
     } else {
       router.replace("/(auth)");
     }
-  }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter]);
+  }, [isAuthenticated, isAuthLoading, userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(protected-tabs)" />
+      <Stack.Screen name="(protected)" />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

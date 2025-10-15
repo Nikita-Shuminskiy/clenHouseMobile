@@ -61,9 +61,6 @@ export const useUpdateOrderStatus = () => {
       ordersApi.updateStatus(id, data),
     onSuccess: (data) => {
       toast.success("Статус обновлен!", {
-        description: `Статус заказа #${data.id.slice(-8)} изменен на ${
-          data.status
-        }`,
         duration: 4000,
       });
 
@@ -101,7 +98,6 @@ export const useCancelOrder = () => {
     }) => ordersApi.cancel(id, cancelOrderDto),
     onSuccess: (data) => {
       toast.success("Заказ отменен!", {
-        description: `Заказ #${data.id.slice(-8)} успешно отменен`,
         duration: 4000,
       });
 

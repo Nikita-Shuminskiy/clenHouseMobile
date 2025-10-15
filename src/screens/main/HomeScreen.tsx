@@ -3,15 +3,63 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
+import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+import { OrderStatus } from "@/src/modules/orders/types/orders";
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useGetMe();
+  
+  // Получаем заказы в работе (assigned и in_progress)
+  const { data: ordersData, isLoading: ordersLoading } = useOrders({
+    status: OrderStatus.ASSIGNED,
+    currierId: user?.id,
+  });
+
+  const { data: inProgressOrdersData } = useOrders({
+    status: OrderStatus.IN_PROGRESS,
+    currierId: user?.id,
+  });
+
+  // Объединяем заказы в работе
+  const activeOrders = [
+    ...(ordersData?.orders || []),
+    ...(inProgressOrdersData?.orders || [])
+  ];
+
+  const handleOrderPress = (orderId: string) => {
+    router.push(`/(protected)/order-details?orderId=${orderId}`);
+  };
+
+  const getStatusText = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.ASSIGNED:
+        return "Назначен";
+      case OrderStatus.IN_PROGRESS:
+        return "В работе";
+      default:
+        return status;
+    }
+  };
+
+  const getStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.ASSIGNED:
+        return "#FFA500";
+      case OrderStatus.IN_PROGRESS:
+        return "#4CAF50";
+      default:
+        return "#5A6E8A";
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -26,6 +74,78 @@ const HomeScreen: React.FC = () => {
               </Text>
               <Text style={styles.subtitle}>Давай сделаем чистоту!</Text>
             </View>
+          </View>
+        </View>
+
+        <View style={styles.mainContent}>
+          {/* Секция активных заказов */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Заказы в работе</Text>
+              {activeOrders.length > 0 && (
+                <Text style={styles.seeAllText}>
+                  {activeOrders.length} заказ{activeOrders.length === 1 ? '' : activeOrders.length < 5 ? 'а' : 'ов'}
+                </Text>
+              )}
+            </View>
+
+            {ordersLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="#5A6E8A" />
+                <Text style={styles.loadingText}>Загрузка заказов...</Text>
+              </View>
+            ) : activeOrders.length > 0 ? (
+              <View style={styles.ordersContainer}>
+                {activeOrders.map((order) => (
+                  <TouchableOpacity
+                    key={order.id}
+                    style={styles.orderCard}
+                    onPress={() => handleOrderPress(order.id)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.orderHeader}>
+                      <Text style={styles.orderId}>#{order.id.slice(-8)}</Text>
+                      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
+                        <Text style={styles.statusText}>
+                          {getStatusText(order.status)}
+                        </Text>
+                      </View>
+                    </View>
+                    
+                    <Text style={styles.orderDescription} numberOfLines={2}>
+                      {order.description}
+                    </Text>
+                    
+                    <View style={styles.orderInfo}>
+                      <Text style={styles.orderAddress} numberOfLines={1}>
+                        📍 {order.address}
+                      </Text>
+                      <Text style={styles.orderPrice}>
+                        {order.price} ₽
+                      </Text>
+                    </View>
+                    
+                    <Text style={styles.orderTime}>
+                      📅 {new Date(order.scheduledAt).toLocaleDateString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>
+                  У вас пока нет заказов в работе
+                </Text>
+                <Text style={styles.emptyStateSubtext}>
+                  Новые заказы появятся здесь автоматически
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -276,6 +396,124 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: "#1A1A1A",
+    textAlign: "center",
+  },
+  // Стили для заказов
+  ordersContainer: {
+    gap: 12,
+  },
+  orderCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: "#1A1A1A",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  orderHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  orderId: {
+    fontFamily: "Onest",
+    fontWeight: "600",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#1A1A1A",
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  statusText: {
+    fontFamily: "Onest",
+    fontWeight: "500",
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#FFFFFF",
+  },
+  orderDescription: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#5A6E8A",
+    marginBottom: 12,
+  },
+  orderInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  orderAddress: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#5A6E8A",
+    flex: 1,
+    marginRight: 8,
+  },
+  orderPrice: {
+    fontFamily: "Onest",
+    fontWeight: "600",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#1A1A1A",
+  },
+  orderTime: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#7D8EAA",
+  },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 20,
+    gap: 8,
+  },
+  loadingText: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#5A6E8A",
+  },
+  emptyState: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 24,
+    alignItems: "center",
+    shadowColor: "#1A1A1A",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  emptyStateText: {
+    fontFamily: "Onest",
+    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#1A1A1A",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  emptyStateSubtext: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#7D8EAA",
     textAlign: "center",
   },
 });

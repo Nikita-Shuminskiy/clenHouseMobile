@@ -1,29 +1,28 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
+  TextInput
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
+import { OTPInput } from 'input-otp-native';
 
 import { useVerifySms } from '@/src/modules/auth/hooks/useVerifySms';
 import { TopBar } from '@/src/shared/components/molecules/TopBar';
 import Button from '@/src/shared/components/ui-kit/button';
-import { useLocalSearchParams } from 'expo-router';
-import OtpInputs from "react-native-otp-inputs";
+import { router, useLocalSearchParams } from 'expo-router';
 
 const ConfirmCodeScreen: React.FC = () => {
   const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
 
   const { mutateAsync: verifySms } = useVerifySms();
-  const [, setOtpCode] = useState<string>('');
+  const [otpCode, setOtpCode] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [key, setKey] = useState<number>(0);
-  const otpRef = useRef<any>(null);
 
   const handleOtpChange = (code: string) => {
     setOtpCode(code);
@@ -44,14 +43,13 @@ const ConfirmCodeScreen: React.FC = () => {
         phoneNumber: phoneNumber, // Номер уже в правильном формате +7XXXXXXXXXX
         code: code,
       });
-      console.log(res);
-      // Успешная верификация - пользователь будет перенаправлен автоматически
+      router.replace("/(protected-tabs)");
     } catch (error: any) {
       console.error('Ошибка верификации SMS:', error);
       setIsError(true);
       // Очищаем буфер обмена и сбрасываем OTP поле при ошибке
       await Clipboard.setStringAsync('');
-      setKey(prevKey => prevKey + 1);
+      setOtpCode('');
     } finally {
       setIsLoading(false);
     }
@@ -87,32 +85,45 @@ const ConfirmCodeScreen: React.FC = () => {
 
           {/* OTP Input */}
           <View style={styles.otpContainer}>
-            <OtpInputs
-              key={key}
-              ref={otpRef}
-              isRTL={false}
-              onTouchStart={async () => {
-                if (isError) {
-                  await Clipboard.setStringAsync('');
-                  setIsError(false);
-                  setKey(prevKey => prevKey + 1);
-                }
-              }}
-              handleChange={handleOtpChange}
-              keyboardType="phone-pad"
-              numberOfInputs={6}
-              autofillFromClipboard
-              style={styles.otpInputContainer}
-              inputStyles={[
-                styles.otpInput,
-                isError && styles.otpInputError
-              ]}
-              focusStyles={[
-                styles.otpInputFocus,
-                isError && styles.otpInputError
-              ]}
-              selectionColor="transparent"
+            <OTPInput
+              maxLength={6}
+              value={otpCode}
+              onChange={handleOtpChange}
+              onComplete={handleVerifyCode}
+              textAlign="center"
               editable={!isLoading}
+              render={({ slots, isFocused }) => (
+                <View style={styles.otpInputContainer}>
+                  {slots.map((slot, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.otpInput,
+                        slot.isActive && styles.otpInputFocus,
+                        isError && styles.otpInputError,
+                      ]}
+                    >
+                      <TextInput
+                        value={slot.char || ''}
+                        style={styles.otpInputText}
+                        keyboardType="phone-pad"
+                        maxLength={1}
+                        editable={!isLoading}
+                        selectTextOnFocus
+                        onFocus={() => {
+                          if (isError) {
+                            setIsError(false);
+                            setOtpCode('');
+                          }
+                        }}
+                      />
+                      {slot.hasFakeCaret && (
+                        <View style={styles.caret} />
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
             />
           </View>
 
@@ -206,9 +217,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E1EAF0',
     backgroundColor: '#fff',
-    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  otpInputText: {
     fontSize: 18,
     color: '#000',
+    textAlign: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  caret: {
+    position: 'absolute',
+    width: 2,
+    height: 20,
+    backgroundColor: '#FC712C',
+    borderRadius: 1,
   },
   otpInputFocus: {
     borderColor: '#FC712C',

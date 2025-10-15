@@ -6,6 +6,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useOrders, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
@@ -99,7 +100,10 @@ const OrdersScreen: React.FC = () => {
   }, [user?.id, updateStatusMutation, cancelOrderMutation]);
 
   const handleOrderPress = useCallback((order: any) => {
-    console.log('Order pressed:', order.id);
+    router.push({
+      pathname: '/(protected)/order-details' as any,
+      params: { orderId: order.id }
+    });
   }, []);
 
   const handleRefresh = useCallback(() => {
