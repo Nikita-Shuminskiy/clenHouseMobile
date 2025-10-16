@@ -11,7 +11,6 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProtectedLayout() {
