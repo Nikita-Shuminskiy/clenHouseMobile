@@ -12,10 +12,12 @@ export const useVerifySms = () => {
         mutationFn: (data: VerifySmsRequest) => authApi.verifySms(data),
         onSuccess: (data) => {
             // Сохраняем токены в localStorage
-            setToken(data.accessToken);
-            setRefreshToken(data.refreshToken);
+            setToken(data.accessToken).then(() => {
+                setRefreshToken(data.refreshToken).then(() => {
+                    router.replace("/(protected-tabs)");
+                });
+            });
 
-            // Инвалидируем кэш пользователя для обновления данных
             queryClient.invalidateQueries({ queryKey: ['me'] });
 
             toast.success('Добро пожаловать!', {

@@ -11,10 +11,8 @@ import { ThemeProvider } from "../src/shared/use-theme";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useEffect } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
-import { useAuth } from "@/src/shared/hooks/useAuth";
 
 const RootStack = () => {
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
   const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
     queryKey: ["isFirstEnter"],
@@ -22,18 +20,24 @@ const RootStack = () => {
   });
 
   useEffect(() => {
-    if (isAuthLoading || isLoadingGetMe || isLoadingGetIsFirstEnter) {
+    if (isLoadingGetMe || isLoadingGetIsFirstEnter) {
       return;
     }
 
-    if (isAuthenticated && userMe?.role) {
-      router.replace("/(protected-tabs)");
+    // Проверяем, находимся ли мы уже на нужном экране, чтобы избежать лишних переходов
+    const currentPath = router.canGoBack() ? 'unknown' : 'initial';
+    
+    if (userMe?.role) {
+      // Перенаправляем только если не находимся уже на защищенных экранах
+      if (!currentPath.includes('protected')) {
+        router.replace("/(protected-tabs)");
+      }
     } else if (isFirstEnter === "true") {
       router.replace("/(auth)/onboarding");
     } else {
       router.replace("/(auth)");
     }
-  }, [isAuthenticated, isAuthLoading, userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter]);
+  }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

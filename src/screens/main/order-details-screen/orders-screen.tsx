@@ -5,6 +5,7 @@ import {
   View,
   Alert,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
@@ -220,7 +221,11 @@ const OrderDetailsScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView 
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.orderDetails}>
           <Text style={styles.sectionTitle}>Описание</Text>
           <Text style={styles.orderDescription}>{order.description}</Text>
@@ -276,7 +281,7 @@ const OrderDetailsScreen: React.FC = () => {
             </View>
           );
         })()}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -335,7 +340,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  contentContainer: {
     padding: 16,
+    paddingBottom: 32,
   },
   orderDetails: {
     backgroundColor: "#FFFFFF",

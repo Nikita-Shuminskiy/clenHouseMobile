@@ -43,7 +43,7 @@ const ConfirmCodeScreen: React.FC = () => {
         phoneNumber: phoneNumber, // Номер уже в правильном формате +7XXXXXXXXXX
         code: code,
       });
-      router.replace("/(protected-tabs)");
+      // Навигация происходит в хуке useVerifySms, не нужно дублировать
     } catch (error: any) {
       console.error('Ошибка верификации SMS:', error);
       setIsError(true);
