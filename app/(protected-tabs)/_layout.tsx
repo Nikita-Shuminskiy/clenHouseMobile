@@ -82,19 +82,19 @@ export default function ProtectedLayout() {
                     >
                       {options.tabBarIcon?.({
                         focused: isFocused,
-                        color: isFocused ? String(theme.colors.primary500) : String(theme.colors.grey500),
+                        color: isFocused ? String(theme.colors.primary500) : String(theme.colors.muted),
                         size: 24,
                       })}
                     </View>
                     <Text
                       style={{
-                        color: isFocused ? String(theme.colors.primary500) : String(theme.colors.grey500),
+                        color: isFocused ? String(theme.colors.primary500) : String(theme.colors.muted),
                         fontSize: 10,
                         lineHeight: 16,
                         fontWeight: "500",
                       }}
                     >
-                      {route.name}
+                      {options.title}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -107,21 +107,21 @@ export default function ProtectedLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Главная",
           tabBarIcon: ({ color, size }) => <HomeIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="orders"
         options={{
-          title: "Orders",
+          title: "Заказы",
           tabBarIcon: ({ color, size }) => <AppointmentsIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Профиль",
           tabBarIcon: ({ color, size }) => <ProfileIcon color={color} />,
         }}
       />

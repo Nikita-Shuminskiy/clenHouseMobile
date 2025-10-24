@@ -5,43 +5,49 @@ import { ITheme, ThemeColors, ThemeGradients, ThemeSizes, ThemeSpacing, } from "
 export const COLORS: ThemeColors = {
     // Neutral colors
     white: '#FFFFFF',
-    black: '#2C2C2C',
-    background: '#F8F9FA',
+    black: '#000000',
+    background: '#F3F3F3', // Обновлено согласно веб-версии
     grey100: '#F5F5F5',
     grey200: '#E8E8E8',
     grey300: '#D1D1D1',
-    grey400: '#B8B8B8',
+    grey400: '#999999', // Обновлено согласно веб-версии
     grey500: '#9E9E9E',
     grey600: '#757575',
     grey700: '#616161',
     grey800: '#424242',
     grey900: '#2C2C2C',
     
-    // Primary colors (Orange theme from "Чисто дома")
+    // Primary colors (обновлено согласно cleanHouseWeb)
     primary100: '#FFE0D6',
     primary200: '#FFC4A3',
     primary300: '#FFA370',
     primary400: '#FF8A4D',
-    primary500: '#FF6B35',
-    primary500_12: 'rgba(255, 107, 53, 0.12)',
-    primary600: '#E55A2B',
-    primary700: '#CC4A21',
+    primary500: '#FF5E00', // Основной цвет из веб-версии
+    primary500_12: 'rgba(255, 94, 0, 0.12)',
+    primary600: '#FF8000', // Accent цвет из веб-версии
+    primary700: '#E55A2B',
     primary800: '#B23A17',
     primary900: '#992A0D',
     
-    // Accent colors (Yellow for highlights)
-    accent500: '#FFD700',
-    accent500_12: 'rgba(255, 215, 0, 0.12)',
+    // Accent colors (обновлено согласно веб-версии)
+    accent500: '#FF8000', // Accent цвет из веб-версии
+    accent500_12: 'rgba(255, 128, 0, 0.12)',
     
     // Additional colors for the theme
-    orange: '#FF6B35',
-    orangeLight: '#FF8A4D',
+    orange: '#FF5E00', // Обновлено согласно веб-версии
+    orangeLight: '#FF8000', // Accent цвет
     orangeDark: '#E55A2B',
     
-    // Palette colors
-    red: '#F53F3F',
+    // Palette colors (обновлено согласно веб-версии)
+    red: '#DC2626', // Destructive цвет из веб-версии
     blue: '#2196F3',
     green: '#4CAF50',
+    
+    // Дополнительные цвета из веб-версии
+    destructive: '#DC2626', // Для ошибок и предупреждений
+    muted: 'rgba(0,0,0,0.7)', // Приглушенный текст
+    border: 'rgba(0,0,0,0.08)', // Границы
+    ring: 'rgba(255, 94, 0, 0.35)', // Фокус кольца
 };
 
 export const GRADIENTS: ThemeGradients = {

@@ -89,6 +89,12 @@ export interface ThemeColors {
     red: ColorValue;
     blue: ColorValue;
     green: ColorValue;
+    
+    // Дополнительные цвета из веб-версии
+    destructive: ColorValue; // Для ошибок и предупреждений
+    muted: ColorValue; // Приглушенный текст
+    border: ColorValue; // Границы
+    ring: ColorValue; // Фокус кольца
 }
 
 export interface ThemeGradients {

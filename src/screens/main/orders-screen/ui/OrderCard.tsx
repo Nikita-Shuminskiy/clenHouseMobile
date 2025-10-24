@@ -20,7 +20,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
       case OrderStatus.IN_PROGRESS:
         return '#9C27B0';
       case OrderStatus.DONE:
-        return '#4CAF50';
+        return '#9E9E9E';
       case OrderStatus.CANCELED:
         return '#F44336';
       default:

@@ -10,33 +10,33 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { UserRole } from "@/src/shared/api/types/data-contracts";
-import { ArrowBackIcon } from "../../../shared/components/icons";
+// import { ArrowBackIcon } from "../../../shared/components/icons";
 import { queryClient } from "@/src/shared/api/configs/query-client-config";
 import { QueryKey } from "@/src/shared/api/constants/api-keys/query-key";
 import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
-import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+// import { useOrders } from "@/src/modules/orders/hooks/useOrders";
 
-// UI Components
-import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
+// UI Components - временно закомментировано
+// import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
 
 const ProfileScreen: React.FC = () => {
   const { data: user } = useGetMe();
   
-  // Получаем статистику заказов пользователя
-  const { data: ordersData } = useOrders({
-    currierId: user?.id,
-  });
+  // Получаем статистику заказов пользователя - временно закомментировано
+  // const { data: ordersData } = useOrders({
+  //   currierId: user?.id,
+  // });
 
-  // Вычисляем статистику
-  const totalOrders = ordersData?.orders?.length || 0;
-  const completedOrders = ordersData?.orders?.filter(order => order.status === 'done').length || 0;
-  const rating = 4.8; // Можно добавить реальный рейтинг из API
+  // Вычисляем статистику - временно закомментировано
+  // const totalOrders = ordersData?.orders?.length || 0;
+  // const completedOrders = ordersData?.orders?.filter(order => order.status === 'done').length || 0;
+  // const rating = 4.8; // Можно добавить реальный рейтинг из API
 
-  const handleBack = () => {
-    console.log("Назад");
-  };
+  // const handleBack = () => {
+  //   router.back();
+  // };
 
   const handleLogout = async () => {
     Alert.alert(
@@ -62,70 +62,68 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
-  // Обработчики для настроек
-  const handleEditProfile = useCallback(() => {
-    Alert.alert('Редактирование профиля', 'Функция в разработке');
-  }, []);
+  // Обработчики для настроек - временно закомментировано
+  // const handleEditProfile = useCallback(() => {
+  //   Alert.alert('Редактирование профиля', 'Функция в разработке');
+  // }, []);
 
-  const handleChangePassword = useCallback(() => {
-    Alert.alert('Смена пароля', 'Функция в разработке');
-  }, []);
+  // const handleChangePassword = useCallback(() => {
+  //   Alert.alert('Смена пароля', 'Функция в разработке');
+  // }, []);
 
-  const handleNotifications = useCallback(() => {
-    Alert.alert('Уведомления', 'Функция в разработке');
-  }, []);
+  // const handleNotifications = useCallback(() => {
+  //   Alert.alert('Уведомления', 'Функция в разработке');
+  // }, []);
 
-  const handlePrivacy = useCallback(() => {
-    Alert.alert('Конфиденциальность', 'Функция в разработке');
-  }, []);
+  // const handlePrivacy = useCallback(() => {
+  //   Alert.alert('Конфиденциальность', 'Функция в разработке');
+  // }, []);
 
-  const handleSupport = useCallback(() => {
-    Alert.alert('Поддержка', 'Функция в разработке');
-  }, []);
+  // const handleSupport = useCallback(() => {
+  //   Alert.alert('Поддержка', 'Функция в разработке');
+  // }, []);
 
-  // Обработчики для верификации
-  const handleVerifyPhone = useCallback(() => {
-    Alert.alert('Верификация телефона', 'Функция в разработке');
-  }, []);
+  // Обработчики для верификации - временно закомментировано
+  // const handleVerifyPhone = useCallback(() => {
+  //   Alert.alert('Верификация телефона', 'Функция в разработке');
+  // }, []);
 
-  const handleVerifyEmail = useCallback(() => {
-    Alert.alert('Верификация email', 'Функция в разработке');
-  }, []);
+  // const handleVerifyEmail = useCallback(() => {
+  //   Alert.alert('Верификация email', 'Функция в разработке');
+  // }, []);
 
-  // Обработчики для быстрых действий
-  const handleViewOrders = useCallback(() => {
-    router.push('/(protected-tabs)/orders');
-  }, []);
+  // Обработчики для быстрых действий - временно закомментировано
+  // const handleViewOrders = useCallback(() => {
+  //   router.push('/(protected-tabs)/orders');
+  // }, []);
 
-  const handleCreateOrder = useCallback(() => {
-    Alert.alert('Создание заказа', 'Функция в разработке');
-  }, []);
+  // const handleCreateOrder = useCallback(() => {
+  //   Alert.alert('Создание заказа', 'Функция в разработке');
+  // }, []);
 
-  const handleViewHistory = useCallback(() => {
-    Alert.alert('История', 'Функция в разработке');
-  }, []);
+  // const handleViewHistory = useCallback(() => {
+  //   Alert.alert('История', 'Функция в разработке');
+  // }, []);
 
-  const handleInviteFriends = useCallback(() => {
-    Alert.alert('Пригласить друзей', 'Функция в разработке');
-  }, []);
+  // const handleInviteFriends = useCallback(() => {
+  //   Alert.alert('Пригласить друзей', 'Функция в разработке');
+  // }, []);
 
   console.log(user, "user?.createdAt");
   
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Профиль</Text>
+      </View>
+
+      {/* Основной контент */}
       <ScrollView
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <ArrowBackIcon style={styles.backIcon} />
-          </TouchableOpacity>
-
-          <Text style={styles.title}>Профиль</Text>
-        </View>
-
         {/* Информация о пользователе */}
         <View style={styles.userInfoContainer}>
           <View style={styles.avatarContainer}>
@@ -149,48 +147,48 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Статистика пользователя */}
-        <UserStats
+        {/* Статистика пользователя - временно закомментировано */}
+        {/* <UserStats
           totalOrders={totalOrders}
           completedOrders={completedOrders}
           rating={rating}
           joinDate={user?.createdAt?.toString()}
-        />
+        /> */}
 
-        {/* Статус верификации */}
-        <VerificationStatus
+        {/* Статус верификации - временно закомментировано */}
+        {/* <VerificationStatus
           isPhoneVerified={user?.isPhoneVerified}
           isEmailVerified={user?.isEmailVerified}
           phone={user?.phone}
           email={user?.email}
           onVerifyPhone={handleVerifyPhone}
           onVerifyEmail={handleVerifyEmail}
-        />
+        /> */}
 
-        {/* Быстрые действия */}
-        <QuickActions
+        {/* Быстрые действия - временно закомментировано */}
+        {/* <QuickActions
           onViewOrders={handleViewOrders}
           onCreateOrder={handleCreateOrder}
           onViewHistory={handleViewHistory}
           onInviteFriends={handleInviteFriends}
-        />
+        /> */}
 
-        {/* Настройки профиля */}
-        <ProfileSettings
+        {/* Настройки профиля - временно закомментировано */}
+        {/* <ProfileSettings
           onEditProfile={handleEditProfile}
           onChangePassword={handleChangePassword}
           onNotifications={handleNotifications}
           onPrivacy={handlePrivacy}
           onSupport={handleSupport}
-        />
-
-        {/* Кнопка выхода */}
-        <View style={styles.logoutContainer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Выйти</Text>
-          </TouchableOpacity>
-        </View>
+        /> */}
       </ScrollView>
+
+      {/* Кнопка выхода - прижата к низу */}
+      <View style={styles.logoutContainer}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Выйти</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -200,13 +198,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FAFCFE",
   },
+  scrollView: {
+    flex: 1,
+  },
   scrollContent: {
-    paddingBottom: 34,
+    paddingBottom: 24,
   },
   header: {
     backgroundColor: "#FFFFFF",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 16,
@@ -217,15 +219,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 50,
     elevation: 6,
-  },
-  backButton: {
-    padding: 10,
-    marginRight: 16,
-  },
-  backIcon: {
-    width: 24,
-    height: 24,
-    color: "#1A1A1A",
   },
   title: {
     fontFamily: "Onest",
@@ -339,7 +332,8 @@ const styles = StyleSheet.create({
   },
   logoutContainer: {
     paddingHorizontal: 16,
-    marginTop: 24,
+    paddingBottom: 16,
+    backgroundColor: "#FAFCFE",
   },
   logoutButton: {
     backgroundColor: "#FF3B30",

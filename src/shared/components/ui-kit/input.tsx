@@ -82,25 +82,25 @@ const Input: React.FC<InputProps> = ({
   const shouldBeClearable = clearable || type === 'search' || type === 'mail' || type === 'name';
 
   const getInputStyle = () => {
-    // Точные цвета из Figma
+    // Цвета согласно веб-версии
     if (inputState === 'disabled') {
       return {
-        backgroundColor: colors.grey100, // #EFF3F8
+        backgroundColor: colors.grey100,
         borderColor: 'transparent',
-        color: colors.grey500, // #A1B0CA
+        color: colors.muted, // Используем muted цвет для disabled текста
       };
     }
     if (inputState === 'error') {
       return {
         backgroundColor: colors.white,
-        borderColor: colors.red,
+        borderColor: colors.destructive, // Используем destructive цвет для ошибок
         color: colors.black,
       };
     }
     if (inputState === 'active') {
       return {
-        backgroundColor: colors.white, // #FFFFFF
-        borderColor: 'transparent',
+        backgroundColor: colors.white,
+        borderColor: colors.ring, // Используем ring цвет для активного состояния
         color: colors.black,
       };
     }
@@ -113,9 +113,9 @@ const Input: React.FC<InputProps> = ({
     }
     // Default state
     return {
-      backgroundColor: colors.grey100, // #EFF3F8
+      backgroundColor: colors.grey100,
       borderColor: 'transparent',
-      color: colors.grey500, // #A1B0CA 
+      color: colors.muted, // Используем muted цвет для placeholder
     };
   };
 
@@ -144,13 +144,13 @@ const Input: React.FC<InputProps> = ({
     
     switch (type) {
       case 'mail':
-        return <MailIcon width={20} height={20} color={colors.grey500} />;
+        return <MailIcon width={20} height={20} color={colors.muted} />;
       case 'password':
-        return <LockKeyIcon width={20} height={20} color={colors.grey500} />;
+        return <LockKeyIcon width={20} height={20} color={colors.muted} />;
       case 'search':
-        return <SearchIcon width={20} height={20} color={colors.grey500} />;
+        return <SearchIcon width={20} height={20} color={colors.muted} />;
       case 'name':
-        return <UserIcon width={20} height={20} color={colors.grey500} />;
+        return <UserIcon width={20} height={20} color={colors.muted} />;
       default:
         return null;
     }

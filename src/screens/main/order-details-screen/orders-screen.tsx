@@ -4,8 +4,8 @@ import {
   Text,
   View,
   Alert,
-  TouchableOpacity,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
@@ -14,6 +14,8 @@ import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useOrder, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus, OrderResponseDto } from "@/src/modules/orders/types/orders";
 import Button from "@/src/shared/components/ui-kit/button";
+import useTheme from "@/src/shared/use-theme/use-theme";
+import { BackArrowIcon } from "@/src/shared/components/icons";
 
 // Вспомогательные функции для определения доступных действий
 const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
@@ -65,28 +67,29 @@ const getStatusText = (status: OrderStatus) => {
   }
 };
 
-const getStatusColor = (status: OrderStatus) => {
+const getStatusColor = (status: OrderStatus, colors: any) => {
   switch (status) {
     case OrderStatus.NEW:
-      return '#4CAF50';
+      return colors.green;
     case OrderStatus.PAID:
-      return '#2196F3';
+      return colors.blue;
     case OrderStatus.ASSIGNED:
-      return '#FF9800';
+      return colors.primary500;
     case OrderStatus.IN_PROGRESS:
-      return '#9C27B0';
+      return colors.accent500;
     case OrderStatus.DONE:
-      return '#4CAF50';
+      return colors.grey500;
     case OrderStatus.CANCELED:
-      return '#F44336';
+      return colors.destructive;
     default:
-      return '#9E9E9E';
+      return colors.grey500;
   }
 };
 
 const OrderDetailsScreen: React.FC = () => {
   const { orderId } = useLocalSearchParams<{ orderId: string }>();
   const { data: user } = useGetMe();
+  const { colors } = useTheme();
 
   // Получаем конкретный заказ по ID
   const { 
@@ -161,11 +164,10 @@ const OrderDetailsScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-              <Text style={styles.backButtonText}>← Назад</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Детали заказа</Text>
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>ID заказа не указан</Text>
@@ -177,6 +179,12 @@ const OrderDetailsScreen: React.FC = () => {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Детали заказа</Text>
+        </View>
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Загрузка...</Text>
         </View>
@@ -188,11 +196,10 @@ const OrderDetailsScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-              <Text style={styles.backButtonText}>← Назад</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Детали заказа</Text>
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Заказ не найден</Text>
@@ -204,21 +211,13 @@ const OrderDetailsScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <Text style={styles.backButtonText}>← Назад</Text>
-          </TouchableOpacity>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+          <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Детали заказа</Text>
         </View>
-        <View style={styles.userInfo}>
-          <Text style={styles.greeting}>
-            Детали заказа #{order.id}
-          </Text>
-          <View style={styles.statusContainer}>
-            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
-              <Text style={styles.statusText}>{getStatusText(order.status)}</Text>
-            </View>
-          </View>
-        </View>
+        <View style={styles.backButton} />
       </View>
 
       <ScrollView 
@@ -227,6 +226,9 @@ const OrderDetailsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.orderDetails}>
+          <Text style={[styles.sectionTitle, { marginTop: 0 }]}>Номер заказа</Text>
+          <Text style={styles.orderNumber}>#{order.id.toString().slice(-8)}</Text>
+          
           <Text style={styles.sectionTitle}>Описание</Text>
           <Text style={styles.orderDescription}>{order.description}</Text>
           
@@ -293,9 +295,11 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#FFFFFF",
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#1A1A1A",
@@ -304,39 +308,22 @@ const styles = StyleSheet.create({
     shadowRadius: 50,
     elevation: 6,
   },
-  headerTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 24,
-  },
   backButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    padding: 10,
+    width: 40,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  backButtonText: {
-    fontFamily: "Onest",
-    fontWeight: "500",
-    fontSize: 16,
-    color: "#5A6E8A",
-  },
-  userInfo: {
+  titleContainer: {
     flex: 1,
+    alignItems: "center",
   },
-  greeting: {
+  title: {
     fontFamily: "Onest",
     fontWeight: "600",
-    fontSize: 24,
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 28,
     color: "#1A1A1A",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontFamily: "Onest",
-    fontWeight: "400",
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#5A6E8A",
   },
   content: {
     flex: 1,
@@ -363,12 +350,21 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
   },
+  orderNumber: {
+    fontFamily: "Onest",
+    fontWeight: "600",
+    fontSize: 16,
+    color: "#1A1A1A",
+    lineHeight: 24,
+    marginBottom: 16,
+  },
   orderDescription: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
     color: "#5A6E8A",
     lineHeight: 20,
+    marginBottom: 16,
   },
   orderAddress: {
     fontFamily: "Onest",
@@ -434,22 +430,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 16,
     color: "#FF6B6B",
-  },
-  statusContainer: {
-    marginTop: 8,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    alignSelf: 'flex-start',
-  },
-  statusText: {
-    fontFamily: "Onest",
-    fontWeight: "600",
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#FFFFFF",
   },
   actionsContainer: {
     backgroundColor: "#FFFFFF",

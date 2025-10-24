@@ -49,17 +49,17 @@ const Button: React.FC<ButtonProps> = ({
       if (buttonState === "disabled") {
         return {
           backgroundColor: colors.grey100,
-          color: colors.grey500,
+          color: colors.muted,
         };
       }
       if (buttonState === "press") {
         return {
-          backgroundColor: colors.primary600,
+          backgroundColor: colors.accent500, // Используем accent цвет для pressed состояния
           color: colors.white,
         };
       }
       return {
-        backgroundColor: colors.primary500,
+        backgroundColor: colors.primary500, // Основной цвет из веб-версии
         color: colors.white,
       };
     }
@@ -68,12 +68,12 @@ const Button: React.FC<ButtonProps> = ({
       if (buttonState === "disabled") {
         return {
           backgroundColor: colors.grey100,
-          color: colors.grey500,
+          color: colors.muted,
         };
       }
       return {
         backgroundColor: colors.grey100,
-        color: colors.primary500,
+        color: colors.primary500, // Основной цвет из веб-версии
       };
     }
 

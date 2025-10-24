@@ -113,14 +113,7 @@ const OrdersScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View style={styles.userInfo}>
-            <Text style={styles.greeting}>
-              Привет, {user?.name || "Гость"}!
-            </Text>
-            <Text style={styles.subtitle}>Управляйте своими заказами</Text>
-          </View>
-        </View>
+        <Text style={styles.title}>Ваши заказы</Text>
       </View>
 
       <View style={styles.content}>
@@ -155,9 +148,12 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#FFFFFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#1A1A1A",
@@ -166,29 +162,12 @@ const styles = StyleSheet.create({
     shadowRadius: 50,
     elevation: 6,
   },
-  headerTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 24,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  greeting: {
+  title: {
     fontFamily: "Onest",
     fontWeight: "600",
-    fontSize: 24,
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 28,
     color: "#1A1A1A",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontFamily: "Onest",
-    fontWeight: "400",
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#5A6E8A",
   },
   content: {
     flex: 1,

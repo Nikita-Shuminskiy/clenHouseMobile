@@ -95,25 +95,25 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             : 'default';
 
   const getInputStyle = () => {
-    // Точные цвета из Figma
+    // Цвета согласно веб-версии
     if (inputState === 'disabled') {
       return {
-        backgroundColor: colors.grey100, // #EFF3F8
+        backgroundColor: colors.grey100,
         borderColor: 'transparent',
-        color: colors.grey500, // #A1B0CA
+        color: colors.muted, // Используем muted цвет для disabled текста
       };
     }
     if (inputState === 'error') {
       return {
         backgroundColor: colors.white,
-        borderColor: colors.red,
+        borderColor: colors.destructive, // Используем destructive цвет для ошибок
         color: colors.black,
       };
     }
     if (inputState === 'active') {
       return {
-        backgroundColor: colors.white, // #FFFFFF
-        borderColor: 'transparent',
+        backgroundColor: colors.white,
+        borderColor: colors.ring, // Используем ring цвет для активного состояния
         color: colors.black,
       };
     }
@@ -126,9 +126,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     }
     // Default state
     return {
-      backgroundColor: colors.grey100, // #EFF3F8
+      backgroundColor: colors.grey100,
       borderColor: 'transparent',
-      color: colors.grey500, // #A1B0CA 
+      color: colors.muted, // Используем muted цвет для placeholder
     };
   };
 
@@ -173,6 +173,14 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     if (validationError) {
       setValidationError(null);
     }
+    
+    // Проверяем, не превышает ли количество цифр максимально допустимое
+    const digitsOnly = unmasked.replace(/\D/g, '');
+    if (digitsOnly.length > 10) {
+      // Если цифр больше 10, не обновляем значение
+      return;
+    }
+    
     onChangeText?.(masked, unmasked);
   };
 
@@ -221,6 +229,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             mask={phoneMask}
             keyboardType="phone-pad"
             autoComplete="tel"
+            maxLength={18} // Максимальная длина с маской
             {...props}
           />
           

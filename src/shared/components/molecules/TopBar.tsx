@@ -114,10 +114,10 @@ const createStyles = ({
       fontWeight: weights.medium,
       fontSize: 12,
       lineHeight: 16,
-      color: colors.grey500,
+      color: colors.muted, // Используем muted цвет для неактивного текста
     },
     badgeTextActive: {
-      color: colors.primary500,
+      color: colors.primary500, // Основной цвет из веб-версии
     },
   });
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { OrderStatus } from '@/src/modules/orders/types/orders';
+import useTheme from '@/src/shared/use-theme/use-theme';
 
 interface OrderFiltersProps {
   selectedStatus?: OrderStatus;
@@ -8,6 +9,8 @@ interface OrderFiltersProps {
 }
 
 const OrderFilters: React.FC<OrderFiltersProps> = ({ selectedStatus, onStatusChange }) => {
+  const { colors } = useTheme();
+  
   const statusOptions = [
     { value: undefined, label: 'Все', count: 0 },
     { value: OrderStatus.NEW, label: 'Новые', count: 0 },
@@ -30,7 +33,11 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ selectedStatus, onStatusCha
             key={option.value || 'all'}
             style={[
               styles.filterButton,
-              selectedStatus === option.value && styles.activeFilterButton,
+              {
+                backgroundColor: selectedStatus === option.value 
+                  ? colors.primary500 
+                  : colors.grey100
+              }
             ]}
             onPress={() => onStatusChange(option.value)}
             activeOpacity={0.7}
@@ -38,14 +45,32 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ selectedStatus, onStatusCha
             <Text
               style={[
                 styles.filterText,
-                selectedStatus === option.value && styles.activeFilterText,
+                {
+                  color: selectedStatus === option.value 
+                    ? colors.white 
+                    : colors.muted
+                }
               ]}
             >
               {option.label}
             </Text>
             {option.count > 0 && (
-              <View style={styles.countBadge}>
-                <Text style={styles.countText}>{option.count}</Text>
+              <View style={[
+                styles.countBadge,
+                {
+                  backgroundColor: selectedStatus === option.value 
+                    ? colors.white 
+                    : colors.grey100
+                }
+              ]}>
+                <Text style={[
+                  styles.countText,
+                  {
+                    color: selectedStatus === option.value 
+                      ? colors.primary500 
+                      : colors.muted
+                  }
+                ]}>{option.count}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -68,25 +93,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#F3F3F3',
     borderRadius: 20,
     gap: 8,
-  },
-  activeFilterButton: {
-    backgroundColor: '#1A1A1A',
   },
   filterText: {
     fontFamily: 'Onest',
     fontWeight: '500',
     fontSize: 14,
     lineHeight: 20,
-    color: '#5A6E8A',
-  },
-  activeFilterText: {
-    color: '#FFFFFF',
   },
   countBadge: {
-    backgroundColor: '#EFF3F8',
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -98,7 +114,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
     lineHeight: 16,
-    color: '#5A6E8A',
   },
 });
 

@@ -10,6 +10,7 @@ export { Anchor16Icon } from './Anchor16Icon';
 export { default as AnchorGreyIcon } from './AnchorGreyIcon';
 export { AnchorIcon } from './AnchorIcon';
 export { ArrowBackIcon, ArrowBackIcon as ArrowLeftIcon } from './ArrowBackIcon';
+export { BackArrowIcon } from './BackArrowIcon';
 export { Badge10To99Icon } from './Badge10To99Icon';
 export { Badge2To9Icon } from './Badge2To9Icon';
 export { BadgeNoneIcon } from './BadgeNoneIcon';
