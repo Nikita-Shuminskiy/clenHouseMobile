@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -16,9 +17,13 @@ import { OrderStatus } from "@/src/modules/orders/types/orders";
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useGetMe();
-  
+
   // Получаем заказы в работе (assigned и in_progress)
-  const { data: ordersData, isLoading: ordersLoading } = useOrders({
+  const {
+    data: ordersData,
+    isLoading: ordersLoading,
+    refetch: refetchOrders,
+  } = useOrders({
     status: OrderStatus.ASSIGNED,
     currierId: user?.id,
   });
@@ -31,7 +36,7 @@ const HomeScreen: React.FC = () => {
   // Объединяем заказы в работе
   const activeOrders = [
     ...(ordersData?.orders || []),
-    ...(inProgressOrdersData?.orders || [])
+    ...(inProgressOrdersData?.orders || []),
   ];
 
   const handleOrderPress = (orderId: string) => {
@@ -65,6 +70,16 @@ const HomeScreen: React.FC = () => {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          refetchOrders ? (
+            <RefreshControl
+              refreshing={ordersLoading}
+              onRefresh={refetchOrders}
+              colors={["#1A1A1A"]}
+              tintColor="#1A1A1A"
+            />
+          ) : undefined
+        }
       >
         <View style={styles.header}>
           <View style={styles.headerTop}>
@@ -84,7 +99,12 @@ const HomeScreen: React.FC = () => {
               <Text style={styles.sectionTitle}>Заказы в работе</Text>
               {activeOrders.length > 0 && (
                 <Text style={styles.seeAllText}>
-                  {activeOrders.length} заказ{activeOrders.length === 1 ? '' : activeOrders.length < 5 ? 'а' : 'ов'}
+                  {activeOrders.length} заказ
+                  {activeOrders.length === 1
+                    ? ""
+                    : activeOrders.length < 5
+                    ? "а"
+                    : "ов"}
                 </Text>
               )}
             </View>
@@ -105,32 +125,36 @@ const HomeScreen: React.FC = () => {
                   >
                     <View style={styles.orderHeader}>
                       <Text style={styles.orderId}>#{order.id.slice(-8)}</Text>
-                      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          { backgroundColor: getStatusColor(order.status) },
+                        ]}
+                      >
                         <Text style={styles.statusText}>
                           {getStatusText(order.status)}
                         </Text>
                       </View>
                     </View>
-                    
+
                     <Text style={styles.orderDescription} numberOfLines={2}>
                       {order.description}
                     </Text>
-                    
+
                     <View style={styles.orderInfo}>
                       <Text style={styles.orderAddress} numberOfLines={1}>
                         📍 {order.address}
                       </Text>
-                      <Text style={styles.orderPrice}>
-                        {order.price} ₽
-                      </Text>
+                      <Text style={styles.orderPrice}>{order.price} ₽</Text>
                     </View>
-                    
+
                     <Text style={styles.orderTime}>
-                      📅 {new Date(order.scheduledAt).toLocaleDateString('ru-RU', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                      📅{" "}
+                      {new Date(order.scheduledAt).toLocaleDateString("ru-RU", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </Text>
                   </TouchableOpacity>

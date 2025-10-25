@@ -234,7 +234,7 @@ const OrderDetailsScreen: React.FC = () => {
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.greeting}>
-            Детали заказа #{order.id}
+            Детали заказа #{order.createdAt.split('T')[0]}
           </Text>
           <View style={styles.statusContainer}>
             <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     color: "#5A6E8A",
   },
   userInfo: {
-    flex: 1,
+    // flex: 1,
   },
   greeting: {
     fontFamily: "Onest",
