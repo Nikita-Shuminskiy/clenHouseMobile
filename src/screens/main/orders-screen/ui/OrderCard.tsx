@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
+import Button from '@/src/shared/components/ui-kit/button';
 
 interface OrderCardProps {
   order: OrderResponseDto;
@@ -133,12 +134,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
 
       {order.status === OrderStatus.ASSIGNED && onAction && (
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.startButton]}
+          <Button
+            type="primary"
             onPress={() => onAction(order, 'start')}
+            style={styles.actionButton}
           >
             <Text style={styles.startButtonText}>Начать</Text>
-          </TouchableOpacity>
+          </Button>
         </View>
       )}
 
@@ -357,7 +359,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   startButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: 'orange',
   },
   startButtonText: {
     fontFamily: 'Onest',
