@@ -35,12 +35,15 @@ const AuthScreen: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
+    watch,
   } = useForm<SignInSoftFormData>({
     resolver: yupResolver(signInSoftSchema),
-    mode: "onSubmit", // Валидация только при отправке
-    reValidateMode: "onBlur", // Перевалидация при потере фокуса
+    mode: "onChange", // Валидация при изменении
+    reValidateMode: "onChange", // Перевалидация при изменении
   });
+
+  const phoneValue = watch("phone");
 
   const styles = createStyles({ colors, sizes, fonts, weights });
 
@@ -138,7 +141,7 @@ const AuthScreen: React.FC = () => {
                 <Button
                   type="primary"
                   onPress={handleSubmit(onSubmit)}
-                  disabled={isPending}
+                  disabled={isPending || !isValid || !phoneValue}
                   isLoading={isPending}
                   containerStyle={styles.loginButton}
                 >

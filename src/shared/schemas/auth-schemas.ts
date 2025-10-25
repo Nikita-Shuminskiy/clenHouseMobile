@@ -44,7 +44,25 @@ export const resetPasswordSchema = yup.object({
 export const signInSoftSchema = yup.object({
   phone: yup
     .string()
-    .required('Номер телефона обязателен'),
+    .required('Номер телефона обязателен')
+    .test('phone-format', 'Некорректный формат номера телефона', function(value) {
+      if (!value) return false;
+      
+      // Убираем все символы кроме цифр
+      const cleanPhone = value.replace(/\D/g, '');
+      
+      // Проверяем длину (должно быть 10 цифр для российского номера без кода страны)
+      if (cleanPhone.length !== 10) {
+        return false;
+      }
+      
+      // Проверяем, что первая цифра не 0 (недопустимые коды операторов)
+      if (cleanPhone[0] === '0') {
+        return false;
+      }
+      
+      return true;
+    }),
 });
 
 export const signUpSchema = yup.object({

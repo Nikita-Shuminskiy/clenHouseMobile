@@ -38,26 +38,21 @@ export const validateRussianPhone = (phone: string): { isValid: boolean; error?:
   // Убираем все символы кроме цифр
   const cleanPhone = phone.replace(/\D/g, '');
   
-  // Проверяем длину (должно быть 11 цифр для российского номера)
+  // Проверяем длину (должно быть 10 цифр для российского номера без кода страны)
   if (cleanPhone.length === 0) {
     return { isValid: false, error: 'Введите номер телефона' };
   }
   
-  if (cleanPhone.length < 11) {
-    return { isValid: false, error: 'Номер телефона должен содержать 11 цифр' };
+  if (cleanPhone.length < 10) {
+    return { isValid: false, error: 'Введите полный номер телефона' };
   }
   
-  if (cleanPhone.length > 11) {
+  if (cleanPhone.length > 10) {
     return { isValid: false, error: 'Номер телефона слишком длинный' };
   }
   
-  // Проверяем, что номер начинается с 7 (российский код)
-  if (!cleanPhone.startsWith('7')) {
-    return { isValid: false, error: 'Номер должен начинаться с +7' };
-  }
-  
-  // Проверяем, что вторая цифра не 0 (недопустимые коды операторов)
-  if (cleanPhone[1] === '0') {
+  // Проверяем, что первая цифра не 0 (недопустимые коды операторов)
+  if (cleanPhone[0] === '0') {
     return { isValid: false, error: 'Некорректный код оператора' };
   }
   

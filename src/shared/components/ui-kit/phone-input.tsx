@@ -147,11 +147,20 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const handleBlur = () => {
     setIsFocused(false);
     
-    // Валидация при потере фокуса
+    // Валидация при потере фокуса только если номер полностью введен
     if (validateOnBlur && value) {
-      const validation = validateRussianPhone(value);
-      if (!validation.isValid) {
-        setValidationError(validation.error || 'Некорректный номер телефона');
+      const cleanPhone = value.replace(/\D/g, '');
+      // Валидируем только если номер содержит 10 цифр (полный номер без кода страны)
+      if (cleanPhone.length === 10) {
+        const validation = validateRussianPhone(value);
+        if (!validation.isValid) {
+          setValidationError(validation.error || 'Некорректный номер телефона');
+        } else {
+          setValidationError(null);
+        }
+      } else if (cleanPhone.length > 0 && cleanPhone.length < 10) {
+        // Показываем ошибку только если номер неполный и пользователь начал вводить
+        setValidationError('Введите полный номер телефона');
       } else {
         setValidationError(null);
       }
