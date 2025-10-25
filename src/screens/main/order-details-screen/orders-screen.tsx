@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   ScrollView,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
@@ -157,6 +158,28 @@ const OrderDetailsScreen: React.FC = () => {
     router.back();
   }, []);
 
+  const handleOpenAddressInMaps = useCallback(async (address: string) => {
+    try {
+      // Кодируем адрес для URL
+      const encodedAddress = encodeURIComponent(address);
+      
+      // Пробуем открыть в Яндекс Картах
+      const yandexMapsUrl = `yandexmaps://maps.yandex.ru/?text=${encodedAddress}`;
+      const canOpenYandex = await Linking.canOpenURL(yandexMapsUrl);
+      
+      if (canOpenYandex) {
+        await Linking.openURL(yandexMapsUrl);
+      } else {
+        // Если Яндекс Карты не установлены, открываем в веб-браузере
+        const webUrl = `https://yandex.ru/maps/?text=${encodedAddress}`;
+        await Linking.openURL(webUrl);
+      }
+    } catch (error) {
+      console.error('Ошибка при открытии карт:', error);
+      Alert.alert('Ошибка', 'Не удалось открыть карты');
+    }
+  }, []);
+
   if (!orderId) {
     return (
       <SafeAreaView style={styles.container}>
@@ -231,7 +254,14 @@ const OrderDetailsScreen: React.FC = () => {
           <Text style={styles.orderDescription}>{order.description}</Text>
           
           <Text style={styles.sectionTitle}>Адрес</Text>
-          <Text style={styles.orderAddress}>{order.address}</Text>
+          <TouchableOpacity 
+            onPress={() => handleOpenAddressInMaps(order.address)}
+            style={styles.addressContainer}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.orderAddress}>{order.address}</Text>
+            <Text style={styles.mapHint}>Нажмите, чтобы открыть в картах</Text>
+          </TouchableOpacity>
           
           <Text style={styles.sectionTitle}>Клиент</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
@@ -370,12 +400,28 @@ const styles = StyleSheet.create({
     color: "#5A6E8A",
     lineHeight: 20,
   },
+  addressContainer: {
+    backgroundColor: "#F8F9FA",
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#E1E5E9",
+    marginTop: 4,
+  },
   orderAddress: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
-    color: "#5A6E8A",
+    color: "#1A1A1A",
     lineHeight: 20,
+    marginBottom: 4,
+  },
+  mapHint: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 12,
+    color: "#5A6E8A",
+    fontStyle: "italic",
   },
   customerName: {
     fontFamily: "Onest",

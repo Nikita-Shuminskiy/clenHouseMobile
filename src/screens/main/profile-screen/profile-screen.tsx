@@ -109,7 +109,6 @@ const ProfileScreen: React.FC = () => {
     Alert.alert('Пригласить друзей', 'Функция в разработке');
   }, []);
 
-  console.log(user, "user?.createdAt");
   
   return (
     <SafeAreaView style={styles.container}>
