@@ -76,11 +76,11 @@ const ProfileScreen: React.FC = () => {
   }, []);
 
   const handlePrivacy = useCallback(() => {
-    Alert.alert('Конфиденциальность', 'Функция в разработке');
+    router.push('/(protected)/privacy');
   }, []);
 
   const handleSupport = useCallback(() => {
-    Alert.alert('Поддержка', 'Функция в разработке');
+    router.push('/(protected)/support');
   }, []);
 
   // Обработчики для верификации
