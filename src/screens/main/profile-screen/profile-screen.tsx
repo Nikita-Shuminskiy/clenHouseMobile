@@ -119,9 +119,9 @@ const ProfileScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          {/* <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <ArrowBackIcon style={styles.backIcon} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <Text style={styles.title}>Профиль</Text>
         </View>
