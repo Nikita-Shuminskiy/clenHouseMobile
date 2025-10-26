@@ -125,14 +125,14 @@ const SupportScreen: React.FC = () => {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Text style={[styles.backButtonText, { color: theme.colors.primary500 }]}>← Назад</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Поддержка</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.grey900 }]}>Поддержка</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Приветственное сообщение */}
         <View style={[styles.welcomeCard, { backgroundColor: theme.colors.primary500_12 }]}>
-          <Text style={[styles.welcomeTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.welcomeTitle, { color: theme.colors.grey900 }]}>
             Мы всегда готовы помочь! 🤝
           </Text>
           <Text style={[styles.welcomeText, { color: theme.colors.grey600 }]}>
@@ -142,7 +142,7 @@ const SupportScreen: React.FC = () => {
 
         {/* Способы связи */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Способы связи</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Способы связи</Text>
           {supportOptions.map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -155,7 +155,7 @@ const SupportScreen: React.FC = () => {
                   <Text style={styles.supportIconText}>{option.icon}</Text>
                 </View>
                 <View style={styles.supportText}>
-                  <Text style={[styles.supportTitle, { color: theme.colors.text }]}>
+                  <Text style={[styles.supportTitle, { color: theme.colors.grey900 }]}>
                     {option.title}
                   </Text>
                   <Text style={[styles.supportSubtitle, { color: theme.colors.primary500 }]}>
@@ -173,10 +173,10 @@ const SupportScreen: React.FC = () => {
 
         {/* FAQ */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Часто задаваемые вопросы</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Часто задаваемые вопросы</Text>
           {faqItems.map((item, index) => (
             <View key={index} style={[styles.faqItem, { backgroundColor: theme.colors.white }]}>
-              <Text style={[styles.faqQuestion, { color: theme.colors.text }]}>
+              <Text style={[styles.faqQuestion, { color: theme.colors.grey900 }]}>
                 {item.question}
               </Text>
               <Text style={[styles.faqAnswer, { color: theme.colors.grey600 }]}>
@@ -188,7 +188,7 @@ const SupportScreen: React.FC = () => {
 
         {/* Дополнительная информация */}
         <View style={[styles.infoCard, { backgroundColor: theme.colors.primary500_12 }]}>
-          <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.infoTitle, { color: theme.colors.grey900 }]}>
             Время работы службы поддержки
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.grey600 }]}>

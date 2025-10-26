@@ -17,26 +17,26 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   onSupport
 }) => {
   const settingsItems = [
+    // {
+    //   icon: '✏️',
+    //   title: 'Редактировать профиль',
+    //   subtitle: 'Изменить имя, телефон, email',
+    //   onPress: onEditProfile,
+    // },
+    // {
+    //   icon: '🔒',
+    //   title: 'Изменить пароль',
+    //   subtitle: 'Обновить пароль для безопасности',
+    //   onPress: onChangePassword,
+    // },
+    // {
+    //   icon: '🔔',
+    //   title: 'Уведомления',
+    //   subtitle: 'Настройки push-уведомлений',
+    //   onPress: onNotifications,
+    // },
     {
-      icon: '✏️',
-      title: 'Редактировать профиль',
-      subtitle: 'Изменить имя, телефон, email',
-      onPress: onEditProfile,
-    },
-    {
-      icon: '🔒',
-      title: 'Изменить пароль',
-      subtitle: 'Обновить пароль для безопасности',
-      onPress: onChangePassword,
-    },
-    {
-      icon: '🔔',
-      title: 'Уведомления',
-      subtitle: 'Настройки push-уведомлений',
-      onPress: onNotifications,
-    },
-    {
-      icon: '🛡️',
+      icon: '🔫',
       title: 'Конфиденциальность',
       subtitle: 'Управление данными',
       onPress: onPrivacy,

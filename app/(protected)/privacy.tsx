@@ -65,14 +65,14 @@ const PrivacyScreen: React.FC = () => {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Text style={[styles.backButtonText, { color: theme.colors.primary500 }]}>← Назад</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Конфиденциальность</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.grey900 }]}>Конфиденциальность</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Приветственное сообщение */}
         <View style={[styles.welcomeCard, { backgroundColor: theme.colors.primary500_12 }]}>
-          <Text style={[styles.welcomeTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.welcomeTitle, { color: theme.colors.grey900 }]}>
             Защита ваших данных 🛡️
           </Text>
           <Text style={[styles.welcomeText, { color: theme.colors.grey600 }]}>
@@ -82,7 +82,7 @@ const PrivacyScreen: React.FC = () => {
 
         {/* Основная информация */}
         <View style={[styles.infoCard, { backgroundColor: theme.colors.white }]}>
-          <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.infoTitle, { color: theme.colors.grey900 }]}>
             Политика конфиденциальности
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.grey600 }]}>
@@ -95,10 +95,10 @@ const PrivacyScreen: React.FC = () => {
 
         {/* Разделы политики */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Основные положения</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Основные положения</Text>
           {privacySections.map((section, index) => (
             <View key={index} style={[styles.privacySection, { backgroundColor: theme.colors.white }]}>
-              <Text style={[styles.sectionTitleText, { color: theme.colors.text }]}>
+              <Text style={[styles.sectionTitleText, { color: theme.colors.grey900 }]}>
                 {section.title}
               </Text>
               <Text style={[styles.sectionContent, { color: theme.colors.grey600 }]}>
@@ -110,7 +110,7 @@ const PrivacyScreen: React.FC = () => {
 
         {/* Контактная информация */}
         <View style={[styles.contactCard, { backgroundColor: theme.colors.primary500_12 }]}>
-          <Text style={[styles.contactTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.contactTitle, { color: theme.colors.grey900 }]}>
             Вопросы по конфиденциальности
           </Text>
           <Text style={[styles.contactText, { color: theme.colors.grey600 }]}>
@@ -120,7 +120,7 @@ const PrivacyScreen: React.FC = () => {
           <View style={styles.contactItem}>
             <Text style={[styles.contactIcon, { color: theme.colors.primary500 }]}>📧</Text>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactLabel, { color: theme.colors.text }]}>Email</Text>
+              <Text style={[styles.contactLabel, { color: theme.colors.grey900 }]}>Email</Text>
               <Text style={[styles.contactValue, { color: theme.colors.primary500 }]}>
                 {contactInfo.email}
               </Text>
@@ -130,7 +130,7 @@ const PrivacyScreen: React.FC = () => {
           <View style={styles.contactItem}>
             <Text style={[styles.contactIcon, { color: theme.colors.primary500 }]}>📞</Text>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactLabel, { color: theme.colors.text }]}>Телефон</Text>
+              <Text style={[styles.contactLabel, { color: theme.colors.grey900 }]}>Телефон</Text>
               <Text style={[styles.contactValue, { color: theme.colors.primary500 }]}>
                 {contactInfo.phone}
               </Text>
@@ -140,7 +140,7 @@ const PrivacyScreen: React.FC = () => {
           <View style={styles.contactItem}>
             <Text style={[styles.contactIcon, { color: theme.colors.primary500 }]}>📍</Text>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactLabel, { color: theme.colors.text }]}>Адрес</Text>
+              <Text style={[styles.contactLabel, { color: theme.colors.grey900 }]}>Адрес</Text>
               <Text style={[styles.contactValue, { color: theme.colors.primary500 }]}>
                 {contactInfo.address}
               </Text>
@@ -150,7 +150,7 @@ const PrivacyScreen: React.FC = () => {
 
         {/* Дополнительная информация */}
         <View style={[styles.footerCard, { backgroundColor: theme.colors.grey100 }]}>
-          <Text style={[styles.footerTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.footerTitle, { color: theme.colors.grey900 }]}>
             Согласие на обработку данных
           </Text>
           <Text style={[styles.footerText, { color: theme.colors.grey600 }]}>

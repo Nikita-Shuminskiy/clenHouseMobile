@@ -16,27 +16,27 @@ import { QueryKey } from "@/src/shared/api/constants/api-keys/query-key";
 import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
-// import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+import { useOrders } from "@/src/modules/orders/hooks/useOrders";
 
 // UI Components - временно закомментировано
-// import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
+import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
 
 const ProfileScreen: React.FC = () => {
   const { data: user } = useGetMe();
   
   // Получаем статистику заказов пользователя - временно закомментировано
-  // const { data: ordersData } = useOrders({
-  //   currierId: user?.id,
-  // });
+  const { data: ordersData } = useOrders({
+    currierId: user?.id,
+  });
 
   // Вычисляем статистику - временно закомментировано
-  // const totalOrders = ordersData?.orders?.length || 0;
-  // const completedOrders = ordersData?.orders?.filter(order => order.status === 'done').length || 0;
-  // const rating = 4.8; // Можно добавить реальный рейтинг из API
+  const totalOrders = ordersData?.orders?.length || 0;
+  const completedOrders = ordersData?.orders?.filter(order => order.status === 'done').length || 0;
+  const rating = 4.8; // Можно добавить реальный рейтинг из API
 
-  // const handleBack = () => {
-  //   router.back();
-  // };
+  const handleBack = () => {
+    router.back();
+  };
 
   const handleLogout = async () => {
     Alert.alert(
@@ -62,7 +62,6 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
-  // Обработчики для настроек - временно закомментировано
   // const handleEditProfile = useCallback(() => {
   //   Alert.alert('Редактирование профиля', 'Функция в разработке');
   // }, []);
@@ -75,42 +74,14 @@ const ProfileScreen: React.FC = () => {
   //   Alert.alert('Уведомления', 'Функция в разработке');
   // }, []);
 
-  // const handlePrivacy = useCallback(() => {
-  //   Alert.alert('Конфиденциальность', 'Функция в разработке');
-  // }, []);
+  const handlePrivacy = useCallback(() => {
+    router.push('/(protected)/privacy');
+  }, []);
 
-  // const handleSupport = useCallback(() => {
-  //   Alert.alert('Поддержка', 'Функция в разработке');
-  // }, []);
+  const handleSupport = useCallback(() => {
+    router.push('/(protected)/support');
+  }, []);
 
-  // Обработчики для верификации - временно закомментировано
-  // const handleVerifyPhone = useCallback(() => {
-  //   Alert.alert('Верификация телефона', 'Функция в разработке');
-  // }, []);
-
-  // const handleVerifyEmail = useCallback(() => {
-  //   Alert.alert('Верификация email', 'Функция в разработке');
-  // }, []);
-
-  // Обработчики для быстрых действий - временно закомментировано
-  // const handleViewOrders = useCallback(() => {
-  //   router.push('/(protected-tabs)/orders');
-  // }, []);
-
-  // const handleCreateOrder = useCallback(() => {
-  //   Alert.alert('Создание заказа', 'Функция в разработке');
-  // }, []);
-
-  // const handleViewHistory = useCallback(() => {
-  //   Alert.alert('История', 'Функция в разработке');
-  // }, []);
-
-  // const handleInviteFriends = useCallback(() => {
-  //   Alert.alert('Пригласить друзей', 'Функция в разработке');
-  // }, []);
-
-  console.log(user, "user?.createdAt");
-  
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -147,40 +118,10 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Статистика пользователя - временно закомментировано */}
-        {/* <UserStats
-          totalOrders={totalOrders}
-          completedOrders={completedOrders}
-          rating={rating}
-          joinDate={user?.createdAt?.toString()}
-        /> */}
-
-        {/* Статус верификации - временно закомментировано */}
-        {/* <VerificationStatus
-          isPhoneVerified={user?.isPhoneVerified}
-          isEmailVerified={user?.isEmailVerified}
-          phone={user?.phone}
-          email={user?.email}
-          onVerifyPhone={handleVerifyPhone}
-          onVerifyEmail={handleVerifyEmail}
-        /> */}
-
-        {/* Быстрые действия - временно закомментировано */}
-        {/* <QuickActions
-          onViewOrders={handleViewOrders}
-          onCreateOrder={handleCreateOrder}
-          onViewHistory={handleViewHistory}
-          onInviteFriends={handleInviteFriends}
-        /> */}
-
-        {/* Настройки профиля - временно закомментировано */}
-        {/* <ProfileSettings
-          onEditProfile={handleEditProfile}
-          onChangePassword={handleChangePassword}
-          onNotifications={handleNotifications}
+        <ProfileSettings
           onPrivacy={handlePrivacy}
           onSupport={handleSupport}
-        /> */}
+        />
       </ScrollView>
 
       {/* Кнопка выхода - прижата к низу */}
