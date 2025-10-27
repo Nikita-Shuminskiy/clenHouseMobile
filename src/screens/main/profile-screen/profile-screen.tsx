@@ -1,11 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,12 +16,14 @@ import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
 import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+import LogoutConfirmationModal from "@/src/shared/components/modals/LogoutConfirmationModal";
 
 // UI Components - временно закомментировано
 import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
 
 const ProfileScreen: React.FC = () => {
   const { data: user } = useGetMe();
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   
   // Получаем статистику заказов пользователя - временно закомментировано
   const { data: ordersData } = useOrders({
@@ -38,28 +39,24 @@ const ProfileScreen: React.FC = () => {
     router.back();
   };
 
-  const handleLogout = async () => {
-    Alert.alert(
-      'Выход',
-      'Вы уверены, что хотите выйти из аккаунта?',
-      [
-        { text: 'Отмена', style: 'cancel' },
-        { 
-          text: 'Выйти', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await removeToken();
-              await removeRefreshToken();
-              queryClient.invalidateQueries({ queryKey: [QueryKey.GET_ME] });
-              router.replace("/(auth)");
-            } catch (error) {
-              console.error("Ошибка выхода:", error);
-            }
-          }
-        }
-      ]
-    );
+  const handleLogout = () => {
+    setLogoutModalVisible(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setLogoutModalVisible(false);
+    try {
+      await removeToken();
+      await removeRefreshToken();
+      queryClient.invalidateQueries({ queryKey: [QueryKey.GET_ME] });
+      router.replace("/(auth)");
+    } catch (error) {
+      console.error("Ошибка выхода:", error);
+    }
+  };
+
+  const handleLogoutCancel = () => {
+    setLogoutModalVisible(false);
   };
 
   // const handleEditProfile = useCallback(() => {
@@ -130,6 +127,13 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.logoutText}>Выйти</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Модалка подтверждения выхода */}
+      <LogoutConfirmationModal
+        visible={logoutModalVisible}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+      />
     </SafeAreaView>
   );
 };
