@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
   TextInput
 } from 'react-native';
@@ -12,8 +13,8 @@ import * as Clipboard from 'expo-clipboard';
 import { OTPInput } from 'input-otp-native';
 
 import { useVerifySms } from '@/src/modules/auth/hooks/useVerifySms';
-import { TopBar } from '@/src/shared/components/molecules/TopBar';
 import Button from '@/src/shared/components/ui-kit/button';
+import { BackArrowIcon } from '@/src/shared/components/icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
 const ConfirmCodeScreen: React.FC = () => {
@@ -61,10 +62,21 @@ const ConfirmCodeScreen: React.FC = () => {
     Alert.alert('Код отправлен', 'Новый код подтверждения отправлен на ваш номер');
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      {/* Top bar */}
-      <TopBar title="Подтверждение" badge="2" maxBadge="3" />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+          <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Подтверждение</Text>
+        </View>
+        <View style={styles.backButton} />
+      </View>
 
       {/* Основной контент */}
       <ScrollView
@@ -75,7 +87,7 @@ const ConfirmCodeScreen: React.FC = () => {
         <View style={styles.formContainer}>
           {/* Заголовок и описание */}
           <View style={styles.headerContainer}>
-            <Text style={styles.title}>
+            <Text style={styles.pageTitle}>
               Введите код{'\n'}подтверждения
             </Text>
             <Text style={styles.subtitle}>
@@ -157,6 +169,41 @@ const ConfirmCodeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FAFCFE',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#1A1A1A',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.05,
+    shadowRadius: 50,
+    elevation: 6,
+  },
+  backButton: {
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontFamily: 'Onest',
+    fontWeight: '600',
+    fontSize: 20,
+    lineHeight: 28,
+    color: '#1A1A1A',
+    textAlign: 'center',
   },
   content: {
     flex: 1,
@@ -164,18 +211,18 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   formContainer: {
-    gap: 32,
+    gap: 24,
   },
   headerContainer: {
     alignItems: 'center',
     gap: 8,
   },
-  title: {
+  pageTitle: {
     fontSize: 20,
     lineHeight: 28,
     letterSpacing: -0.5,
