@@ -55,7 +55,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // Маска для российского номера телефона
+  // Маска для российского номера телефона с фиксированным +7
   const phoneMask = [
     '+',
     '7',
@@ -76,6 +76,9 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     /\d/,
     /\d/
   ];
+
+  // Префикс +7 всегда отображается
+  const displayValue = value ? `+7 ${value}` : '';
 
   const hasValue = value && value.length > 0;
   
@@ -217,6 +220,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           </View>
           
           {/* Поле ввода с маской */}
+          <Text style={[styles.prefixText, { color: inputStyleFromState.color }]}>+7</Text>
           <MaskInput
             style={[
               styles.textInput,
@@ -228,14 +232,30 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
               },
               inputStyle,
             ]}
-            placeholder={placeholder}
+            placeholder="(___) ___-__-__"
             placeholderTextColor={colors.grey500}
             value={value}
             onChangeText={handleChangeText}
             onFocus={handleFocus}
             onBlur={handleBlur}
             editable={!disabled}
-            mask={phoneMask}
+            mask={[
+              '(',
+              /\d/,
+              /\d/,
+              /\d/,
+              ')',
+              ' ',
+              /\d/,
+              /\d/,
+              /\d/,
+              '-',
+              /\d/,
+              /\d/,
+              '-',
+              /\d/,
+              /\d/
+            ]}
             keyboardType="phone-pad"
             autoComplete="tel"
             maxLength={18} // Максимальная длина с маской
@@ -279,13 +299,18 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 0,
   },
   label: {
     marginBottom: 0,
   },
   iconContainer: {
     padding: 2,
+  },
+  prefixText: {
+    fontSize: 16,
+    fontWeight: '400',
+    marginRight: 0,
   },
   textInput: {
     flex: 1,
