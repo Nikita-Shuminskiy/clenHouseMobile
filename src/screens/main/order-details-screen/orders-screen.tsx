@@ -165,7 +165,7 @@ const OrderDetailsScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+            <Text style={{ fontSize: 24, color: "#1A1A1A" }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Детали заказа</Text>
         </View>
@@ -181,7 +181,7 @@ const OrderDetailsScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+            <Text style={{ fontSize: 24, color: "#1A1A1A" }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Детали заказа</Text>
         </View>
@@ -197,7 +197,7 @@ const OrderDetailsScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+            <Text style={{ fontSize: 24, color: "#1A1A1A" }}>←</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Детали заказа</Text>
         </View>
@@ -214,6 +214,9 @@ const OrderDetailsScreen: React.FC = () => {
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <BackArrowIcon width={24} height={24} color="#1A1A1A" />
         </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Детали заказа</Text>
+        </View>
         <View style={styles.backButton} />
       </View>
 
@@ -225,13 +228,6 @@ const OrderDetailsScreen: React.FC = () => {
         <View style={styles.orderDetails}>
           <Text style={[styles.sectionTitle, { marginTop: 0 }]}>Номер заказа</Text>
           <Text style={styles.orderNumber}>#{order.id.toString().slice(-8)}</Text>
-          
-          <Text style={styles.sectionTitle}>Статус заказа</Text>
-          <View style={styles.statusContainer}>
-            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status, colors) }]}>
-              <Text style={styles.statusText}>{getStatusText(order.status)}</Text>
-            </View>
-          </View>
           
           <Text style={styles.sectionTitle}>Описание</Text>
           <Text style={styles.orderDescription}>{order.description}</Text>
@@ -321,6 +317,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontFamily: "Onest",
@@ -328,13 +325,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     color: "#1A1A1A",
-  },
-  subtitle: {
-    fontFamily: "Onest",
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#5A6E8A",
-    lineHeight: 20,
+    textAlign: "center",
   },
   content: {
     flex: 1,
@@ -368,22 +359,6 @@ const styles = StyleSheet.create({
     color: "#1A1A1A",
     lineHeight: 24,
     marginBottom: 16,
-  },
-  statusContainer: {
-    marginBottom: 16,
-  },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  statusText: {
-    fontFamily: "Onest",
-    fontWeight: "600",
-    fontSize: 14,
-    color: "#FFFFFF",
-    lineHeight: 20,
   },
   orderDescription: {
     fontFamily: "Onest",
