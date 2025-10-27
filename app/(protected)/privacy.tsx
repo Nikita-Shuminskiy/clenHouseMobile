@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import useTheme from '@/src/shared/use-theme/use-theme';
+import { BackArrowIcon } from '@/src/shared/components/icons';
 
 const PrivacyScreen: React.FC = () => {
   const theme = useTheme();
@@ -63,7 +64,7 @@ const PrivacyScreen: React.FC = () => {
       {/* Заголовок */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Text style={[styles.backButtonText, { color: theme.colors.primary500 }]}>← Назад</Text>
+          <BackArrowIcon width={24} height={24} color="#1A1A1A" />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.grey900 }]}>Конфиденциальность</Text>
         <View style={styles.placeholder} />
@@ -178,10 +179,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: '500',
   },
   headerTitle: {
     fontSize: 18,
