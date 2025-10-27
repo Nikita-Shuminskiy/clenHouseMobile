@@ -46,12 +46,17 @@ export const signInSoftSchema = yup.object({
     .string()
     .required('Номер телефона обязателен')
     .test('phone-format', 'Некорректный формат номера телефона', function(value) {
-      if (!value) return false;
+      if (!value) return true; // Не валидируем пустое значение (required уже проверит)
       
       // Убираем все символы кроме цифр
       const cleanPhone = value.replace(/\D/g, '');
       
-      // Проверяем длину (должно быть 10 цифр для российского номера без кода страны)
+      // Если номер неполный, не валидируем (показывается только required)
+      if (cleanPhone.length < 10) {
+        return true;
+      }
+      
+      // Проверяем длину только если номер полный
       if (cleanPhone.length !== 10) {
         return false;
       }

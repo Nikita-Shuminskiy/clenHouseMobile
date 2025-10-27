@@ -74,6 +74,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     /\d/,
     '-',
     /\d/,
+    /\d/,
     /\d/
   ];
 
@@ -153,14 +154,10 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     // Валидация при потере фокуса только если номер полностью введен
     if (validateOnBlur && value) {
       const cleanPhone = value.replace(/\D/g, '');
-      // Валидируем только если номер содержит 10 цифр (полный номер без кода страны)
+      // Проверяем, что номер содержит 10 цифр (без кода страны)
       if (cleanPhone.length === 10) {
-        const validation = validateRussianPhone(value);
-        if (!validation.isValid) {
-          setValidationError(validation.error || 'Некорректный номер телефона');
-        } else {
-          setValidationError(null);
-        }
+        // Номер полный, очищаем ошибку валидации
+        setValidationError(null);
       } else if (cleanPhone.length > 0 && cleanPhone.length < 10) {
         // Показываем ошибку только если номер неполный и пользователь начал вводить
         setValidationError('Введите полный номер телефона');
@@ -172,6 +169,30 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     onBlur?.();
   };
   
+  const handleChangeText = (masked: string, unmasked: string) => {
+    // Очищаем ошибку валидации при изменении текста
+    if (validationError) {
+      setValidationError(null);
+    }
+    
+    // Ограничиваем количество цифр до 10 (без кода страны)
+    const digitsOnly = unmasked.replace(/\D/g, '');
+    if (digitsOnly.length > 10) {
+      // Обрезаем до 10 цифр и применим маску вручную
+      const trimmedDigits = digitsOnly.slice(0, 10);
+      const trimmedMasked = `(${trimmedDigits.slice(0, 3)}) ${trimmedDigits.slice(3, 6)}-${trimmedDigits.slice(6, 8)}-${trimmedDigits.slice(8, 10)}`;
+      onChangeText?.(trimmedMasked, trimmedDigits);
+      return;
+    }
+    
+    // Если номер полный (10 цифр), очищаем валидационную ошибку
+    if (digitsOnly.length === 10) {
+      setValidationError(null);
+    }
+    
+    onChangeText?.(masked, unmasked);
+  };
+  
   const handleClear = () => {
     onChangeText?.('', '');
     setValidationError(null);
@@ -179,22 +200,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   };
   
   const shouldShowClear = clearable && value && value.length > 0 && !disabled && inputState !== 'filled';
-  
-  const handleChangeText = (masked: string, unmasked: string) => {
-    // Очищаем ошибку валидации при изменении текста
-    if (validationError) {
-      setValidationError(null);
-    }
-    
-    // Проверяем, не превышает ли количество цифр максимально допустимое
-    const digitsOnly = unmasked.replace(/\D/g, '');
-    if (digitsOnly.length > 10) {
-      // Если цифр больше 10, не обновляем значение
-      return;
-    }
-    
-    onChangeText?.(masked, unmasked);
-  };
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -258,7 +263,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             ]}
             keyboardType="phone-pad"
             autoComplete="tel"
-            maxLength={18} // Максимальная длина с маской
+            maxLength={15} // Максимальная длина маски без +7
             {...props}
           />
           

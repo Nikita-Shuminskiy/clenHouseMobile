@@ -187,9 +187,11 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#FFFFFF",
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#1A1A1A",
@@ -201,8 +203,8 @@ const styles = StyleSheet.create({
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 24,
+    alignItems: "center",
+    width: "100%",
   },
   userInfo: {
     flex: 1,
@@ -210,10 +212,9 @@ const styles = StyleSheet.create({
   greeting: {
     fontFamily: "Onest",
     fontWeight: "600",
-    fontSize: 24,
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 28,
     color: "#1A1A1A",
-    marginBottom: 4,
   },
   subtitle: {
     fontFamily: "Onest",
