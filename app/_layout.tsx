@@ -9,8 +9,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
 import { ThemeProvider } from "../src/shared/use-theme";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
+import * as SplashScreen from "expo-splash-screen";
+
+// Сохраняем splash screen видимым до готовности приложения
+SplashScreen.preventAutoHideAsync();
 
 const RootStack = () => {
   const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
@@ -18,6 +22,21 @@ const RootStack = () => {
     queryKey: ["isFirstEnter"],
     queryFn: () => getStorageIsFirstEnter(),
   });
+  const [isNavigationReady, setIsNavigationReady] = useState(false);
+
+  // Скрываем splash screen после небольшой задержки, чтобы он успел показаться
+  useEffect(() => {
+    const prepareApp = async () => {
+      // Ждем минимум 500мс чтобы splash screen успел показаться
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Скрываем splash screen
+      await SplashScreen.hideAsync();
+      setIsNavigationReady(true);
+    };
+    
+    prepareApp();
+  }, []);
 
   useEffect(() => {
     if (isLoadingGetMe || isLoadingGetIsFirstEnter) {
