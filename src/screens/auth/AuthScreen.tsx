@@ -75,7 +75,7 @@ const AuthScreen: React.FC = () => {
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30}
       >
         <ScrollView
           style={styles.scrollView}

@@ -1,10 +1,10 @@
 export enum OrderStatus {
-  NEW = 'new',
-  PAID = 'paid',
-  ASSIGNED = 'assigned',
-  IN_PROGRESS = 'in_progress',
-  DONE = 'done',
-  CANCELED = 'canceled',
+  NEW = "new",
+  PAID = "paid",
+  ASSIGNED = "assigned",
+  IN_PROGRESS = "in_progress",
+  DONE = "done",
+  CANCELED = "canceled",
 }
 
 export interface CreateOrderDto {
@@ -14,7 +14,7 @@ export interface CreateOrderDto {
   phone: string;
   coordinates?: {
     lat: number;
-    lng: number;
+    lon: number;
   };
 }
 
@@ -60,7 +60,7 @@ export interface OrderResponseDto {
   payments: PaymentDto[];
   coordinates?: {
     lat: number;
-    lng: number;
+    lon: number;
   };
   createdAt: string;
   updatedAt: string;
@@ -70,7 +70,6 @@ export interface OrdersListResponse {
   orders: OrderResponseDto[];
   total: number;
 }
-
 
 export interface TakeOrderDto {
   courierId: string;

@@ -6,6 +6,8 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  Linking,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
@@ -160,6 +162,26 @@ const OrderDetailsScreen: React.FC = () => {
   const handleGoBack = useCallback(() => {
     router.back();
   }, []);
+
+  const handleOpenMaps = useCallback(() => {
+    if (!order?.coordinates) {
+      Alert.alert('Ошибка', 'Координаты не найдены');
+      return;
+    }
+
+    const { lat, lon } = order.coordinates;
+    const url = Platform.select({
+      ios: `maps://maps.apple.com/?q=${lat},${lon}`,
+      android: `geo:${lat},${lon}?q=${lat},${lon}`,
+    });
+
+    if (url) {
+      Linking.openURL(url).catch(err => {
+        Alert.alert('Ошибка', 'Не удалось открыть карты');
+      });
+    }
+  }, [order]);
+
   console.log(order);
 
   if (!orderId) {
@@ -236,6 +258,16 @@ const OrderDetailsScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Адрес</Text>
           <Text style={styles.orderAddress}>{order.address}</Text>
+
+          {order.coordinates && (
+            <Button
+              type="secondary"
+              onPress={handleOpenMaps}
+              style={{ marginTop: 12 }}
+            >
+              Открыть в картах
+            </Button>
+          )}
 
           <Text style={styles.sectionTitle}>Клиент</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
