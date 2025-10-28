@@ -181,20 +181,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFCFE',
   },
   header: {
-    backgroundColor: '#FFFFFF',
+
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 16,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: '#1A1A1A',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
-    shadowRadius: 50,
-    elevation: 6,
+
+
   },
   backButton: {
     width: 40,

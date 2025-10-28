@@ -16,15 +16,15 @@ import { OrderStatus, OrderResponseDto } from "@/src/modules/orders/types/orders
 import Button from "@/src/shared/components/ui-kit/button";
 import useTheme from "@/src/shared/use-theme/use-theme";
 import { BackArrowIcon } from "@/src/shared/components/icons";
-import { formatPrice } from "@/src/shared/utils/formatting";
+import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
 
 // Вспомогательные функции для определения доступных действий
 const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
   const actions = [];
-  
+
   // Проверяем, является ли пользователь курьером для этого заказа
   const isAssignedCourier = order.currier?.id === userId;
-  
+
   switch (order.status) {
     case OrderStatus.NEW:
       actions.push({ key: 'accept', label: 'Принять заказ', type: 'primary' });
@@ -40,12 +40,12 @@ const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
       }
       break;
   }
-  
+
   // Кнопка отмены доступна для всех статусов кроме завершенных
   if (order.status !== OrderStatus.DONE && order.status !== OrderStatus.CANCELED) {
     actions.push({ key: 'cancel', label: 'Отменить', type: 'secondary' });
   }
-  
+
   return actions;
 };
 
@@ -93,8 +93,8 @@ const OrderDetailsScreen: React.FC = () => {
   const { colors } = useTheme();
 
   // Получаем конкретный заказ по ID
-  const { 
-    data: order, 
+  const {
+    data: order,
     isLoading
   } = useOrder(orderId || '');
   const updateStatusMutation = useUpdateOrderStatus();
@@ -103,32 +103,32 @@ const OrderDetailsScreen: React.FC = () => {
   // Зарезервировано для будущих действий с заказом (принять, начать, завершить, отменить)
   const handleOrderAction = useCallback((action: string) => {
     if (!order) return;
-    
+
     switch (action) {
       case 'accept':
         updateStatusMutation.mutate({
           id: order.id,
-          data: { 
+          data: {
             status: OrderStatus.ASSIGNED,
-            currierId: user?.id 
+            currierId: user?.id
           }
         });
         break;
       case 'start':
         updateStatusMutation.mutate({
           id: order.id,
-          data: { 
+          data: {
             status: OrderStatus.IN_PROGRESS,
-            currierId: user?.id 
+            currierId: user?.id
           }
         });
         break;
       case 'complete':
         updateStatusMutation.mutate({
           id: order.id,
-          data: { 
+          data: {
             status: OrderStatus.DONE,
-            currierId: user?.id 
+            currierId: user?.id
           }
         });
         break;
@@ -138,8 +138,8 @@ const OrderDetailsScreen: React.FC = () => {
           'Вы уверены, что хотите отменить этот заказ?',
           [
             { text: 'Нет', style: 'cancel' },
-            { 
-              text: 'Да', 
+            {
+              text: 'Да',
               style: 'destructive',
               onPress: () => {
                 cancelOrderMutation.mutate({
@@ -160,6 +160,7 @@ const OrderDetailsScreen: React.FC = () => {
   const handleGoBack = useCallback(() => {
     router.back();
   }, []);
+  console.log(order);
 
   if (!orderId) {
     return (
@@ -221,7 +222,7 @@ const OrderDetailsScreen: React.FC = () => {
         <View style={styles.backButton} />
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -229,30 +230,30 @@ const OrderDetailsScreen: React.FC = () => {
         <View style={styles.orderDetails}>
           <Text style={[styles.sectionTitle, { marginTop: 0 }]}>Номер заказа</Text>
           <Text style={styles.orderNumber}>#{order.id.toString().slice(-8)}</Text>
-          
+
           <Text style={styles.sectionTitle}>Описание</Text>
           <Text style={styles.orderDescription}>{order.description}</Text>
-          
+
           <Text style={styles.sectionTitle}>Адрес</Text>
           <Text style={styles.orderAddress}>{order.address}</Text>
-          
+
           <Text style={styles.sectionTitle}>Клиент</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
           <Text style={styles.customerPhone}>{order.customer.phone}</Text>
-          
+
           <Text style={styles.sectionTitle}>Сумма</Text>
           <Text style={styles.orderAmount}>{formatPrice(Number(order.price))}</Text>
-          
+
           {order.notes && (
             <>
               <Text style={styles.sectionTitle}>Заметки</Text>
               <Text style={styles.orderNotes}>{order.notes}</Text>
             </>
           )}
-          
+
           <Text style={styles.sectionTitle}>Запланировано на</Text>
           <Text style={styles.scheduledAt}>
-            {new Date(order.scheduledAt).toLocaleString('ru-RU')}
+            {formatDateStringFull(order.scheduledAt)}
           </Text>
         </View>
 
