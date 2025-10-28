@@ -104,8 +104,8 @@ const HomeScreen: React.FC = () => {
                   {activeOrders.length === 1
                     ? ""
                     : activeOrders.length < 5
-                    ? "а"
-                    : "ов"}
+                      ? "а"
+                      : "ов"}
                 </Text>
               )}
             </View>
@@ -181,7 +181,7 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFCFE",
+    backgroundColor: "#FFFFFF",
   },
   scrollContent: {
     paddingBottom: 34,

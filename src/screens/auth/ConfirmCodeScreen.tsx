@@ -28,26 +28,35 @@ const ConfirmCodeScreen: React.FC = () => {
   const handleOtpChange = (code: string) => {
     setOtpCode(code);
     setIsError(false);
-    
-    if (code.length === 6) {
-      handleVerifyCode(code);
-    }
   };
 
   const handleVerifyCode = async (code: string) => {
+    if (isLoading) {
+      return;
+    }
+
     setIsLoading(true);
+    setIsError(false);
+
     try {
       console.log('Verifying code:', code);
-      console.log(phoneNumber, "phoneNumber");
-      
+      console.log('Phone number:', phoneNumber);
+
       const res = await verifySms({
-        phoneNumber: phoneNumber, // Номер уже в правильном формате +7XXXXXXXXXX
+        phoneNumber: phoneNumber,
         code: code,
       });
-      // Навигация происходит в хуке useVerifySms, не нужно дублировать
+
+      // Проверяем что ответ корректен
+      if (!res || !res.accessToken || !res.refreshToken) {
+        throw new Error('Некорректный ответ от сервера');
+      }
+
+      // Навигация происходит в хуке useVerifySms при успехе
     } catch (error: any) {
       console.error('Ошибка верификации SMS:', error);
       setIsError(true);
+
       // Очищаем буфер обмена и сбрасываем OTP поле при ошибке
       await Clipboard.setStringAsync('');
       setOtpCode('');

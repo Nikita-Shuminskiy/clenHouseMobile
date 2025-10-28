@@ -30,124 +30,97 @@ import Logo from "../../../assets/images/logo.png";
 
 const AuthScreen: React.FC = () => {
   const { colors, sizes, fonts, weights } = useTheme();
-  const { mutateAsync: signInWithSms, isPending } = useSendSms()
+  const { mutateAsync: signInWithSms, isPending } = useSendSms();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
     watch,
   } = useForm<SignInSoftFormData>({
     resolver: yupResolver(signInSoftSchema),
-    mode: "onChange", // Валидация при изменении
-    reValidateMode: "onChange", // Перевалидация при изменении
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const phoneValue = watch("phone");
-
   const styles = createStyles({ colors, sizes, fonts, weights });
 
   const onSubmit = async (data: SignInSoftFormData) => {
     try {
-      // Формируем номер телефона в правильном формате
       const phoneNumber = `+7${data.phone}`;
-      
       const res = await signInWithSms({
-        phoneNumber: phoneNumber,
+        phoneNumber,
         isDev: true,
       });
-
       console.log(res);
       router.push({
         pathname: "/(auth)/confirm-code",
-        params: { phoneNumber: phoneNumber }
+        params: { phoneNumber },
       });
     } catch (error) {
       console.error("Ошибка входа:", error);
     }
   };
 
-  // const handleRegister = () => {
-  //   router.push("/(auth)/registration-role");
-  // };
-
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* Градиентный фон */}
       <LinearGradient
-        colors={[
-          colors.primary500,
-          colors.primary400,
-          colors.primary300,
-          colors.primary200,
-        ]}
+        colors={[colors.grey700, colors.grey500, colors.grey300]}
         style={styles.gradientBackground}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       />
 
-      {/* Логотип и заголовок */}
-      <View style={styles.headerContainer}>
-        <View style={styles.logoCard}>
-          <Image source={Logo} />
-        </View>
-
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Вход в аккаунт</Text>
-          <Text style={styles.subtitleText}>
-            Войдите, чтобы управлять выносом мусора{"\n"}и профилем
-          </Text>
-        </View>
-      </View>
-
       <KeyboardAvoidingView
-        style={{
-          flex: 1,
-        }}
+        style={styles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
-          style={styles.mainContent}
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.contentCard}>
-            <View style={styles.formContent}>
-              <View style={styles.inputsContainer}>
-                <Controller
-                  control={control}
-                  name="phone"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <>
-                      <PhoneInput
-                        label="Номер телефона"
-                        value={value}
-                        onChangeText={(masked, unmasked) => {
-                          onChange(unmasked);
-                        }}
-                        validateOnBlur={true}
-                        required={true}
-                      />
-                      <Text style={{ color: colors.red }}>
-                        {errors.phone?.message}
-                      </Text>
-                    </>
-                  )}
-                />
-              </View>
+          <View style={styles.headerContainer}>
+            <View style={styles.logoCard}>
+              <Image style={styles.logoImage} source={Logo} resizeMode="contain" />
+            </View>
+            <View style={styles.titleContainer}>
+              <Text style={styles.titleText}>Вход в аккаунт</Text>
+              <Text style={styles.subtitleText}>
+                Войдите, чтобы управлять выносом мусора и профилем
+              </Text>
+            </View>
+          </View>
 
-              <View style={styles.actionsContainer}>
-                <Button
-                  type="primary"
-                  onPress={handleSubmit(onSubmit)}
-                  disabled={isPending || !isValid || !phoneValue}
-                  isLoading={isPending}
-                  containerStyle={styles.loginButton}
-                >
-                  {isPending ? "Вход..." : "Войти"}
-                </Button>
-              </View>
+          <View style={styles.formCard}>
+            <View style={styles.inputsContainer}>
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field: { onChange, value } }) => (
+                  <PhoneInput
+                    label="Номер телефона"
+                    value={value}
+                    onChangeText={(masked, unmasked) => onChange(unmasked)}
+                    validateOnBlur={true}
+                    required={true}
+                  />
+                )}
+              />
+            </View>
+
+            <View style={styles.actionsContainer}>
+              <Button
+                type="primary"
+                onPress={handleSubmit(onSubmit)}
+                disabled={isPending || !isValid || !phoneValue}
+                isLoading={isPending}
+              >
+                {isPending ? "Вход..." : "Войти"}
+              </Button>
             </View>
           </View>
         </ScrollView>
@@ -177,41 +150,29 @@ const createStyles = ({
       left: 0,
       right: 0,
       bottom: 0,
-      zIndex: -1,
     },
     headerContainer: {
       alignItems: "center",
-      paddingTop: sizes.m,
-      paddingBottom: sizes.m,
+      paddingTop: sizes.xxl,
+      paddingBottom: sizes.xl,
       paddingHorizontal: sizes.m,
-      gap: sizes.m,
+      gap: sizes.l,
     },
     logoCard: {
-      backgroundColor: "rgba(255, 255, 255, 0.12)",
-      borderWidth: 1,
-      borderColor: "rgba(255, 255, 255, 0.12)",
-      borderRadius: 56,
-      paddingHorizontal: 24,
-      paddingVertical: 16,
-      flexDirection: "row",
+      backgroundColor: "rgba(255, 255, 255, 0.25)",
+      borderRadius: 24,
+      padding: sizes.md,
       justifyContent: "center",
       alignItems: "center",
     },
-    logoText: {
-      fontSize: 16,
-      lineHeight: 24,
-      letterSpacing: -1,
-      fontWeight: "700",
-    },
-    gradientTextContainer: {
-      alignSelf: "center",
-    },
-    gradientText: {
-      alignSelf: "center",
+    logoImage: {
+      width: 100,
+      height: 100,
     },
     titleContainer: {
       alignItems: "center",
       gap: sizes.s,
+      paddingHorizontal: sizes.m,
     },
     titleText: {
       fontFamily: fonts.h1,
@@ -226,126 +187,39 @@ const createStyles = ({
       fontFamily: fonts.text2,
       fontWeight: weights.normal,
       fontSize: sizes.text2,
-      lineHeight: 24,
-      letterSpacing: -0.5,
+      lineHeight: 22,
+      letterSpacing: -0.3,
       color: colors.white,
       textAlign: "center",
+      opacity: 0.95,
     },
-    mainContent: {
+    keyboardView: {
+      flex: 1,
+    },
+    scrollView: {
       flex: 1,
     },
     scrollContent: {
       flexGrow: 1,
-      paddingHorizontal: 0,
     },
-    contentCard: {
-      backgroundColor: colors.background,
-      borderRadius: 32,
+    formCard: {
       flex: 1,
+
       borderTopLeftRadius: 32,
       borderTopRightRadius: 32,
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      justifyContent: "space-between",
-    },
-    formContent: {
-      flex: 1,
-      padding: sizes.m,
-      justifyContent: "space-between",
-      gap: sizes.md,
-    },
+      padding: sizes.l,
+      paddingTop: sizes.xl,
 
+      gap: sizes.xl,
+      marginTop: sizes.xl,
+      minHeight: "100%",
+
+    },
     inputsContainer: {
-      flex: 1,
-      justifyContent: "center",
       gap: sizes.sm,
     },
-    passwordContainer: {
-      gap: sizes.s,
-    },
-    inputContainer: {
-      marginBottom: 0,
-    },
-    forgotPasswordContainer: {
-      alignItems: "flex-end",
-      alignSelf: "flex-end",
-      paddingVertical: 12,
-    },
-    forgotPasswordText: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.medium,
-      fontSize: sizes.text3,
-      lineHeight: 20,
-      color: colors.primary600,
-    },
-    loginButton: {
-      marginTop: 0,
-    },
-    registerButton: {
-      marginTop: sizes.s,
-    },
     actionsContainer: {
-      gap: sizes.m,
-    },
-    dividerContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: sizes.s,
-    },
-    divider: {
-      flex: 1,
-      height: 1,
-      backgroundColor: colors.grey200,
-    },
-    dividerText: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.normal,
-      fontSize: sizes.text3,
-      lineHeight: 20,
-      color: colors.grey700,
-    },
-    socialButtonsContainer: {
-      flexDirection: "row",
-      gap: sizes.s,
-    },
-    socialButton: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: colors.grey100,
-      borderRadius: sizes.sm,
-      paddingVertical: sizes.sm,
-      paddingHorizontal: sizes.m,
-      gap: sizes.s,
-    },
-    socialButtonText: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.medium,
-      fontSize: sizes.text3,
-      lineHeight: 20,
-      color: colors.black,
-    },
-    registrationContainer: {
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: sizes.s,
-      paddingBottom: 34,
-    },
-    registrationText: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.normal,
-      fontSize: sizes.text3,
-      lineHeight: 20,
-      color: colors.grey700,
-    },
-    registrationLink: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.medium,
-      fontSize: sizes.text3,
-      lineHeight: 20,
-      color: colors.primary600,
+      paddingTop: sizes.s,
     },
   });
 

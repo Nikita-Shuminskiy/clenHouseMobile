@@ -29,7 +29,7 @@ export default function ProtectedLayout() {
             style={{ position: "relative", backgroundColor: "transparent" }}
           >
             <LinearGradient
-              colors={[String(theme.colors.primary500_12), `${String(theme.colors.primary500)}26`]}
+              colors={["#FFFFFF", "#FFFFFF"]}
             >
               <BlurView
                 intensity={20}

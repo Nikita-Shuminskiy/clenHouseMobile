@@ -23,6 +23,17 @@ export const authApi = {
   // Верификация SMS кода и авторизация
   verifySms: async (data: VerifySmsRequest): Promise<AuthResponse> => {
     const response = await instance.post("/auth/sms/verify", data);
+
+    // Проверяем что ответ содержит все необходимые данные
+    if (
+      !response.data ||
+      !response.data.accessToken ||
+      !response.data.refreshToken ||
+      !response.data.user
+    ) {
+      throw new Error("Некорректный формат ответа от сервера");
+    }
+
     return response.data;
   },
 
