@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
 import Button from '@/src/shared/components/ui-kit/button';
+import { formatPrice } from '@/src/shared/utils/formatting';
 
 interface OrderCardProps {
   order: OrderResponseDto;
@@ -59,10 +60,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
     });
   };
 
-  const formatPrice = (price: string) => {
-    return `${price} ₽`;
-  };
-
   return (
     <TouchableOpacity
       style={styles.container}
@@ -76,7 +73,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
             <Text style={styles.statusText}>{getStatusText(order.status)}</Text>
           </View>
         </View>
-        <Text style={styles.price}>{formatPrice(order.price)}</Text>
+        <Text style={styles.price}>{formatPrice(Number(order.price))}</Text>
       </View>
 
       <View style={styles.content}>

@@ -14,6 +14,7 @@ import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useOrders } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
+import { formatPrice } from "@/src/shared/utils/formatting";
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useGetMe();
@@ -145,7 +146,7 @@ const HomeScreen: React.FC = () => {
                       <Text style={styles.orderAddress} numberOfLines={1}>
                         📍 {order.address}
                       </Text>
-                      <Text style={styles.orderPrice}>{order.price} ₽</Text>
+                      <Text style={styles.orderPrice}>{formatPrice(Number(order.price))}</Text>
                     </View>
 
                     <Text style={styles.orderTime}>

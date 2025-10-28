@@ -16,6 +16,7 @@ import { OrderStatus, OrderResponseDto } from "@/src/modules/orders/types/orders
 import Button from "@/src/shared/components/ui-kit/button";
 import useTheme from "@/src/shared/use-theme/use-theme";
 import { BackArrowIcon } from "@/src/shared/components/icons";
+import { formatPrice } from "@/src/shared/utils/formatting";
 
 // Вспомогательные функции для определения доступных действий
 const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
@@ -240,7 +241,7 @@ const OrderDetailsScreen: React.FC = () => {
           <Text style={styles.customerPhone}>{order.customer.phone}</Text>
           
           <Text style={styles.sectionTitle}>Сумма</Text>
-          <Text style={styles.orderAmount}>{order.price} ₽</Text>
+          <Text style={styles.orderAmount}>{formatPrice(Number(order.price))}</Text>
           
           {order.notes && (
             <>
