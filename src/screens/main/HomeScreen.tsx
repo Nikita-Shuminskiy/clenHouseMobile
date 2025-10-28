@@ -14,7 +14,7 @@ import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useOrders } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
-import { formatPrice } from "@/src/shared/utils/formatting";
+import { formatDateStringFull, formatPrice } from "@/src/shared/utils/formatting";
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useGetMe();
@@ -151,12 +151,7 @@ const HomeScreen: React.FC = () => {
 
                     <Text style={styles.orderTime}>
                       📅{" "}
-                      {new Date(order.scheduledAt).toLocaleDateString("ru-RU", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatDateStringFull(order.scheduledAt)}
                     </Text>
                   </TouchableOpacity>
                 ))}

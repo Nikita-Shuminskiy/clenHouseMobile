@@ -18,14 +18,12 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Logo from "../../../assets/images/logo.png";
 
 const AuthScreen: React.FC = () => {
@@ -72,59 +70,56 @@ const AuthScreen: React.FC = () => {
         end={{ x: 1, y: 1 }}
       />
 
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30}
+      <KeyboardAwareScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        extraScrollHeight={20}
       >
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.headerContainer}>
-            <View style={styles.logoCard}>
-              <Image style={styles.logoImage} source={Logo} resizeMode="contain" />
-            </View>
-            <View style={styles.titleContainer}>
-              <Text style={styles.titleText}>Вход в аккаунт</Text>
-              <Text style={styles.subtitleText}>
-                Войдите, чтобы управлять выносом мусора и профилем
-              </Text>
-            </View>
+        <View style={styles.headerContainer}>
+          <View style={styles.logoCard}>
+            <Image style={styles.logoImage} source={Logo} resizeMode="contain" />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>Вход в аккаунт</Text>
+            <Text style={styles.subtitleText}>
+              Войдите, чтобы управлять выносом мусора и профилем
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.formCard}>
+          <View style={styles.inputsContainer}>
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field: { onChange, value } }) => (
+                <PhoneInput
+                  label="Номер телефона"
+                  value={value}
+                  onChangeText={(masked, unmasked) => onChange(unmasked)}
+                  validateOnBlur={true}
+                  required={true}
+                />
+              )}
+            />
           </View>
 
-          <View style={styles.formCard}>
-            <View style={styles.inputsContainer}>
-              <Controller
-                control={control}
-                name="phone"
-                render={({ field: { onChange, value } }) => (
-                  <PhoneInput
-                    label="Номер телефона"
-                    value={value}
-                    onChangeText={(masked, unmasked) => onChange(unmasked)}
-                    validateOnBlur={true}
-                    required={true}
-                  />
-                )}
-              />
-            </View>
-
-            <View style={styles.actionsContainer}>
-              <Button
-                type="primary"
-                onPress={handleSubmit(onSubmit)}
-                disabled={isPending || !isValid || !phoneValue}
-                isLoading={isPending}
-              >
-                {isPending ? "Вход..." : "Войти"}
-              </Button>
-            </View>
+          <View style={styles.actionsContainer}>
+            <Button
+              type="primary"
+              onPress={handleSubmit(onSubmit)}
+              disabled={isPending || !isValid || !phoneValue}
+              isLoading={isPending}
+            >
+              {isPending ? "Вход..." : "Войти"}
+            </Button>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
@@ -193,14 +188,12 @@ const createStyles = ({
       textAlign: "center",
       opacity: 0.95,
     },
-    keyboardView: {
-      flex: 1,
-    },
     scrollView: {
       flex: 1,
     },
     scrollContent: {
       flexGrow: 1,
+      paddingBottom: 50,
     },
     formCard: {
       flex: 1,

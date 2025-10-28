@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Alert,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,10 +8,12 @@ import {
   TextInput
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Clipboard from 'expo-clipboard';
 import { OTPInput } from 'input-otp-native';
 
 import { useVerifySms } from '@/src/modules/auth/hooks/useVerifySms';
+import { useSendSms } from '@/src/modules/auth/hooks/useSendSms';
 import Button from '@/src/shared/components/ui-kit/button';
 import { BackArrowIcon } from '@/src/shared/components/icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -21,6 +22,7 @@ const ConfirmCodeScreen: React.FC = () => {
   const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
 
   const { mutateAsync: verifySms } = useVerifySms();
+  const { mutateAsync: sendSms } = useSendSms();
   const [otpCode, setOtpCode] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -65,10 +67,32 @@ const ConfirmCodeScreen: React.FC = () => {
     }
   };
 
-  const handleResendCode = () => {
-    // Логика повторной отправки кода
-    console.log('Resending code...');
-    Alert.alert('Код отправлен', 'Новый код подтверждения отправлен на ваш номер');
+  const handleResendCode = async () => {
+    try {
+      await sendSms({ phoneNumber, isDev: true });
+      Alert.alert('Код отправлен', 'Новый код подтверждения отправлен на ваш номер');
+    } catch (error) {
+      Alert.alert('Ошибка', 'Не удалось отправить код');
+    }
+  };
+
+  const handleAutoFill = async () => {
+    try {
+      // Запрашиваем код с сервера в dev режиме
+      const res = await sendSms({ phoneNumber, isDev: true });
+      console.log('Auto-fill response:', res);
+
+      // Если сервер возвращает код, используем его
+      if (res && res.code) {
+        setOtpCode(res.code);
+        await handleVerifyCode(res.code);
+      } else {
+        Alert.alert('Информация', 'Проверьте код в консоли разработчика');
+      }
+    } catch (error) {
+      console.error('Ошибка автозаполнения:', error);
+      Alert.alert('Ошибка', 'Не удалось получить код');
+    }
   };
 
   const handleGoBack = () => {
@@ -88,10 +112,14 @@ const ConfirmCodeScreen: React.FC = () => {
       </View>
 
       {/* Основной контент */}
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.formContainer}>
           {/* Заголовок и описание */}
@@ -169,8 +197,18 @@ const ConfirmCodeScreen: React.FC = () => {
               Отправить повторно
             </Button>
           </View>
+
+          {/* Dev кнопка автозаполнения */}
+          <Button
+            type="secondary"
+            onPress={handleAutoFill}
+            disabled={isLoading}
+            style={styles.autoFillButton}
+          >
+            Автоввод (Dev)
+          </Button>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
@@ -217,7 +255,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 16,
+    paddingBottom: 50,
   },
   formContainer: {
     gap: 24,
@@ -318,6 +356,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: '#000',
+  },
+  autoFillButton: {
+    marginTop: 12,
   },
 })
 
