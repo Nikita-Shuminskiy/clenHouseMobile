@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { formatDateStringMonthYear } from '@/src/shared/utils/formatting';
 
 interface UserStatsProps {
   totalOrders?: number;
@@ -14,15 +15,6 @@ const UserStats: React.FC<UserStatsProps> = ({
   rating = 0,
   joinDate
 }) => {
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Неизвестно';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', {
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
   const stats = [
     {
       label: 'Всего заказов',
@@ -41,7 +33,7 @@ const UserStats: React.FC<UserStatsProps> = ({
     },
     {
       label: 'С нами с',
-      value: formatDate(joinDate),
+      value: formatDateStringMonthYear(joinDate),
       icon: '📅'
     }
   ];

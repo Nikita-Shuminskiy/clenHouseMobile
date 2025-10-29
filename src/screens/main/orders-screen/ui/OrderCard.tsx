@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
 import Button from '@/src/shared/components/ui-kit/button';
-import { formatDateStringFull, formatPrice } from '@/src/shared/utils/formatting';
+import { formatPrice, formatDateString } from '@/src/shared/utils/formatting';
 
 interface OrderCardProps {
   order: OrderResponseDto;
@@ -49,17 +49,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   return (
     <TouchableOpacity
       style={styles.container}
@@ -101,13 +90,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
 
         <View style={styles.dateContainer}>
           <Text style={styles.dateLabel}>Создан:</Text>
-          <Text style={styles.date}>{formatDateStringFull(order.createdAt)}</Text>
+          <Text style={styles.date}>{formatDateString(order.createdAt)}</Text>
         </View>
 
         {order.scheduledAt && (
           <View style={styles.scheduledContainer}>
             <Text style={styles.scheduledLabel}>Запланирован на:</Text>
-            <Text style={styles.scheduledDate}>{formatDateStringFull(order.scheduledAt)}</Text>
+            <Text style={styles.scheduledDate}>{formatDateString(order.scheduledAt)}</Text>
           </View>
         )}
       </View>
