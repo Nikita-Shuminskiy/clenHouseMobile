@@ -259,6 +259,36 @@ const OrderDetailsScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Адрес</Text>
           <Text style={styles.orderAddress}>{order.address}</Text>
 
+          {order.addressDetails && (
+            <View style={styles.addressDetailsContainer}>
+              {order.addressDetails.building && (
+                <Text style={styles.addressDetailItem}>
+                  Корпус: {order.addressDetails.building}
+                </Text>
+              )}
+              {order.addressDetails.buildingBlock && (
+                <Text style={styles.addressDetailItem}>
+                  Блок: {order.addressDetails.buildingBlock}
+                </Text>
+              )}
+              {order.addressDetails.entrance && (
+                <Text style={styles.addressDetailItem}>
+                  Подъезд: {order.addressDetails.entrance}
+                </Text>
+              )}
+              {order.addressDetails.floor && (
+                <Text style={styles.addressDetailItem}>
+                  Этаж: {order.addressDetails.floor}
+                </Text>
+              )}
+              {order.addressDetails.apartment && (
+                <Text style={styles.addressDetailItem}>
+                  Квартира: {order.addressDetails.apartment}
+                </Text>
+              )}
+            </View>
+          )}
+
           {order.coordinates && (
             <Button
               type="secondary"
@@ -403,6 +433,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   orderAddress: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 14,
+    color: "#5A6E8A",
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  addressDetailsContainer: {
+    marginTop: 8,
+    gap: 4,
+  },
+  addressDetailItem: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,

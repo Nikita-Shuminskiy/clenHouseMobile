@@ -47,6 +47,14 @@ export interface UserDto {
   updatedAt: string;
 }
 
+export interface AddressDetailsDto {
+  floor?: number;
+  building?: number;
+  entrance?: string;
+  apartment?: number;
+  buildingBlock?: string;
+}
+
 export interface OrderResponseDto {
   id: string;
   customer: UserDto;
@@ -62,6 +70,7 @@ export interface OrderResponseDto {
     lat: number;
     lon: number;
   };
+  addressDetails?: AddressDetailsDto;
   createdAt: string;
   updatedAt: string;
 }

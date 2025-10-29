@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
 import Button from '@/src/shared/components/ui-kit/button';
-import { formatPrice } from '@/src/shared/utils/formatting';
+import { formatDateStringFull, formatPrice } from '@/src/shared/utils/formatting';
 
 interface OrderCardProps {
   order: OrderResponseDto;
@@ -80,7 +80,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
         <Text style={styles.description} numberOfLines={2}>
           {order.description}
         </Text>
-        
+
         <View style={styles.addressContainer}>
           <Text style={styles.addressLabel}>Адрес:</Text>
           <Text style={styles.address}>{order.address}</Text>
@@ -101,13 +101,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
 
         <View style={styles.dateContainer}>
           <Text style={styles.dateLabel}>Создан:</Text>
-          <Text style={styles.date}>{formatDate(order.createdAt)}</Text>
+          <Text style={styles.date}>{formatDateStringFull(order.createdAt)}</Text>
         </View>
 
         {order.scheduledAt && (
           <View style={styles.scheduledContainer}>
             <Text style={styles.scheduledLabel}>Запланирован на:</Text>
-            <Text style={styles.scheduledDate}>{formatDate(order.scheduledAt)}</Text>
+            <Text style={styles.scheduledDate}>{formatDateStringFull(order.scheduledAt)}</Text>
           </View>
         )}
       </View>
