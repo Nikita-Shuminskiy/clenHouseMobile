@@ -19,19 +19,19 @@ export const formatDateTime = (date: Date): string => {
 
 export const formatDateString = (dateString: string): string => {
   const date = new Date(dateString);
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  const hours = String(date.getUTCHours()).padStart(2, "0");
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${day}.${month}.${year}, ${hours}:${minutes}`;
 };
 
 export const formatDateStringShort = (dateString: string): string => {
   const date = new Date(dateString);
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${day}.${month}.${year}`;
 };
 
@@ -51,12 +51,34 @@ export const formatDateStringFull = (dateString: string): string => {
     "ноября",
     "декабря",
   ];
-  const day = date.getUTCDate();
-  const month = months[date.getUTCMonth()];
-  const year = date.getUTCFullYear();
-  const hours = String(date.getUTCHours()).padStart(2, "0");
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${day} ${month} ${year}, ${hours}:${minutes}`;
+};
+
+export const formatDateStringMonthYear = (dateString?: string): string => {
+  if (!dateString) return 'Неизвестно';
+  const date = new Date(dateString);
+  const months = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+  ];
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return `${month} ${year}`;
 };
 
 export const formatPriceFromRubles = (price: number): string => {
