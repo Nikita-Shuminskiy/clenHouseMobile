@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
+import * as Clipboard from 'expo-clipboard';
+import { toast } from 'sonner-native';
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useOrder, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
@@ -182,6 +184,56 @@ const OrderDetailsScreen: React.FC = () => {
     }
   }, [order]);
 
+  const handleCopyAddress = useCallback(async () => {
+    if (!order) return;
+
+    try {
+      // Формируем полный адрес для копирования
+      let fullAddress = order.address;
+
+      // Добавляем детали адреса если они есть
+      if (order.addressDetails) {
+        const details: string[] = [];
+        
+        if (order.addressDetails.building) {
+          details.push(`д. ${order.addressDetails.building}`);
+        }
+        
+        if (order.addressDetails.buildingBlock) {
+          details.push(`корп. ${order.addressDetails.buildingBlock}`);
+        }
+        
+        if (order.addressDetails.entrance) {
+          details.push(`подъезд ${order.addressDetails.entrance}`);
+        }
+        
+        if (order.addressDetails.floor) {
+          details.push(`эт. ${order.addressDetails.floor}`);
+        }
+        
+        if (order.addressDetails.apartment) {
+          details.push(`кв. ${order.addressDetails.apartment}`);
+        }
+
+        if (details.length > 0) {
+          fullAddress += ', ' + details.join(', ');
+        }
+      }
+
+      await Clipboard.setStringAsync(fullAddress);
+      
+      toast.success('Адрес скопирован', {
+        description: 'Адрес скопирован в буфер обмена',
+        duration: 2000,
+      });
+    } catch (error) {
+      toast.error('Ошибка', {
+        description: 'Не удалось скопировать адрес',
+        duration: 2000,
+      });
+    }
+  }, [order]);
+
   console.log(order);
 
   if (!orderId) {
@@ -294,15 +346,24 @@ const OrderDetailsScreen: React.FC = () => {
             </View>
           )}
 
-          {order.coordinates && (
+          <View style={styles.addressActions}>
             <Button
               type="secondary"
-              onPress={handleOpenMaps}
-              style={{ marginTop: 12 }}
+              onPress={handleCopyAddress}
+              style={styles.addressActionButton}
             >
-              Открыть в картах
+              Копировать адрес
             </Button>
-          )}
+            {order.coordinates && (
+              <Button
+                type="secondary"
+                onPress={handleOpenMaps}
+                style={styles.addressActionButton}
+              >
+                Открыть в картах
+              </Button>
+            )}
+          </View>
 
           <Text style={styles.sectionTitle}>Клиент</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
@@ -537,6 +598,14 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     width: '100%',
+  },
+  addressActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  addressActionButton: {
+    flex: 1,
   },
 });
 
