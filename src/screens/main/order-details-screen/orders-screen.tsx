@@ -317,34 +317,34 @@ const OrderDetailsScreen: React.FC = () => {
           <Text style={styles.orderAddress}>{order.address}</Text>
 
           {order.addressDetails && (
-            <View style={styles.addressDetailsContainer}>
+            <View key={`address-details-${order.id}`} style={styles.addressDetailsContainer}>
               {order.addressDetails.building && (
-                <Text style={styles.addressDetailItem}>
+                <Text key="building" style={styles.addressDetailItem}>
                   Дом: {order.addressDetails.building}
                 </Text>
               )}
               {order.addressDetails.buildingBlock && (
-                <Text style={styles.addressDetailItem}>
+                <Text key="buildingBlock" style={styles.addressDetailItem}>
                   Корпус: {order.addressDetails.buildingBlock}
                 </Text>
               )}
               {order.addressDetails.entrance && (
-                <Text style={styles.addressDetailItem}>
+                <Text key="entrance" style={styles.addressDetailItem}>
                   Подъезд: {order.addressDetails.entrance}
                 </Text>
               )}
               {order.addressDetails.floor && (
-                <Text style={styles.addressDetailItem}>
+                <Text key="floor" style={styles.addressDetailItem}>
                   Этаж: {order.addressDetails.floor}
                 </Text>
               )}
               {order.addressDetails.apartment && (
-                <Text style={styles.addressDetailItem}>
+                <Text key="apartment" style={styles.addressDetailItem}>
                   Квартира: {order.addressDetails.apartment}
                 </Text>
               )}
               {order.addressDetails.domophone && (
-                <Text style={styles.addressDetailItem}>
+                <Text key="domophone" style={styles.addressDetailItem}>
                   Домофон: {order.addressDetails.domophone}
                 </Text>
               )}
@@ -361,6 +361,7 @@ const OrderDetailsScreen: React.FC = () => {
             </Button>
             {order.coordinates && (
               <Button
+                key="maps-button"
                 type="secondary"
                 onPress={handleOpenMaps}
                 style={styles.addressActionButton}
@@ -378,10 +379,10 @@ const OrderDetailsScreen: React.FC = () => {
           <Text style={styles.orderAmount}>{formatPrice(Number(order.price))}</Text>
 
           {order.notes && (
-            <>
+            <View key={`notes-${order.id}`}>
               <Text style={styles.sectionTitle}>Заметки</Text>
               <Text style={styles.orderNotes}>{order.notes}</Text>
-            </>
+            </View>
           )}
 
           <Text style={styles.sectionTitle}>Запланировано на</Text>
