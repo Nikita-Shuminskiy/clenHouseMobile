@@ -21,7 +21,7 @@ const SupportScreen: React.FC = () => {
   };
 
   const handleEmailPress = () => {
-    const email = 'Chisto.doma1@mail.ru';
+    const email = 'chisto.doma1@mail.ru';
     const subject = 'Поддержка Mussor';
     const body = 'Здравствуйте! Я обращаюсь в службу поддержки по поводу...';
     
@@ -77,7 +77,7 @@ const SupportScreen: React.FC = () => {
     {
       icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
       title: 'Email поддержка',
-      subtitle: 'Chisto.doma1@mail.ru',
+      subtitle: 'chisto.doma1@mail.ru',
       description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
       onPress: handleEmailPress,
       color: '#2196F3'

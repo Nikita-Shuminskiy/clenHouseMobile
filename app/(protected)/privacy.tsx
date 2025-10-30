@@ -54,7 +54,7 @@ const PrivacyScreen: React.FC = () => {
   ];
 
   const contactInfo = {
-    email: 'Chisto.doma1@mail.ru',
+    email: 'chisto.doma1@mail.ru',
     phone: '+7 (921) 965-8884',
     address: '188689, Ленинградская область, Всеволожский район, гп Янино-1, ул Шоссейная, д. 48Е, стр. 6'
   };
