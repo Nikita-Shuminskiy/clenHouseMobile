@@ -53,6 +53,7 @@ export interface AddressDetailsDto {
   entrance?: string;
   apartment?: number;
   buildingBlock?: string;
+  domophone?: string;
 }
 
 export interface OrderResponseDto {

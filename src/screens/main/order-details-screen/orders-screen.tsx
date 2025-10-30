@@ -286,6 +286,11 @@ const OrderDetailsScreen: React.FC = () => {
                   Квартира: {order.addressDetails.apartment}
                 </Text>
               )}
+              {order.addressDetails.domophone && (
+                <Text style={styles.addressDetailItem}>
+                  Домофон: {order.addressDetails.domophone}
+                </Text>
+              )}
             </View>
           )}
 
