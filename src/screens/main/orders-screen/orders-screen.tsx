@@ -14,11 +14,14 @@ import { OrderStatus } from "@/src/modules/orders/types/orders";
 
 // UI Components
 import { OrderSearch, OrderFilters, OrderList } from "./ui";
+import CompleteOrderModal from "@/src/shared/components/modals/CompleteOrderModal";
 
 const OrdersScreen: React.FC = () => {
   const { data: user } = useGetMe();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | undefined>();
+  const [completeModalVisible, setCompleteModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   // Получаем заказы с фильтрацией
   const { 
@@ -66,13 +69,8 @@ const OrdersScreen: React.FC = () => {
         });
         break;
       case 'complete':
-        updateStatusMutation.mutate({
-          id: order.id,
-          data: { 
-            status: OrderStatus.DONE,
-            currierId: user?.id 
-          }
-        });
+        setSelectedOrder(order);
+        setCompleteModalVisible(true);
         break;
       case 'cancel':
         Alert.alert(
@@ -110,6 +108,28 @@ const OrdersScreen: React.FC = () => {
     refetch();
   }, [refetch]);
 
+  const handleConfirmComplete = useCallback(() => {
+    if (selectedOrder) {
+      updateStatusMutation.mutate({
+        id: selectedOrder.id,
+        data: { 
+          status: OrderStatus.DONE,
+          currierId: user?.id 
+        }
+      }, {
+        onSuccess: () => {
+          setCompleteModalVisible(false);
+          setSelectedOrder(null);
+        }
+      });
+    }
+  }, [selectedOrder, user?.id, updateStatusMutation]);
+
+  const handleCloseCompleteModal = useCallback(() => {
+    setCompleteModalVisible(false);
+    setSelectedOrder(null);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -137,6 +157,12 @@ const OrdersScreen: React.FC = () => {
           onOrderAction={handleOrderAction}
         />
       </View>
+
+      <CompleteOrderModal
+        visible={completeModalVisible}
+        onClose={handleCloseCompleteModal}
+        onConfirm={handleConfirmComplete}
+      />
     </SafeAreaView>
   );
 };
