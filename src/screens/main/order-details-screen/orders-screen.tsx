@@ -191,11 +191,16 @@ const OrderDetailsScreen: React.FC = () => {
       // Формируем полный адрес для копирования
       let fullAddress = order.address;
 
+      // Проверяем, есть ли номер дома в основном адресе
+      const addressMatch = order.address.match(/(\d+)$/);
+      const hasBuildingInAddress = addressMatch !== null;
+
       // Добавляем детали адреса если они есть
       if (order.addressDetails) {
         const details: string[] = [];
         
-        if (order.addressDetails.building) {
+        // Не добавляем номер дома, если он уже есть в адресе
+        if (order.addressDetails.building && !hasBuildingInAddress) {
           details.push(`д. ${order.addressDetails.building}`);
         }
         
