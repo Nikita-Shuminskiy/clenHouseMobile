@@ -132,12 +132,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
 
       {order.status === OrderStatus.IN_PROGRESS && onAction && (
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.completeButton]}
+          <Button
+            type="primary"
             onPress={() => onAction(order, 'complete')}
+            style={styles.actionButton}
           >
-            <Text style={styles.completeButtonText}>Завершить</Text>
-          </TouchableOpacity>
+            <Text style={styles.startButtonText}>Завершить</Text>
+          </Button>
         </View>
       )}
     </TouchableOpacity>
@@ -344,20 +345,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#FFFFFF',
   },
-  startButton: {
-    backgroundColor: 'orange',
-  },
   startButtonText: {
-    fontFamily: 'Onest',
-    fontWeight: '600',
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#FFFFFF',
-  },
-  completeButton: {
-    backgroundColor: '#4CAF50',
-  },
-  completeButtonText: {
     fontFamily: 'Onest',
     fontWeight: '600',
     fontSize: 14,
