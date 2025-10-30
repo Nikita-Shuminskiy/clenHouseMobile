@@ -188,47 +188,34 @@ const OrderDetailsScreen: React.FC = () => {
     if (!order) return;
 
     try {
-      // Формируем полный адрес для копирования
-      let fullAddress = order.address;
+      // Формируем адрес для навигатора (только улица и номер дома)
+      let navigationAddress = order.address;
 
       // Проверяем, есть ли номер дома в основном адресе
       const addressMatch = order.address.match(/(\d+)$/);
       const hasBuildingInAddress = addressMatch !== null;
 
-      // Добавляем детали адреса если они есть
-      if (order.addressDetails) {
-        const details: string[] = [];
+      // Добавляем только номер дома и корпус для навигатора
+      if (order.addressDetails && !hasBuildingInAddress) {
+        const navigationDetails: string[] = [];
         
-        // Не добавляем номер дома, если он уже есть в адресе
-        if (order.addressDetails.building && !hasBuildingInAddress) {
-          details.push(`д. ${order.addressDetails.building}`);
+        if (order.addressDetails.building) {
+          navigationDetails.push(String(order.addressDetails.building));
         }
         
         if (order.addressDetails.buildingBlock) {
-          details.push(`корп. ${order.addressDetails.buildingBlock}`);
-        }
-        
-        if (order.addressDetails.entrance) {
-          details.push(`подъезд ${order.addressDetails.entrance}`);
-        }
-        
-        if (order.addressDetails.floor) {
-          details.push(`эт. ${order.addressDetails.floor}`);
-        }
-        
-        if (order.addressDetails.apartment) {
-          details.push(`кв. ${order.addressDetails.apartment}`);
+          navigationDetails.push(`корп. ${order.addressDetails.buildingBlock}`);
         }
 
-        if (details.length > 0) {
-          fullAddress += ', ' + details.join(', ');
+        if (navigationDetails.length > 0) {
+          navigationAddress += ', ' + navigationDetails.join(' ');
         }
       }
 
-      await Clipboard.setStringAsync(fullAddress);
+      await Clipboard.setStringAsync(navigationAddress);
       
       toast.success('Адрес скопирован', {
-        description: 'Адрес скопирован в буфер обмена',
+        description: 'Адрес для навигатора скопирован в буфер обмена',
         duration: 2000,
       });
     } catch (error) {
