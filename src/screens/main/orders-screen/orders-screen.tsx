@@ -15,12 +15,14 @@ import { OrderStatus } from "@/src/modules/orders/types/orders";
 // UI Components
 import { OrderSearch, OrderFilters, OrderList } from "./ui";
 import CompleteOrderModal from "@/src/shared/components/modals/CompleteOrderModal";
+import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
 
 const OrdersScreen: React.FC = () => {
   const { data: user } = useGetMe();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | undefined>();
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
+  const [startModalVisible, setStartModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   // Получаем заказы с фильтрацией
@@ -60,13 +62,8 @@ const OrdersScreen: React.FC = () => {
         });
         break;
       case 'start':
-        updateStatusMutation.mutate({
-          id: order.id,
-          data: { 
-            status: OrderStatus.IN_PROGRESS,
-            currierId: user?.id 
-          }
-        });
+        setSelectedOrder(order);
+        setStartModalVisible(true);
         break;
       case 'complete':
         setSelectedOrder(order);
@@ -130,6 +127,28 @@ const OrdersScreen: React.FC = () => {
     setSelectedOrder(null);
   }, []);
 
+  const handleConfirmStart = useCallback(() => {
+    if (selectedOrder) {
+      updateStatusMutation.mutate({
+        id: selectedOrder.id,
+        data: { 
+          status: OrderStatus.IN_PROGRESS,
+          currierId: user?.id 
+        }
+      }, {
+        onSuccess: () => {
+          setStartModalVisible(false);
+          setSelectedOrder(null);
+        }
+      });
+    }
+  }, [selectedOrder, user?.id, updateStatusMutation]);
+
+  const handleCloseStartModal = useCallback(() => {
+    setStartModalVisible(false);
+    setSelectedOrder(null);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -162,6 +181,12 @@ const OrdersScreen: React.FC = () => {
         visible={completeModalVisible}
         onClose={handleCloseCompleteModal}
         onConfirm={handleConfirmComplete}
+      />
+
+      <StartOrderModal
+        visible={startModalVisible}
+        onClose={handleCloseStartModal}
+        onConfirm={handleConfirmStart}
       />
     </SafeAreaView>
   );
