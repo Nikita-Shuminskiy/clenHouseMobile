@@ -320,12 +320,12 @@ const OrderDetailsScreen: React.FC = () => {
             <View style={styles.addressDetailsContainer}>
               {order.addressDetails.building && (
                 <Text style={styles.addressDetailItem}>
-                  Корпус: {order.addressDetails.building}
+                  Дом: {order.addressDetails.building}
                 </Text>
               )}
               {order.addressDetails.buildingBlock && (
                 <Text style={styles.addressDetailItem}>
-                  Блок: {order.addressDetails.buildingBlock}
+                  Корпус: {order.addressDetails.buildingBlock}
                 </Text>
               )}
               {order.addressDetails.entrance && (
@@ -396,7 +396,7 @@ const OrderDetailsScreen: React.FC = () => {
           if (availableActions.length === 0) return null;
 
           return (
-            <View style={styles.actionsContainer}>
+            <View style={styles.actionsContainer} key={`actions-${order.id}`}>
               <Text style={styles.actionsTitle}>Действия с заказом</Text>
               <View style={styles.actionsButtons}>
                 {availableActions.map((action) => (
