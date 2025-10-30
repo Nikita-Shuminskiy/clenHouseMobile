@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { PrivacyIcon, SupportIcon } from '@/src/shared/components/icons';
 
 interface ProfileSettingsProps {
   onEditProfile?: () => void;
@@ -36,13 +37,13 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     //   onPress: onNotifications,
     // },
     {
-      icon: '🔫',
+      icon: <PrivacyIcon width={20} height={20} color="#FF5E00" />,
       title: 'Конфиденциальность',
       subtitle: 'Управление данными',
       onPress: onPrivacy,
     },
     {
-      icon: '💬',
+      icon: <SupportIcon width={20} height={20} color="#FF5E00" />,
       title: 'Поддержка',
       subtitle: 'Связаться с нами',
       onPress: onSupport,
@@ -64,7 +65,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
             activeOpacity={0.7}
           >
             <View style={styles.settingContent}>
-              <Text style={styles.settingIcon}>{item.icon}</Text>
+              <View style={styles.settingIcon}>{item.icon}</View>
               <View style={styles.settingText}>
                 <Text style={styles.settingTitle}>{item.title}</Text>
                 <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
@@ -120,7 +121,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingIcon: {
-    fontSize: 20,
     marginRight: 16,
   },
   settingText: {

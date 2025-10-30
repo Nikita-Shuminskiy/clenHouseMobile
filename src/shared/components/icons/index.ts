@@ -61,4 +61,7 @@ export { WarningIcon } from './WarningIcon';
 export { WidgetIcon } from './WidgetIcon';
 export { XCircle16Icon } from './XCircle16Icon';
 export { XCircle20Icon } from './XCircle20Icon';
+export { PrivacyIcon } from './PrivacyIcon';
+export { SupportIcon } from './SupportIcon';
+export { AddressIcon } from './AddressIcon';
 

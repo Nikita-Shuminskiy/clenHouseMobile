@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import useTheme from '@/src/shared/use-theme/use-theme';
-import { BackArrowIcon } from '@/src/shared/components/icons';
+import { BackArrowIcon, EmailIcon, PhoneIcon, AddressIcon } from '@/src/shared/components/icons';
 
 const PrivacyScreen: React.FC = () => {
   const theme = useTheme();
@@ -54,9 +54,9 @@ const PrivacyScreen: React.FC = () => {
   ];
 
   const contactInfo = {
-    email: 'privacy@mussor.com',
-    phone: '+7 (800) 123-45-67',
-    address: 'г. Москва, ул. Примерная, д. 123'
+    email: 'Chisto.doma1@mail.ru',
+    phone: '+7 (921) 965-8884',
+    address: '188689, Ленинградская область, Всеволожский район, гп Янино-1, ул Шоссейная, д. 48Е, стр. 6'
   };
 
   return (
@@ -119,30 +119,36 @@ const PrivacyScreen: React.FC = () => {
           </Text>
           
           <View style={styles.contactItem}>
-            <Text style={[styles.contactIcon, { color: theme.colors.primary500 }]}>📧</Text>
+            <View style={styles.contactIcon}>
+              <EmailIcon width={20} height={20} color={theme.colors.primary500} />
+            </View>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactLabel, { color: theme.colors.grey900 }]}>Email</Text>
-              <Text style={[styles.contactValue, { color: theme.colors.primary500 }]}>
+              <Text style={[styles.contactLabel, { color: theme.colors.grey600 }]}>Email</Text>
+              <Text style={[styles.contactValue, { color: theme.colors.grey900 }]}>
                 {contactInfo.email}
               </Text>
             </View>
           </View>
 
           <View style={styles.contactItem}>
-            <Text style={[styles.contactIcon, { color: theme.colors.primary500 }]}>📞</Text>
+            <View style={styles.contactIcon}>
+              <PhoneIcon width={20} height={20} color={theme.colors.primary500} />
+            </View>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactLabel, { color: theme.colors.grey900 }]}>Телефон</Text>
-              <Text style={[styles.contactValue, { color: theme.colors.primary500 }]}>
+              <Text style={[styles.contactLabel, { color: theme.colors.grey600 }]}>Телефон</Text>
+              <Text style={[styles.contactValue, { color: theme.colors.grey900 }]}>
                 {contactInfo.phone}
               </Text>
             </View>
           </View>
 
           <View style={styles.contactItem}>
-            <Text style={[styles.contactIcon, { color: theme.colors.primary500 }]}>📍</Text>
+            <View style={styles.contactIcon}>
+              <AddressIcon width={20} height={20} color={theme.colors.primary500} />
+            </View>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactLabel, { color: theme.colors.grey900 }]}>Адрес</Text>
-              <Text style={[styles.contactValue, { color: theme.colors.primary500 }]}>
+              <Text style={[styles.contactLabel, { color: theme.colors.grey600 }]}>Адрес</Text>
+              <Text style={[styles.contactValue, { color: theme.colors.grey900 }]}>
                 {contactInfo.address}
               </Text>
             </View>
@@ -285,9 +291,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   contactIcon: {
-    fontSize: 20,
     marginRight: 12,
     width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contactInfo: {
     flex: 1,
@@ -299,7 +307,7 @@ const styles = StyleSheet.create({
   },
   contactValue: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   footerCard: {
     padding: 20,

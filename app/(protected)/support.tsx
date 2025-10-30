@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import useTheme from '@/src/shared/use-theme/use-theme';
-import { BackArrowIcon } from '@/src/shared/components/icons';
+import { BackArrowIcon, EmailIcon, PhoneIcon, TelegramIcon } from '@/src/shared/components/icons';
 
 const SupportScreen: React.FC = () => {
   const theme = useTheme();
@@ -21,7 +21,7 @@ const SupportScreen: React.FC = () => {
   };
 
   const handleEmailPress = () => {
-    const email = 'support@mussor.com';
+    const email = 'Chisto.doma1@mail.ru';
     const subject = 'Поддержка Mussor';
     const body = 'Здравствуйте! Я обращаюсь в службу поддержки по поводу...';
     
@@ -75,23 +75,23 @@ const SupportScreen: React.FC = () => {
 
   const supportOptions = [
     {
-      icon: '📧',
+      icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
       title: 'Email поддержка',
-      subtitle: 'support@mussor.com',
+      subtitle: 'Chisto.doma1@mail.ru',
       description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
       onPress: handleEmailPress,
       color: '#2196F3'
     },
     {
-      icon: '📞',
+      icon: <PhoneIcon width={20} height={20} color="#FF5E00" />,
       title: 'Телефон поддержки',
-      subtitle: '+7 (800) 123-45-67',
+      subtitle: '+7 (921) 965-8884',
       description: 'Звоните нам с 9:00 до 18:00 по московскому времени',
       onPress: handlePhonePress,
       color: '#4CAF50'
     },
     {
-      icon: '💬',
+      icon: <TelegramIcon width={20} height={20} color="#FF5E00" />,
       title: 'Telegram',
       subtitle: '@mussor_support',
       description: 'Быстрая связь через Telegram',
@@ -152,8 +152,8 @@ const SupportScreen: React.FC = () => {
               activeOpacity={0.7}
             >
               <View style={styles.supportOptionContent}>
-                <View style={[styles.supportIcon, { backgroundColor: option.color }]}>
-                  <Text style={styles.supportIconText}>{option.icon}</Text>
+                <View style={styles.supportIcon}>
+                  <View style={styles.supportIconContainer}>{option.icon}</View>
                 </View>
                 <View style={styles.supportText}>
                   <Text style={[styles.supportTitle, { color: theme.colors.grey900 }]}>
@@ -274,15 +274,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   supportIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
   },
-  supportIconText: {
-    fontSize: 20,
+  supportIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   supportText: {
     flex: 1,

@@ -297,8 +297,12 @@ const OrderDetailsScreen: React.FC = () => {
           <Text style={[styles.sectionTitle, { marginTop: 0 }]}>Номер заказа</Text>
           <Text style={styles.orderNumber}>#{order.id.toString().slice(-8)}</Text>
 
-          <Text style={styles.sectionTitle}>Описание</Text>
-          <Text style={styles.orderDescription}>{order.description}</Text>
+          {order.description && (
+            <>
+              <Text style={styles.sectionTitle}>Описание</Text>
+              <Text style={styles.orderDescription}>{order.description}</Text>
+            </>
+          )}
 
           <Text style={styles.sectionTitle}>Адрес</Text>
           <Text style={styles.orderAddress}>{order.address}</Text>
@@ -593,12 +597,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   addressActions: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: 12,
     marginTop: 12,
   },
   addressActionButton: {
-    flex: 1,
+    width: '100%',
   },
 });
 
