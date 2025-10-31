@@ -104,7 +104,7 @@ const ProfileScreen: React.FC = () => {
 
           <View style={styles.userDetails}>
             <Text style={styles.userName}>{user?.name}</Text>
-            <Text style={styles.userEmail}>{user?.email}</Text>
+            <Text style={styles.userPhone}>{user?.phone}</Text>
             <Text style={styles.userRole}>
               {user?.role === UserRole.ADMIN
                 ? "Администратор"
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginHorizontal: 16,
     marginTop: 24,
-    padding: 24,
+    padding: 16,
     borderRadius: 24,
     alignItems: "center",
     shadowColor: "#1A1A1A",
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   avatarContainer: {
-    marginBottom: 16,
+    marginBottom: 10,
   },
   avatar: {
     width: 80,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     color: "#1A1A1A",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   userEmail: {
     fontFamily: "Onest",
@@ -220,7 +220,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: "#5A6E8A",
-    marginBottom: 8,
+    marginBottom: 6,
+  },
+  userPhone: {
+    fontFamily: "Onest",
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#5A6E8A",
+    marginBottom: 4,
   },
   userRole: {
     fontFamily: "Onest",
