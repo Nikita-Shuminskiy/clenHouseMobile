@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
-import { useOrders, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
+import { useOrderByLocation, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 
 // UI Components
@@ -31,7 +31,7 @@ const OrdersScreen: React.FC = () => {
     isLoading, 
     isFetching, 
     refetch 
-  } = useOrders({
+  } = useOrderByLocation({
     status: selectedStatus,
     currierId: user?.id,
   });

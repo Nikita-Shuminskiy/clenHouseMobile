@@ -10,6 +10,7 @@ import {
   OrderStatus,
   UpdateOrderStatusDto,
 } from "../types/orders";
+import { useLocation } from "@/src/shared/hooks/useLocation";
 
 interface UseOrderDetailsProps {
   orderId: string;
@@ -42,6 +43,80 @@ export const useOrders = (params?: {
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,
   });
+};
+
+/**
+ * Хук для получения ближайших заказов по локации курьера
+ * @param params - параметры запроса, включая координаты (lat, lon)
+ */
+export const useOrdersNearby = (params: {
+  lat: number;
+  lon: number;
+  maxDistance?: number;
+  page?: number;
+  limit?: number;
+  status?: OrderStatus;
+}) => {
+  return useQuery<OrdersListResponse>({
+    queryKey: ["orders", "nearby", params],
+    queryFn: () => ordersApi.findAllNearby(params),
+    enabled: !!params.lat && !!params.lon,
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
+  });
+};
+
+/**
+ * Умный хук для получения заказов с автоматическим выбором метода
+ * Если локация доступна - использует useOrdersNearby (ближайшие заказы)
+ * Если локация недоступна - использует useOrders (обычные заказы)
+ */
+export const useOrderByLocation = (params?: {
+  page?: number;
+  limit?: number;
+  status?: OrderStatus;
+  customerId?: string;
+  currierId?: string;
+  maxDistance?: number;
+}) => {
+  const { location, hasPermission } = useLocation();
+
+  const hasLocation = hasPermission && location !== null;
+
+  console.log(hasLocation, "hasLocation");
+  console.log(location, "location");
+  
+  // Используем ближайшие заказы, если есть локация
+  const nearbyQuery = useQuery<OrdersListResponse>({
+    queryKey: ["orders", "nearby", { ...params, lat: location?.latitude, lon: location?.longitude }],
+    queryFn: () => ordersApi.findAllNearby({
+      lat: location!.latitude,
+      lon: location!.longitude,
+      maxDistance: params?.maxDistance,
+      page: params?.page,
+      limit: params?.limit,
+      status: params?.status,
+    }),
+    enabled: hasLocation && !!location,
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
+  });
+
+  // Используем обычные заказы, если локации нет
+  const regularQuery = useQuery<OrdersListResponse>({
+    queryKey: ["orders", params],
+    queryFn: () => ordersApi.findAll(params),
+    enabled: !hasLocation,
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
+  });
+
+  // Возвращаем нужный запрос в зависимости от наличия локации
+  if (hasLocation) {
+    return nearbyQuery;
+  }
+
+  return regularQuery;
 };
 
 export const useOrder = (id: string) => {

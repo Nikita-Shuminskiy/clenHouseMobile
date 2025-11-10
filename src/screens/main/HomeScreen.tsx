@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -12,24 +12,41 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
-import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 import { formatDateStringFull, formatPrice } from "@/src/shared/utils/formatting";
+import * as Location from 'expo-location';
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useGetMe();
+
+  useEffect(() => {
+    async function getCurrentLocation() {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      console.log(location);
+      
+    }
+
+    getCurrentLocation();
+  }, []);
 
   // Получаем заказы в работе (assigned и in_progress)
   const {
     data: ordersData,
     isLoading: ordersLoading,
     refetch: refetchOrders,
-  } = useOrders({
+  } = useOrderByLocation({
     status: OrderStatus.ASSIGNED,
     currierId: user?.id,
   });
 
-  const { data: inProgressOrdersData } = useOrders({
+  const { data: inProgressOrdersData } = useOrderByLocation({
     status: OrderStatus.IN_PROGRESS,
     currierId: user?.id,
   });

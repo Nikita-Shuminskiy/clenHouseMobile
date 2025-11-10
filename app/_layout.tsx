@@ -12,6 +12,7 @@ import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useEffect, useState } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
+import { requestLocationPermission } from "@/src/shared/utils/location-permission";
 
 // Сохраняем splash screen видимым до готовности приложения
 SplashScreen.preventAutoHideAsync();
@@ -29,6 +30,10 @@ const RootStack = () => {
     const prepareApp = async () => {
       // Ждем минимум 500мс чтобы splash screen успел показаться
       await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Запрашиваем разрешение на геолокацию в начале приложения
+      // Используется для поиска ближайших заказов курьеру
+      await requestLocationPermission();
       
       // Скрываем splash screen
       await SplashScreen.hideAsync();
