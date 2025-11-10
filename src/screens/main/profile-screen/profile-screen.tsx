@@ -15,7 +15,7 @@ import { QueryKey } from "@/src/shared/api/constants/api-keys/query-key";
 import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
-import { useOrders } from "@/src/modules/orders/hooks/useOrders";
+import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import LogoutConfirmationModal from "@/src/shared/components/modals/LogoutConfirmationModal";
 
 // UI Components - временно закомментировано
@@ -26,7 +26,7 @@ const ProfileScreen: React.FC = () => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   
   // Получаем статистику заказов пользователя - временно закомментировано
-  const { data: ordersData } = useOrders({
+  const { data: ordersData } = useOrderByLocation({
     currierId: user?.id,
   });
 
