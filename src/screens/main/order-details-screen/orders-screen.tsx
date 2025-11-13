@@ -33,6 +33,9 @@ const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
     case OrderStatus.NEW:
       actions.push({ key: 'accept', label: 'Принять заказ', type: 'primary' });
       break;
+    case OrderStatus.PAID:
+      actions.push({ key: 'accept', label: 'Принять заказ', type: 'primary' });
+      break;
     case OrderStatus.ASSIGNED:
       if (isAssignedCourier) {
         actions.push({ key: 'start', label: 'Начать выполнение', type: 'primary' });
@@ -401,7 +404,7 @@ const OrderDetailsScreen: React.FC = () => {
                       (action.key === 'cancel' ? cancelOrderMutation.isPending : updateStatusMutation.isPending) &&
                       (action.key === 'cancel' ? cancelOrderMutation.variables?.id === order.id : updateStatusMutation.variables?.id === order.id)
                     }
-                    style={styles.actionButton}
+                    style={[styles.actionButton]}
                   >
                     {action.label}
                   </Button>
