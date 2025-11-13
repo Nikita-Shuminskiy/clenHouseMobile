@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
 import Button from '@/src/shared/components/ui-kit/button';
 import { formatPrice, formatDateString } from '@/src/shared/utils/formatting';
+import { useLocation } from '@/src/shared/hooks/useLocation';
+import { calculateDistance, formatDistance } from '@/src/shared/utils/distance';
+import useTheme from '@/src/shared/use-theme/use-theme';
 
 interface OrderCardProps {
   order: OrderResponseDto;
@@ -11,6 +14,28 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
+  const { location, hasPermission } = useLocation();
+  const hasLocation = hasPermission && location !== null;
+  const { colors } = useTheme();
+
+  // Вычисляем расстояние до заказа, если есть координаты пользователя и заказа
+  const distance = useMemo(() => {
+    if (!hasLocation || !location || !order.coordinates) {
+      return null;
+    }
+
+    return calculateDistance(
+      {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      },
+      {
+        latitude: order.coordinates.lat,
+        longitude: order.coordinates.lon,
+      }
+    );
+  }, [hasLocation, location, order.coordinates]);
+
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.NEW:
@@ -75,6 +100,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
           <Text style={styles.address}>{order.address}</Text>
         </View>
 
+        {distance !== null && (
+          <View style={styles.distanceContainer}>
+            <Text style={styles.distanceLabel}>Расстояние:</Text>
+            <Text style={styles.distance}>{formatDistance(distance)}</Text>
+          </View>
+        )}
+
         <View style={styles.customerContainer}>
           <Text style={styles.customerLabel}>Клиент:</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
@@ -104,7 +136,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
       {order.status === OrderStatus.NEW && onAction && (
         <View style={styles.actions}>
           <TouchableOpacity
-            style={[styles.actionButton, styles.acceptButton]}
+            style={[styles.actionButton, { backgroundColor: colors.primary500 }]}
             onPress={() => onAction(order, 'accept')}
           >
             <Text style={styles.acceptButtonText}>Принять</Text>
@@ -114,6 +146,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
             onPress={() => onAction(order, 'cancel')}
           >
             <Text style={styles.cancelButtonText}>Отменить</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {order.status === OrderStatus.PAID && onAction && (
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: colors.blue }]}
+            onPress={() => onAction(order, 'accept')}
+          >
+            <Text style={styles.acceptButtonText}>Принять</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -225,6 +268,26 @@ const styles = StyleSheet.create({
     color: '#1A1A1A',
     flex: 1,
   },
+  distanceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  distanceLabel: {
+    fontFamily: 'Onest',
+    fontWeight: '500',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#5A6E8A',
+    minWidth: 50,
+  },
+  distance: {
+    fontFamily: 'Onest',
+    fontWeight: '600',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#2196F3',
+  },
   customerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -324,9 +387,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 12,
     alignItems: 'center',
-  },
-  acceptButton: {
-    backgroundColor: '#4CAF50',
   },
   acceptButtonText: {
     fontFamily: 'Onest',
