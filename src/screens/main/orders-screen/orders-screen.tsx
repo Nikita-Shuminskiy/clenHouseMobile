@@ -20,7 +20,7 @@ import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
 const OrdersScreen: React.FC = () => {
   const { data: user } = useGetMe();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | undefined>();
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | undefined>(OrderStatus.PAID);
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
