@@ -56,6 +56,7 @@ export const useOrdersNearby = (params: {
   page?: number;
   limit?: number;
   status?: OrderStatus;
+  currierId?: string;
 }) => {
   return useQuery<OrdersListResponse>({
     queryKey: ["orders", "nearby", params],
@@ -96,6 +97,7 @@ export const useOrderByLocation = (params?: {
       page: params?.page,
       limit: params?.limit,
       status: params?.status,
+      currierId: params?.currierId,
     }),
     enabled: hasLocation && !!location,
     staleTime: 2 * 60 * 1000,
