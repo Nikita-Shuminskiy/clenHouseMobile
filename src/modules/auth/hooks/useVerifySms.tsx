@@ -27,8 +27,10 @@ export const useVerifySms = () => {
                 await setToken(data.accessToken);
                 await setRefreshToken(data.refreshToken);
 
-                // Инвалидируем кэш пользователя
-                queryClient.invalidateQueries({ queryKey: ['me'] });
+                // Устанавливаем данные пользователя в кэш БЕЗ перезапроса
+                // Это предотвращает возможную 401 ошибку при refetch сразу после логина
+                // которая может привести к очистке токенов в QueryCache onError и редиректу на /(auth)
+                queryClient.setQueryData(['me'], data.user);
 
                 // Показываем успешное уведомление
                 toast.success('Добро пожаловать!', {
