@@ -30,3 +30,10 @@ export interface RefreshTokensResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface GetMeResponse {
+  accessToken: string;
+  adToken: string | null;
+  refreshToken: string;
+  user: IUserDto;
+}

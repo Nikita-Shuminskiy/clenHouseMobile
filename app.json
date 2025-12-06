@@ -43,6 +43,14 @@
             "backgroundColor": "#ffffff"
           }
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Приложению требуется доступ к вашей геолокации для предоставления услуг.",
+          "locationAlwaysPermission": "Приложению требуется доступ к вашей геолокации для предоставления услуг.",
+          "locationWhenInUsePermission": "Приложению требуется доступ к вашей геолокации для предоставления услуг."
+        }
       ]
     ],
     "splash": {

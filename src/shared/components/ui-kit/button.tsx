@@ -19,7 +19,7 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
   isLoading?: boolean;
   disabled?: boolean;
-  style?: ViewStyle;
+  style?: ViewStyle[] | ViewStyle;
   containerStyle?: ViewStyle;
   textStyle?: TextStyle;
 }

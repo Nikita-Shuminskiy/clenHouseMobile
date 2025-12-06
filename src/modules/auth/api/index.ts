@@ -6,6 +6,7 @@ import {
   AuthResponse,
   RefreshTokensRequest,
   RefreshTokensResponse,
+  GetMeResponse,
 } from "../types";
 import { IUserDto } from "@/src/shared/api/types/data-contracts";
 
@@ -47,7 +48,9 @@ export const authApi = {
 
   // Получение данных текущего пользователя
   getMe: async (): Promise<IUserDto> => {
-    const response = await instance.get("/auth/me");
-    return response.data;
+    const response = await instance.get<GetMeResponse>("/auth/me");
+    const data = response.data;
+    // Возвращаем только данные пользователя
+    return data.user;
   },
 };

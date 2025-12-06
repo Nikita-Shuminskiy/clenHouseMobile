@@ -29,6 +29,18 @@ export const ordersApi = {
       .get<OrdersListResponse>("/orders", { params })
       .then((res) => res.data),
 
+  findAllNearby: (params: {
+    lat: number;
+    lon: number;
+    maxDistance?: number;
+    page?: number;
+    limit?: number;
+    status?: OrderStatus;
+  }) =>
+    instance
+      .get<OrdersListResponse>("/orders/nearby", { params })
+      .then((res) => res.data),
+
   findOne: (id: string) =>
     instance
       .get<OrderResponseDto>(`/orders/${id}`)
