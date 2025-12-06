@@ -25,7 +25,8 @@ const OrdersScreen: React.FC = () => {
   const [startModalVisible, setStartModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
-  // Получаем заказы с фильтрацией
+  const statusesWithOutCurrierId = [OrderStatus.NEW, OrderStatus.PAID];
+
   const { 
     data: ordersData, 
     isLoading, 
@@ -33,7 +34,7 @@ const OrdersScreen: React.FC = () => {
     refetch 
   } = useOrderByLocation({
     status: selectedStatus,
-    currierId: user?.id,
+    currierId: selectedStatus ? statusesWithOutCurrierId.includes(selectedStatus as OrderStatus) ? undefined : user?.id :  user?.id,
   });
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
