@@ -44,7 +44,7 @@ const RootStack = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoadingGetMe || isLoadingGetIsFirstEnter) {
+    if (isLoadingGetMe || isLoadingGetIsFirstEnter || !isNavigationReady) {
       return;
     }
 
@@ -61,7 +61,7 @@ const RootStack = () => {
     } else {
       router.replace("/(auth)");
     }
-  }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter]);
+  }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter, isNavigationReady]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
