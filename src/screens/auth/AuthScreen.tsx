@@ -22,11 +22,12 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Logo from "../../../assets/images/logo.png";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AuthScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const { colors, sizes, fonts, weights } = useTheme();
   const { mutateAsync: signInWithSms, isPending } = useSendSms();
 
@@ -42,7 +43,7 @@ const AuthScreen: React.FC = () => {
   });
 
   const phoneValue = watch("phone");
-  const styles = createStyles({ colors, sizes, fonts, weights });
+  const styles = createStyles({ colors, sizes, fonts, weights, insets });
 
   const onSubmit = async (data: SignInSoftFormData) => {
     try {
@@ -62,7 +63,7 @@ const AuthScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <View style={styles.container}>
       <LinearGradient
         colors={[colors.grey700, colors.grey500, colors.grey300]}
         style={styles.gradientBackground}
@@ -120,7 +121,7 @@ const AuthScreen: React.FC = () => {
           </View>
         </View>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -129,11 +130,13 @@ const createStyles = ({
   sizes,
   fonts,
   weights,
+  insets,
 }: {
   colors: ThemeColors;
   sizes: any;
   fonts: ThemeFonts;
   weights: ThemeWeights;
+  insets: { top: number; bottom: number };
 }) =>
   StyleSheet.create({
     container: {
@@ -148,7 +151,7 @@ const createStyles = ({
     },
     headerContainer: {
       alignItems: "center",
-      paddingTop: sizes.xxl,
+      paddingTop: sizes.xxl + insets.top,
       paddingBottom: sizes.xl,
       paddingHorizontal: sizes.m,
       gap: sizes.l,
@@ -193,7 +196,7 @@ const createStyles = ({
     },
     scrollContent: {
       flexGrow: 1,
-      paddingBottom: 50,
+      paddingBottom: 50 + insets.bottom,
     },
     formCard: {
       flex: 1,
