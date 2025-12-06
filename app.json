@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Чисто дома",
-    "slug": "clean-house-mobile",
+    "slug": "chistodoma",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,9 +10,13 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.cleanhousemobile.mobile"
+      "bundleIdentifier": "com.cleanhousemobile.mobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -60,9 +64,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "e2a84ec1-be2c-408b-8342-c2e494cc1682"
+        "projectId": "96620f95-fe87-4ac7-9578-4a4cb8607527"
       }
     },
-    "owner": "nick19951995"
+    "owner": "chistodoma",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/96620f95-fe87-4ac7-9578-4a4cb8607527"
+    }
   }
 }
