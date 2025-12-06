@@ -35,6 +35,7 @@ export const ordersApi = {
     maxDistance?: number;
     page?: number;
     limit?: number;
+    currierId?: string;
     status?: OrderStatus;
   }) =>
     instance
