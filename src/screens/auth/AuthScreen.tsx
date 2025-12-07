@@ -66,13 +66,15 @@ const AuthScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
+      
+      {/* Декоративный градиентный фон */}
       <LinearGradient
-        colors={[colors.grey700, colors.grey500, colors.grey300]}
-        style={styles.gradientBackground}
+        colors={[colors.primary500, colors.primary400, colors.primary300]}
+        style={styles.backgroundGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
-
+      
       <KeyboardAwareScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -82,44 +84,49 @@ const AuthScreen: React.FC = () => {
         enableAutomaticScroll={true}
         extraScrollHeight={20}
       >
-        <View style={styles.headerContainer}>
-          <View style={styles.logoCard}>
+        {/* Верхняя секция с логотипом */}
+        <View style={styles.topSection}>
+          <View style={styles.logoWrapper}>
             <Image style={styles.logoImage} source={Logo} resizeMode="contain" />
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Вход в аккаунт</Text>
-            <Text style={styles.subtitleText}>
-              Войдите, чтобы управлять выносом мусора и профилем
-            </Text>
           </View>
         </View>
 
+        {/* Карточка с формой */}
         <View style={styles.formCard}>
-          <View style={styles.inputsContainer}>
-            <Controller
-              control={control}
-              name="phone"
-              render={({ field: { onChange, value } }) => (
-                <PhoneInput
-                  label="Номер телефона"
-                  value={value}
-                  onChangeText={(masked, unmasked) => onChange(unmasked)}
-                  validateOnBlur={true}
-                  required={true}
-                />
-              )}
-            />
+          <View style={styles.formHeader}>
+            <Text style={styles.titleText}>Вход в аккаунт</Text>
+            <Text style={styles.subtitleText}>
+              Войдите с помощью номера телефона и кода из SMS
+            </Text>
           </View>
 
-          <View style={styles.actionsContainer}>
-            <Button
-              type="primary"
-              onPress={handleSubmit(onSubmit)}
-              disabled={isPending || !isValid || !phoneValue}
-              isLoading={isPending}
-            >
-              {isPending ? "Вход..." : "Войти"}
-            </Button>
+          <View style={styles.formContent}>
+            <View style={styles.inputsContainer}>
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field: { onChange, value } }) => (
+                  <PhoneInput
+                    label="Номер телефона"
+                    value={value}
+                    onChangeText={(masked, unmasked) => onChange(unmasked)}
+                    validateOnBlur={true}
+                    required={true}
+                  />
+                )}
+              />
+            </View>
+
+            <View style={styles.actionsContainer}>
+              <Button
+                type="primary"
+                onPress={handleSubmit(onSubmit)}
+                disabled={isPending || !isValid || !phoneValue}
+                isLoading={isPending}
+              >
+                {isPending ? "Вход..." : "Войти"}
+              </Button>
+            </View>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -143,81 +150,100 @@ const createStyles = ({
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: colors.background,
     },
-    gradientBackground: {
+    backgroundGradient: {
       position: "absolute",
       top: 0,
       left: 0,
       right: 0,
-      bottom: 0,
-    },
-    headerContainer: {
-      alignItems: "center",
-      paddingTop: sizes.xxl + Math.max(insets.top, 0),
-      paddingBottom: sizes.xl,
-      paddingHorizontal: sizes.m,
-      gap: sizes.l,
-    },
-    logoCard: {
-      backgroundColor: "rgba(255, 255, 255, 0.25)",
-      borderRadius: 24,
-      padding: sizes.md,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    logoImage: {
-      width: 100,
-      height: 100,
-    },
-    titleContainer: {
-      alignItems: "center",
-      gap: sizes.s,
-      paddingHorizontal: sizes.m,
-    },
-    titleText: {
-      fontFamily: fonts.h1,
-      fontWeight: weights.semibold,
-      fontSize: sizes.h1,
-      lineHeight: 32,
-      letterSpacing: -0.5,
-      color: colors.white,
-      textAlign: "center",
-    },
-    subtitleText: {
-      fontFamily: fonts.text2,
-      fontWeight: weights.normal,
-      fontSize: sizes.text2,
-      lineHeight: 22,
-      letterSpacing: -0.3,
-      color: colors.white,
-      textAlign: "center",
-      opacity: 0.95,
+      height: "45%",
     },
     scrollView: {
       flex: 1,
     },
     scrollContent: {
       flexGrow: 1,
-      paddingBottom: 50 + Math.max(insets.bottom, 0),
+      justifyContent: "space-between",
+    },
+    topSection: {
+      paddingTop: sizes.xxl + Math.max(insets.top, 0),
+      paddingBottom: sizes.xl,
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: 200,
+    },
+    logoWrapper: {
+      width: 140,
+      height: 140,
+      borderRadius: 70,
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: colors.black,
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 12,
+      elevation: 5,
+    },
+    logoImage: {
+      width: 100,
+      height: 100,
     },
     formCard: {
-      flex: 1,
-
-      borderTopLeftRadius: 32,
-      borderTopRightRadius: 32,
-      padding: sizes.l,
-      paddingTop: sizes.xl,
-
-      gap: sizes.xl,
+      backgroundColor: colors.white,
+      borderTopLeftRadius: 40,
+      borderTopRightRadius: 40,
       marginTop: sizes.xl,
-      minHeight: "100%",
-
+      height: "100%",
+      shadowColor: colors.black,
+      shadowOffset: {
+        width: 0,
+        height: -8,
+      },
+      shadowOpacity: 0.12,
+      shadowRadius: 24,
+      elevation: 12,
+    },
+    formHeader: {
+      paddingTop: sizes.xxl,
+      paddingHorizontal: sizes.xl,
+      paddingBottom: sizes.l,
+      alignItems: "center",
+      gap: sizes.s,
+    },
+    titleText: {
+      fontFamily: fonts.h1,
+      fontWeight: weights.bold,
+      fontSize: sizes.h1 || 32,
+      lineHeight: 40,
+      letterSpacing: -0.8,
+      color: colors.grey900,
+      textAlign: "center",
+    },
+    subtitleText: {
+      fontFamily: fonts.text2,
+      fontWeight: weights.normal,
+      fontSize: sizes.text2 || 16,
+      lineHeight: 24,
+      letterSpacing: -0.2,
+      color: colors.grey600,
+      textAlign: "center",
+      paddingHorizontal: sizes.m,
+    },
+    formContent: {
+      paddingHorizontal: sizes.xl,
+      paddingBottom: insets.bottom,
+      gap: sizes.xl,
     },
     inputsContainer: {
-      gap: sizes.sm,
+      gap: sizes.md,
     },
     actionsContainer: {
-      paddingTop: sizes.s,
+      paddingTop: sizes.md,
     },
   });
 
