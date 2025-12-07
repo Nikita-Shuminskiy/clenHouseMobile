@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { UserRole } from "@/src/shared/api/types/data-contracts";
 // import { ArrowBackIcon } from "../../../shared/components/icons";
@@ -22,6 +22,7 @@ import LogoutConfirmationModal from "@/src/shared/components/modals/LogoutConfir
 import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
 
 const ProfileScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const { data: user } = useGetMe();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   
@@ -80,9 +81,9 @@ const ProfileScreen: React.FC = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.title}>Профиль</Text>
       </View>
 
@@ -134,14 +135,14 @@ const ProfileScreen: React.FC = () => {
         onClose={handleLogoutCancel}
         onConfirm={handleLogoutConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFCFE",
+    backgroundColor: "#FFFFFF",
   },
   scrollView: {
     flex: 1,
@@ -155,13 +156,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
-    paddingTop: 16,
     paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#1A1A1A",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
     shadowRadius: 50,
     elevation: 6,
   },
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: "#1A1A1A",
     shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.12,
     shadowRadius: 50,
     elevation: 6,
   },
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     shadowColor: "#1A1A1A",
     shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.12,
     shadowRadius: 50,
     elevation: 6,
   },
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   logoutContainer: {
     paddingHorizontal: 16,
     paddingBottom: 16,
-    backgroundColor: "#FAFCFE",
+    backgroundColor: "#FFFFFF",
   },
   logoutButton: {
     backgroundColor: "#FF3B30",

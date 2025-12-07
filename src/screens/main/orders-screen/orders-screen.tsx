@@ -5,7 +5,7 @@ import {
   View,
   Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
@@ -18,6 +18,7 @@ import CompleteOrderModal from "@/src/shared/components/modals/CompleteOrderModa
 import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
 
 const OrdersScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const { data: user } = useGetMe();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | undefined>(OrderStatus.PAID);
@@ -151,8 +152,8 @@ const OrdersScreen: React.FC = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.title}>Ваши заказы</Text>
       </View>
 
@@ -189,14 +190,14 @@ const OrdersScreen: React.FC = () => {
         onClose={handleCloseStartModal}
         onConfirm={handleConfirmStart}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFCFE",
+    backgroundColor: "#FFFFFF",
   },
   header: {
     backgroundColor: "#FFFFFF",
@@ -204,13 +205,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
-    paddingTop: 16,
     paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#1A1A1A",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
     shadowRadius: 50,
     elevation: 6,
   },
