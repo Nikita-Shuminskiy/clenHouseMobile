@@ -13,6 +13,7 @@ import {
 import Button from "@components/ui-kit/button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -64,6 +65,7 @@ const AuthScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="light" />
       <LinearGradient
         colors={[colors.grey700, colors.grey500, colors.grey300]}
         style={styles.gradientBackground}
@@ -151,7 +153,7 @@ const createStyles = ({
     },
     headerContainer: {
       alignItems: "center",
-      paddingTop: sizes.xxl + insets.top,
+      paddingTop: sizes.xxl + Math.max(insets.top, 0),
       paddingBottom: sizes.xl,
       paddingHorizontal: sizes.m,
       gap: sizes.l,
@@ -196,7 +198,7 @@ const createStyles = ({
     },
     scrollContent: {
       flexGrow: 1,
-      paddingBottom: 50 + insets.bottom,
+      paddingBottom: 50 + Math.max(insets.bottom, 0),
     },
     formCard: {
       flex: 1,
