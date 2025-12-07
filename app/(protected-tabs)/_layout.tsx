@@ -26,7 +26,7 @@ export default function ProtectedLayout() {
       tabBar={({ state, descriptors, navigation }) => {
         return (
           <View
-            style={{ position: "relative", backgroundColor: "transparent" }}
+            style={{ position: "relative", backgroundColor: "#FFFFFF" }}
           >
             <LinearGradient
               colors={["#FFFFFF", "#FFFFFF"]}
