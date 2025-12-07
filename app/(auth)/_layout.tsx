@@ -1,11 +1,9 @@
 import { Stack } from "expo-router";
-import { SafeAreaView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 
 export default function AuthLayout() {
-  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
+    <View style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="onboarding" />
@@ -15,6 +13,6 @@ export default function AuthLayout() {
         <Stack.Screen name="(forgot-password)" />
         <Stack.Screen name="(reset-password)" />
       </Stack>
-    </SafeAreaView>
+    </View>
   );
 }
