@@ -32,7 +32,8 @@ const OrdersScreen: React.FC = () => {
     data: ordersData, 
     isLoading, 
     isFetching, 
-    refetch 
+    refetch,
+    error: ordersError
   } = useOrderByLocation({
     status: selectedStatus,
     currierId: selectedStatus ? statusesWithOutCurrierId.includes(selectedStatus as OrderStatus) ? undefined : user?.id :  user?.id,
@@ -40,26 +41,44 @@ const OrdersScreen: React.FC = () => {
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
 
-  const filteredOrders = ordersData?.orders?.filter(order => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      order.description.toLowerCase().includes(query) ||
-      order.address.toLowerCase().includes(query) ||
-      order.customer.name.toLowerCase().includes(query) ||
-      order.customer.phone.includes(query) ||
-      order.id.toLowerCase().includes(query)
-    );
-  }) || [];
+  const filteredOrders = React.useMemo(() => {
+    if (!ordersData?.orders) return [];
+    
+    return ordersData.orders.filter(order => {
+      if (!searchQuery) return true;
+      const query = searchQuery.toLowerCase();
+      try {
+        return (
+          (order.description?.toLowerCase() || '').includes(query) ||
+          (order.address?.toLowerCase() || '').includes(query) ||
+          (order.customer?.name?.toLowerCase() || '').includes(query) ||
+          (order.customer?.phone || '').includes(query) ||
+          (order.id?.toLowerCase() || '').includes(query)
+        );
+      } catch (error) {
+        console.error('Ошибка при фильтрации заказа:', error, order);
+        return false;
+      }
+    });
+  }, [ordersData?.orders, searchQuery]);
 
   const handleOrderAction = useCallback((order: any, action: string) => {
     switch (action) {
       case 'accept':
+        if (!user?.id) {
+          Alert.alert('Ошибка', 'Не удалось определить пользователя');
+          return;
+        }
         updateStatusMutation.mutate({
           id: order.id,
           data: { 
             status: OrderStatus.ASSIGNED,
-            currierId: user?.id 
+            currierId: user.id 
+          }
+        }, {
+          onError: (error) => {
+            console.error('Ошибка при принятии заказа:', error);
+            // Ошибка уже обрабатывается в хуке useUpdateOrderStatus
           }
         });
         break;
@@ -169,6 +188,13 @@ const OrdersScreen: React.FC = () => {
           onStatusChange={setSelectedStatus}
         />
 
+        {ordersError && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>
+              Ошибка загрузки заказов. Попробуйте обновить список.
+            </Text>
+          </View>
+        )}
         <OrderList
           orders={filteredOrders}
           isLoading={isLoading}
@@ -224,6 +250,23 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     marginTop: 16,
+  },
+  errorContainer: {
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 16,
+    backgroundColor: '#FFEBEE',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F44336',
+  },
+  errorText: {
+    fontFamily: 'Onest',
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#F44336',
+    textAlign: 'center',
   },
 });
 
