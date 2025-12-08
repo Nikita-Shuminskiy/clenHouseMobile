@@ -90,34 +90,43 @@ export const useOrderByLocation = (params?: {
   // Используем ближайшие заказы, если есть локация
   const nearbyQuery = useQuery<OrdersListResponse>({
     queryKey: ["orders", "nearby", { ...params, lat: location?.latitude, lon: location?.longitude }],
-    queryFn: () => ordersApi.findAllNearby({
-      lat: location!.latitude,
-      lon: location!.longitude,
-      maxDistance: params?.maxDistance,
-      page: params?.page,
-      limit: params?.limit,
-      status: params?.status,
-      currierId: params?.currierId,
-    }),
+    queryFn: () => {
+      if (!location?.latitude || !location?.longitude) {
+        throw new Error('Локация недоступна');
+      }
+      return ordersApi.findAllNearby({
+        lat: location.latitude,
+        lon: location.longitude,
+        maxDistance: params?.maxDistance,
+        page: params?.page,
+        limit: params?.limit,
+        status: params?.status,
+        currierId: params?.currierId,
+      });
+    },
     enabled: hasLocation && !!location,
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,
+    retry: 1,
+    retryOnMount: false,
   });
 
-  // Используем обычные заказы, если локации нет
+  // Используем обычные заказы, если локации нет или произошла ошибка в nearbyQuery
   const regularQuery = useQuery<OrdersListResponse>({
     queryKey: ["orders", params],
     queryFn: () => ordersApi.findAll(params),
-    enabled: !hasLocation,
+    enabled: !hasLocation || (nearbyQuery.isError && !nearbyQuery.isFetching),
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,
+    retry: 1,
   });
 
-  // Возвращаем нужный запрос в зависимости от наличия локации
-  if (hasLocation) {
+  // Если nearbyQuery упал с ошибкой, используем regularQuery
+  if (hasLocation && !nearbyQuery.isError && nearbyQuery.data) {
     return nearbyQuery;
   }
 
+  // Возвращаем regularQuery если нет локации или произошла ошибка
   return regularQuery;
 };
 
