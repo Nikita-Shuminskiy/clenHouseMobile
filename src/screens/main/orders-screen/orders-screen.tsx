@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,31 +13,74 @@ import { useOrderByLocation, useUpdateOrderStatus, useCancelOrder } from "@/src/
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 
 // UI Components
-import { OrderSearch, OrderFilters, OrderList } from "./ui";
+import { OrderSearch, OrderTabs, OrderList, OrderStatusSelect } from "./ui";
 import CompleteOrderModal from "@/src/shared/components/modals/CompleteOrderModal";
 import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
+
+type OrderTabType = 'new' | 'my';
 
 const OrdersScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { data: user } = useGetMe();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | undefined>(OrderStatus.PAID);
+  const [activeTab, setActiveTab] = useState<OrderTabType>('new');
+  const [myOrdersStatusFilter, setMyOrdersStatusFilter] = useState<OrderStatus | undefined>(undefined);
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
-  const statusesWithOutCurrierId = [OrderStatus.NEW, OrderStatus.PAID];
+  // Для табы "Новые заказы" - загружаем заказы со статусами NEW и PAID без currierId
+  const { 
+    data: newOrdersData, 
+    isLoading: isLoadingNew, 
+    isFetching: isFetchingNew,
+    refetch: refetchNew,
+    error: newOrdersError
+  } = useOrderByLocation({
+    status: OrderStatus.NEW,
+    currierId: undefined,
+  });
 
   const { 
-    data: ordersData, 
-    isLoading, 
-    isFetching, 
-    refetch,
-    error: ordersError
+    data: paidOrdersData, 
+    isLoading: isLoadingPaid, 
+    isFetching: isFetchingPaid,
+    refetch: refetchPaid,
+    error: paidOrdersError
   } = useOrderByLocation({
-    status: selectedStatus,
-    currierId: selectedStatus ? statusesWithOutCurrierId.includes(selectedStatus as OrderStatus) ? undefined : user?.id :  user?.id,
+    status: OrderStatus.PAID,
+    currierId: undefined,
   });
+
+  // Для табы "Мои заказы" - загружаем заказы курьера с учетом выбранного фильтра статуса
+  const { 
+    data: myOrdersData, 
+    isLoading: isLoadingMy, 
+    isFetching: isFetchingMy,
+    refetch: refetchMy,
+    error: myOrdersError
+  } = useOrderByLocation({
+    status: myOrdersStatusFilter,
+    currierId: user?.id,
+  });
+
+  // Объединяем данные в зависимости от выбранной табы
+  const ordersData = useMemo(() => {
+    if (activeTab === 'new') {
+      const newOrders = newOrdersData?.orders || [];
+      const paidOrders = paidOrdersData?.orders || [];
+      return {
+        orders: [...newOrders, ...paidOrders],
+        total: (newOrdersData?.total || 0) + (paidOrdersData?.total || 0),
+      };
+    } else {
+      return myOrdersData;
+    }
+  }, [activeTab, newOrdersData, paidOrdersData, myOrdersData]);
+
+  const isLoading = activeTab === 'new' ? (isLoadingNew || isLoadingPaid) : isLoadingMy;
+  const isFetching = activeTab === 'new' ? (isFetchingNew || isFetchingPaid) : isFetchingMy;
+  const ordersError = activeTab === 'new' ? (newOrdersError || paidOrdersError) : myOrdersError;
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
 
@@ -123,8 +166,13 @@ const OrdersScreen: React.FC = () => {
   }, []);
 
   const handleRefresh = useCallback(() => {
-    refetch();
-  }, [refetch]);
+    if (activeTab === 'new') {
+      refetchNew();
+      refetchPaid();
+    } else {
+      refetchMy();
+    }
+  }, [activeTab, refetchNew, refetchPaid, refetchMy]);
 
   const handleConfirmComplete = useCallback(() => {
     if (selectedOrder) {
@@ -183,10 +231,17 @@ const OrdersScreen: React.FC = () => {
           placeholder="Поиск по описанию, адресу, клиенту..."
         /> */}
 
-        <OrderFilters
-          selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
+        <OrderTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
+
+        {activeTab === 'my' && (
+          <OrderStatusSelect
+            selectedStatus={myOrdersStatusFilter}
+            onStatusChange={setMyOrdersStatusFilter}
+          />
+        )}
 
         {ordersError && (
           <View style={styles.errorContainer}>
