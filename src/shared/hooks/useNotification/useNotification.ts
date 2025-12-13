@@ -82,8 +82,14 @@ export const useNotification = (isSignedIn: boolean) => {
 
     const hasMessagingPermission = await requestMessagingPermission();
     if (hasMessagingPermission) {
-      const token = await messaging().getToken();
-      await sendToken(token);
+      try {
+        const token = await messaging().getToken();
+        if (token) {
+          await sendToken(token);
+        }
+      } catch (error) {
+        console.error("Ошибка получения или отправки токена:", error);
+      }
     }
 
     const handleNotificationClick = async (response: any) => {
@@ -131,8 +137,33 @@ export const useNotification = (isSignedIn: boolean) => {
   };
 
   useEffect(() => {
-    if (isSignedIn) {
-      initializeNotifications();
+    if (!isSignedIn) {
+      return;
     }
+
+    let cleanup: (() => void) | undefined;
+
+    initializeNotifications()
+      .then((cleanupFn) => {
+        cleanup = cleanupFn;
+      })
+      .catch((error) => {
+        console.error("Ошибка инициализации уведомлений:", error);
+      });
+
+    const onTokenRefresh = messaging().onTokenRefresh(async (token) => {
+      try {
+        if (token) {
+          await sendToken(token);
+        }
+      } catch (error) {
+        console.error("Ошибка обновления токена:", error);
+      }
+    });
+
+    return () => {
+      cleanup?.();
+      onTokenRefresh();
+    };
   }, [isSignedIn]);
 };

@@ -14,7 +14,6 @@ import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
 import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
-import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
 
 // Сохраняем splash screen видимым до готовности приложения
 SplashScreen.preventAutoHideAsync();
@@ -26,7 +25,6 @@ const RootStack = () => {
     queryFn: () => getStorageIsFirstEnter(),
   });
   const [isNavigationReady, setIsNavigationReady] = useState(false);
-  useNotification(!!userMe?.id);
   // Скрываем splash screen после небольшой задержки, чтобы он успел показаться
   useEffect(() => {
     const prepareApp = async () => {

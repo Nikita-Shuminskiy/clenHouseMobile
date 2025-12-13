@@ -18,6 +18,7 @@ export const addDeviceToken = async (
       token: token,
     },
   });
+  console.log("Токен успешно отправлен на сервер:", response.status);
   return response;
 };
 
@@ -44,7 +45,16 @@ export const requestNotificationPermission = async () => {
 };
 
 export const sendToken = async (token: string) => {
-  await addDeviceToken(token);
+  try {
+    if (!token) {
+      console.warn("Попытка отправить пустой токен");
+      return;
+    }
+    await addDeviceToken(token);
+  } catch (error) {
+    console.error("Ошибка отправки токена на сервер:", error);
+    throw error;
+  }
 };
 
 export const requestMessagingPermission = async () => {
@@ -132,13 +142,3 @@ const createCategoriesChatIos = async () => {
     },
   ]);
 };
-
-/*
-messaging().onTokenRefresh(async (token) => {
-    try {
-        await sendToken(token);
-    } catch (error) {
-        console.error('Failed to update token:', error);
-    }
-});
-*/
