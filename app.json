@@ -8,6 +8,11 @@
     "scheme": "cleanhousemobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "notification": {
+      "iosDisplayInForeground": true,
+      "color": "#D00000",
+      "icon": "./assets/images/adaptive-icon.png"
+    },
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": false,
