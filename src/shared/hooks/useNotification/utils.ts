@@ -5,8 +5,21 @@ import notifee, {
 } from "@notifee/react-native";
 import * as Notifications from "expo-notifications";
 
-import { addDeviceToken } from "../../api/api-hooks/notify";
 import { PermissionsAndroid, Platform } from "react-native";
+import { api } from "../../api/utils/axios-api-base";
+import { AxiosResponse } from "axios";
+
+export const addDeviceToken = async (
+  token: string
+): Promise<AxiosResponse<void>> => {
+  const response = await api.patch<any>({
+    url: `user/add-device-token`,
+    body: {
+      token: token,
+    },
+  });
+  return response;
+};
 
 export const requestNotificationPermission = async () => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -42,7 +55,7 @@ export const requestMessagingPermission = async () => {
   );
 };
 
-export const displayNotification = async (remoteMessage) => {
+export const displayNotification = async (remoteMessage: any) => {
   const channelId = await createChannel();
 
   if (Platform.OS === "ios" && remoteMessage?.data?.route === "Chats") {
