@@ -84,9 +84,8 @@ export const useOrderByLocation = (params?: {
 
   const hasLocation = hasPermission && location !== null;
 
-  console.log(hasLocation, "hasLocation");
-  console.log(location, "location");
-  
+
+
   // Используем ближайшие заказы, если есть локация
   const nearbyQuery = useQuery<OrdersListResponse>({
     queryKey: ["orders", "nearby", { ...params, lat: location?.latitude, lon: location?.longitude }],

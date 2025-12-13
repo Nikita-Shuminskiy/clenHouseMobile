@@ -11,8 +11,51 @@ import notifee, { EventType } from "@notifee/react-native";
 import * as Updates from "expo-updates";
 import { useNavigation } from "@react-navigation/native";
 import { AppState } from "react-native";
+import { router } from "expo-router";
 
 messaging().setBackgroundMessageHandler(displayNotification);
+
+const NAVIGATION_DELAY = 2000; // Задержка перед навигацией для инициализации приложения
+
+const parseRoute = (
+  routeString: string | object | undefined
+): { orderId?: string; type?: string } | null => {
+  if (!routeString) {
+    return null;
+  }
+
+  try {
+    if (typeof routeString === "object") {
+      return routeString as { orderId?: string; type?: string };
+    }
+
+    if (typeof routeString === "string") {
+      const parsed = JSON.parse(routeString);
+      return parsed;
+    }
+
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+const handleNotificationRoute = (
+  routeData: { orderId?: string; type?: string } | null
+) => {
+  if (!routeData || !routeData.orderId) {
+    return;
+  }
+
+  const routePath =
+    `/(protected)/order-details?orderId=${routeData.orderId}` as any;
+
+  try {
+    router.push(routePath);
+  } catch (error) {
+    // Ошибка навигации игнорируется
+  }
+};
 
 const handleNotificationEvent = async ({
   type,
@@ -25,23 +68,23 @@ const handleNotificationEvent = async ({
 
   switch (type) {
     case EventType.DISMISSED:
-      // await notifee.stopForegroundService()
       break;
     case EventType.PRESS:
     case EventType.ACTION_PRESS:
       const dataRoute = notification?.data?.route;
+      const parsedRoute = parseRoute(dataRoute);
 
       if (pressAction?.id === "reply") {
-        //send message to chat
-
         if (notification?.id) {
           await notifee.cancelNotification(notification.id);
         }
         return;
       }
 
-      if (dataRoute) {
-        //  handleNotificationRoute(dataRoute);
+      if (parsedRoute) {
+        setTimeout(() => {
+          handleNotificationRoute(parsedRoute);
+        }, NAVIGATION_DELAY);
       } else {
         await Updates.reloadAsync();
       }
@@ -55,8 +98,13 @@ const handleNotificationEvent = async ({
   }
 };
 
-notifee.onBackgroundEvent(handleNotificationEvent);
-notifee.onForegroundEvent(handleNotificationEvent);
+notifee.onBackgroundEvent(async (event) => {
+  await handleNotificationEvent(event);
+});
+
+notifee.onForegroundEvent(async (event) => {
+  await handleNotificationEvent(event);
+});
 
 export const useNotification = (isSignedIn: boolean) => {
   const navigation = useNavigation();
@@ -67,38 +115,58 @@ export const useNotification = (isSignedIn: boolean) => {
   };
 
   const initializeNotifications = async () => {
-    const initialNotification = await messaging().getInitialNotification();
-    if (initialNotification) {
-      const dataRoute = initialNotification?.data?.route;
+    try {
+      const initialNotification = await messaging().getInitialNotification();
+      if (initialNotification) {
+        const dataRoute = initialNotification?.data?.route;
+        const parsedRoute = parseRoute(dataRoute);
 
-      setTimeout(() => {
-        if (dataRoute) {
-          //  handleNotificationRoute(dataRoute);
+        if (parsedRoute) {
+          setTimeout(() => {
+            handleNotificationRoute(parsedRoute);
+          }, NAVIGATION_DELAY);
         }
-      }, 1000);
-    }
-
-    await requestNotificationPermission();
-
-    const hasMessagingPermission = await requestMessagingPermission();
-    if (hasMessagingPermission) {
-      try {
-        const token = await messaging().getToken();
-
-        if (token) {
-          await sendToken(token);
-        }
-      } catch (error) {
-        console.error("Ошибка получения или отправки токена:", error);
       }
+
+      let permissionStatus = false;
+      try {
+        permissionStatus = await requestNotificationPermission();
+      } catch (error) {
+        // Игнорируем ошибки разрешений
+      }
+
+      let hasMessagingPermission = false;
+      try {
+        hasMessagingPermission = await requestMessagingPermission();
+      } catch (error) {
+        // Игнорируем ошибки разрешений
+      }
+
+      if (hasMessagingPermission) {
+        try {
+          const token = await messaging().getToken();
+
+          if (token) {
+            await sendToken(token);
+          }
+        } catch (error) {
+          // Игнорируем ошибки токена
+        }
+      }
+    } catch (error) {
+      // Игнорируем критические ошибки
     }
 
     const handleNotificationClick = async (response: any) => {
       const notificationData = response?.notification?.request?.content?.data;
-      const dataRoute = notificationData?.data?.route;
-      if (dataRoute) {
-        //  handleNotificationRoute(dataRoute);
-      } else {
+      const dataRoute =
+        notificationData?.data?.route || notificationData?.route;
+      const parsedRoute = parseRoute(dataRoute);
+
+      if (parsedRoute) {
+        setTimeout(() => {
+          handleNotificationRoute(parsedRoute);
+        }, NAVIGATION_DELAY);
       }
     };
 
@@ -109,8 +177,12 @@ export const useNotification = (isSignedIn: boolean) => {
 
     messaging().onNotificationOpenedApp((remoteMessage: any) => {
       const dataRoute = remoteMessage?.data?.route;
-      if (dataRoute) {
-        //  handleNotificationRoute(dataRoute);
+      const parsedRoute = parseRoute(dataRoute);
+
+      if (parsedRoute) {
+        setTimeout(() => {
+          handleNotificationRoute(parsedRoute);
+        }, NAVIGATION_DELAY);
       } else {
         handleNotificationClick({
           notification: {
@@ -148,8 +220,8 @@ export const useNotification = (isSignedIn: boolean) => {
       .then((cleanupFn) => {
         cleanup = cleanupFn;
       })
-      .catch((error) => {
-        console.error("Ошибка инициализации уведомлений:", error);
+      .catch(() => {
+        // Игнорируем ошибки инициализации
       });
 
     const onTokenRefresh = messaging().onTokenRefresh(async (token) => {
@@ -158,7 +230,7 @@ export const useNotification = (isSignedIn: boolean) => {
           await sendToken(token);
         }
       } catch (error) {
-        console.error("Ошибка обновления токена:", error);
+        // Игнорируем ошибки обновления токена
       }
     });
 

@@ -17,51 +17,87 @@ export const addDeviceToken = async (
   const response = await instance.patch<any>("/user/add-device-token", {
     token: token,
   });
-  console.log("Токен успешно отправлен на сервер:", response.status);
   return response;
 };
 
 export const requestNotificationPermission = async () => {
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  try {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
 
-  await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-  );
+    if (Platform.OS === "android") {
+      try {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        );
+      } catch (error) {
+        // Игнорируем ошибки
+      }
+    }
 
-  await notifee.requestPermission({
-    sound: true,
-    announcement: true,
-    alert: true,
-    criticalAlert: true,
-  });
-  let finalStatus = existingStatus;
+    let finalStatus = existingStatus;
 
-  if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
+    if (existingStatus !== "granted") {
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      } catch (error) {
+        // Игнорируем ошибки
+      }
+    }
+
+    if (finalStatus === "granted") {
+      try {
+        const notifeeSettings = await notifee.getNotificationSettings();
+
+        if (notifeeSettings.authorizationStatus < 1) {
+          try {
+            await Promise.race([
+              notifee.requestPermission({
+                sound: true,
+                announcement: true,
+                alert: true,
+                criticalAlert: true,
+              }),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Notifee request timeout")), 5000)
+              ),
+            ]);
+          } catch (error) {
+            // Игнорируем ошибки Notifee
+          }
+        }
+      } catch (error) {
+        // Игнорируем ошибки проверки Notifee
+      }
+    }
+
+    return finalStatus === "granted";
+  } catch (error) {
+    return false;
   }
-  return finalStatus === "granted";
 };
 
 export const sendToken = async (token: string) => {
   try {
     if (!token) {
-      console.warn("Попытка отправить пустой токен");
       return;
     }
     await addDeviceToken(token);
   } catch (error) {
-    console.error("Ошибка отправки токена на сервер:", error);
     throw error;
   }
 };
 
 export const requestMessagingPermission = async () => {
-  const authStatus = await messaging().requestPermission();
-  return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  );
+  try {
+    const authStatus = await messaging().requestPermission();
+    return (
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL
+    );
+  } catch (error) {
+    return false;
+  }
 };
 
 export const displayNotification = async (remoteMessage: any) => {
@@ -75,14 +111,16 @@ export const displayNotification = async (remoteMessage: any) => {
   const chatId = remoteMessage?.data?.chatId;
   const groupKey = isChatNotification && chatId ? `Chats` : "";
 
+  const notificationData = {
+    route: remoteMessage?.data?.route || "1",
+    ...remoteMessage?.data,
+  };
+
   await notifee.displayNotification({
     title:
       remoteMessage?.data?.title || remoteMessage?.title || "Default title",
     body: remoteMessage?.data?.body || remoteMessage?.body || "Default body",
-    data: {
-      route: remoteMessage?.data?.route || "1",
-      ...remoteMessage?.data,
-    },
+    data: notificationData,
     android: {
       channelId,
       pressAction: {

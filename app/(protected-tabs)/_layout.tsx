@@ -13,11 +13,18 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
+import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
+
 
 export default function ProtectedLayout() {
   const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const { data: user, isLoading: isLoadingUser } = useGetMe();
+
+  // Инициализация уведомлений для авторизованного пользователя
+  // Ждем загрузки пользователя перед инициализацией
+  useNotification(!isLoadingUser && !!user?.role);
 
 
   return (
