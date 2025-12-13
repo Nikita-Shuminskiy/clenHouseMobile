@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, View, StyleSheet, RefreshControl } from 'react-native';
-import { OrderResponseDto } from '@/src/modules/orders/types/orders';
+import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
 import OrderCard from './OrderCard';
 import EmptyOrders from './EmptyOrders';
 
@@ -23,13 +23,16 @@ const OrderList: React.FC<OrderListProps> = ({
   onOrderAction,
   onLoadMore,
 }) => {
-  const renderOrder = ({ item }: { item: OrderResponseDto }) => (
-    <OrderCard
-      order={item}
-      onPress={onOrderPress}
-      onAction={onOrderAction}
-    />
-  );
+  const renderOrder = ({ item }: { item: OrderResponseDto }) => {
+
+    return (
+      <OrderCard
+        order={item}
+        onPress={onOrderPress}
+        onAction={onOrderAction}
+      />
+    );
+  }
 
   const renderEmpty = () => (
     <EmptyOrders />

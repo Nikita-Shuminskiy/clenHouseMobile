@@ -19,7 +19,7 @@ import { useOrder, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/or
 import { OrderStatus, OrderResponseDto } from "@/src/modules/orders/types/orders";
 import Button from "@/src/shared/components/ui-kit/button";
 import useTheme from "@/src/shared/use-theme/use-theme";
-import { BackArrowIcon } from "@/src/shared/components/icons";
+import { BackArrowIcon, PhoneIcon } from "@/src/shared/components/icons";
 import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
 
 // Вспомогательные функции для определения доступных действий
@@ -387,8 +387,10 @@ const OrderDetailsScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => handlePhonePress(order.customer.phone)}
             activeOpacity={0.7}
+            style={styles.phoneContainer}
           >
-            <Text style={styles.customerPhone}>{order.customer.phone}</Text>
+            <PhoneIcon width={16} height={16} color={colors.primary500} />
+            <Text style={[styles.customerPhone, { color: colors.primary500 }]}>{order.customer.phone}</Text>
           </TouchableOpacity>
 
           <Text style={styles.sectionTitle}>Сумма</Text>
@@ -558,11 +560,16 @@ const styles = StyleSheet.create({
     color: "#1A1A1A",
     lineHeight: 20,
   },
+  phoneContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
   customerPhone: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
-    color: "#5A6E8A",
     lineHeight: 20,
   },
   orderAmount: {

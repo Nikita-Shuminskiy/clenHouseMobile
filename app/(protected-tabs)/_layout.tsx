@@ -19,8 +19,6 @@ export default function ProtectedLayout() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
 
-  // Инициализация уведомлений после авторизации
-  useNotification(true);
 
   return (
     <Tabs

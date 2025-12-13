@@ -16,8 +16,12 @@ import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 import { formatDateStringFull, formatPrice } from "@/src/shared/utils/formatting";
 import * as Location from 'expo-location';
+import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
 
 const HomeScreen: React.FC = () => {
+
+  // Инициализация уведомлений после авторизации
+  useNotification(true);
   const { data: user } = useGetMe();
 
   useEffect(() => {

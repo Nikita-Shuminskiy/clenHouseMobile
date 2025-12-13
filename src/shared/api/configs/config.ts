@@ -1,7 +1,14 @@
 import axios from "axios";
 import { stringify } from "qs";
 
-import { getRefreshToken, getToken, removeRefreshToken, removeToken, setRefreshToken, setToken } from "../../utils/token";
+import {
+  getRefreshToken,
+  getToken,
+  removeRefreshToken,
+  removeToken,
+  setRefreshToken,
+  setToken,
+} from "../../utils/token";
 import { QS_OPTIONS } from "../constants/qs-options";
 
 export const API_URL = "https://cleanhouse123-cleanhouseapi-209c.twc1.net/";
@@ -20,6 +27,7 @@ export const instance = axios.create({
 instance.interceptors.request.use(
   async (config) => {
     const token = await getToken();
+
     if (token) {
       //@ts-ignore
       config.headers = {
@@ -43,7 +51,7 @@ instance.interceptors.response.use(
       try {
         const refreshToken = await getRefreshToken();
         const accessToken = await getToken();
-        
+
         if (!refreshToken || !accessToken) {
           await removeToken();
           await removeRefreshToken();
@@ -55,7 +63,8 @@ instance.interceptors.response.use(
           refreshToken,
         });
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          response.data;
         await setToken(newAccessToken);
         await setRefreshToken(newRefreshToken);
 

@@ -1,4 +1,4 @@
-import messaging from "@react-native-firebase/messaging";
+import messaging, { getToken } from "@react-native-firebase/messaging";
 import notifee, {
   AndroidImportance,
   AndroidVisibility,
@@ -8,15 +8,14 @@ import * as Notifications from "expo-notifications";
 import { PermissionsAndroid, Platform } from "react-native";
 import { api } from "../../api/utils/axios-api-base";
 import { AxiosResponse } from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { instance } from "../../api/configs/config";
 
 export const addDeviceToken = async (
   token: string
 ): Promise<AxiosResponse<void>> => {
-  const response = await api.patch<any>({
-    url: `user/add-device-token`,
-    body: {
-      token: token,
-    },
+  const response = await instance.patch<any>("/user/add-device-token", {
+    token: token,
   });
   console.log("Токен успешно отправлен на сервер:", response.status);
   return response;

@@ -14,6 +14,8 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
+
+
   const { location, hasPermission } = useLocation();
   const hasLocation = hasPermission && location !== null;
   const { colors } = useTheme();

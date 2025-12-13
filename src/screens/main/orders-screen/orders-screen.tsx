@@ -30,9 +30,9 @@ const OrdersScreen: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   // Для табы "Новые заказы" - загружаем заказы со статусами NEW и PAID без currierId
-  const { 
-    data: newOrdersData, 
-    isLoading: isLoadingNew, 
+  const {
+    data: newOrdersData,
+    isLoading: isLoadingNew,
     isFetching: isFetchingNew,
     refetch: refetchNew,
     error: newOrdersError
@@ -41,9 +41,9 @@ const OrdersScreen: React.FC = () => {
     currierId: undefined,
   });
 
-  const { 
-    data: paidOrdersData, 
-    isLoading: isLoadingPaid, 
+  const {
+    data: paidOrdersData,
+    isLoading: isLoadingPaid,
     isFetching: isFetchingPaid,
     refetch: refetchPaid,
     error: paidOrdersError
@@ -53,9 +53,9 @@ const OrdersScreen: React.FC = () => {
   });
 
   // Для табы "Мои заказы" - загружаем заказы курьера с учетом выбранного фильтра статуса
-  const { 
-    data: myOrdersData, 
-    isLoading: isLoadingMy, 
+  const {
+    data: myOrdersData,
+    isLoading: isLoadingMy,
     isFetching: isFetchingMy,
     refetch: refetchMy,
     error: myOrdersError
@@ -67,7 +67,7 @@ const OrdersScreen: React.FC = () => {
   // Объединяем данные в зависимости от выбранной табы
   const ordersData = useMemo(() => {
     if (activeTab === 'new') {
-      const newOrders = newOrdersData?.orders || [];
+      const newOrders = newOrdersData?.orders?.filter(order => order?.status === OrderStatus.PAID) || [];
       const paidOrders = paidOrdersData?.orders || [];
       return {
         orders: [...newOrders, ...paidOrders],
@@ -86,7 +86,7 @@ const OrdersScreen: React.FC = () => {
 
   const filteredOrders = React.useMemo(() => {
     if (!ordersData?.orders) return [];
-    
+
     return ordersData.orders.filter(order => {
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
@@ -114,9 +114,9 @@ const OrdersScreen: React.FC = () => {
         }
         updateStatusMutation.mutate({
           id: order.id,
-          data: { 
+          data: {
             status: OrderStatus.ASSIGNED,
-            currierId: user.id 
+            currierId: user.id
           }
         }, {
           onError: (error) => {
@@ -139,8 +139,8 @@ const OrdersScreen: React.FC = () => {
           'Вы уверены, что хотите отменить этот заказ?',
           [
             { text: 'Нет', style: 'cancel' },
-            { 
-              text: 'Да', 
+            {
+              text: 'Да',
               style: 'destructive',
               onPress: () => {
                 cancelOrderMutation.mutate({
@@ -178,9 +178,9 @@ const OrdersScreen: React.FC = () => {
     if (selectedOrder) {
       updateStatusMutation.mutate({
         id: selectedOrder.id,
-        data: { 
+        data: {
           status: OrderStatus.DONE,
-          currierId: user?.id 
+          currierId: user?.id
         }
       }, {
         onSuccess: () => {
@@ -200,9 +200,9 @@ const OrdersScreen: React.FC = () => {
     if (selectedOrder) {
       updateStatusMutation.mutate({
         id: selectedOrder.id,
-        data: { 
+        data: {
           status: OrderStatus.IN_PROGRESS,
-          currierId: user?.id 
+          currierId: user?.id
         }
       }, {
         onSuccess: () => {

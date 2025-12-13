@@ -84,6 +84,7 @@ export const useNotification = (isSignedIn: boolean) => {
     if (hasMessagingPermission) {
       try {
         const token = await messaging().getToken();
+
         if (token) {
           await sendToken(token);
         }
