@@ -12,11 +12,15 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
 
 export default function ProtectedLayout() {
   const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+
+  // Инициализация уведомлений после авторизации
+  useNotification(true);
 
   return (
     <Tabs
