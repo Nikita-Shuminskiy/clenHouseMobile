@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
+import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
+import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
 
 // Сохраняем splash screen видимым до готовности приложения
 SplashScreen.preventAutoHideAsync();
@@ -24,24 +26,26 @@ const RootStack = () => {
     queryFn: () => getStorageIsFirstEnter(),
   });
   const [isNavigationReady, setIsNavigationReady] = useState(false);
-
+  useNotification(!!userMe?.id);
   // Скрываем splash screen после небольшой задержки, чтобы он успел показаться
   useEffect(() => {
     const prepareApp = async () => {
       // Ждем минимум 500мс чтобы splash screen успел показаться
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Запрашиваем разрешение на геолокацию в начале приложения
       // Используется для поиска ближайших заказов курьеру
       await requestLocationPermission();
-      
+
       // Скрываем splash screen
       await SplashScreen.hideAsync();
       setIsNavigationReady(true);
+      requestNotificationPermission();
     };
-    
+
     prepareApp();
   }, []);
+
 
   useEffect(() => {
     if (isLoadingGetMe || isLoadingGetIsFirstEnter || !isNavigationReady) {
@@ -50,7 +54,7 @@ const RootStack = () => {
 
     // Проверяем, находимся ли мы уже на нужном экране, чтобы избежать лишних переходов
     const currentPath = router.canGoBack() ? 'unknown' : 'initial';
-    
+
     if (userMe?.role) {
       // Перенаправляем только если не находимся уже на защищенных экранах
       if (!currentPath.includes('protected')) {
