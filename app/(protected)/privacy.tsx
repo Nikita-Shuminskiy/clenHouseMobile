@@ -5,6 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Linking,
+  Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -16,6 +19,43 @@ const PrivacyScreen: React.FC = () => {
 
   const handleBack = () => {
     router.back();
+  };
+
+  const handleEmailPress = () => {
+    const email = contactInfo.email;
+    const subject = 'Вопрос по конфиденциальности';
+    const body = 'Здравствуйте! У меня вопрос по обработке персональных данных...';
+
+    const emailUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    Linking.canOpenURL(emailUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(emailUrl);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось открыть почтовое приложение');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Ошибка', 'Не удалось открыть почтовое приложение');
+      });
+  };
+
+  const handlePhonePress = () => {
+    const phoneNumber = contactInfo.phone.replace(/[\s()\-]/g, '');
+    const phoneUrl = `tel:${phoneNumber}`;
+
+    Linking.canOpenURL(phoneUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(phoneUrl);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось открыть приложение для звонков');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Ошибка', 'Не удалось открыть приложение для звонков');
+      });
   };
 
   const privacySections = [
@@ -117,8 +157,12 @@ const PrivacyScreen: React.FC = () => {
           <Text style={[styles.contactText, { color: theme.colors.grey600 }]}>
             Если у вас есть вопросы по обработке персональных данных, обращайтесь:
           </Text>
-          
-          <View style={styles.contactItem}>
+
+          <TouchableOpacity
+            style={styles.contactItem}
+            onPress={handleEmailPress}
+            activeOpacity={0.7}
+          >
             <View style={styles.contactIcon}>
               <EmailIcon width={20} height={20} color={theme.colors.primary500} />
             </View>
@@ -128,9 +172,13 @@ const PrivacyScreen: React.FC = () => {
                 {contactInfo.email}
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          <View style={styles.contactItem}>
+          <TouchableOpacity
+            style={styles.contactItem}
+            onPress={handlePhonePress}
+            activeOpacity={0.7}
+          >
             <View style={styles.contactIcon}>
               <PhoneIcon width={20} height={20} color={theme.colors.primary500} />
             </View>
@@ -140,7 +188,7 @@ const PrivacyScreen: React.FC = () => {
                 {contactInfo.phone}
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
 
           <View style={styles.contactItem}>
             <View style={styles.contactIcon}>
@@ -161,7 +209,7 @@ const PrivacyScreen: React.FC = () => {
             Согласие на обработку данных
           </Text>
           <Text style={[styles.footerText, { color: theme.colors.grey600 }]}>
-            Используя наше приложение, вы соглашаетесь с данной политикой конфиденциальности. 
+            Используя наше приложение, вы соглашаетесь с данной политикой конфиденциальности.
             Мы обязуемся защищать ваши данные в соответствии с действующим законодательством РФ.
           </Text>
         </View>

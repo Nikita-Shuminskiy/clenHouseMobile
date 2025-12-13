@@ -72,6 +72,7 @@ export interface OrderResponseDto {
     lon: number;
   };
   addressDetails?: AddressDetailsDto;
+  numberPackages?: number;
   createdAt: string;
   updatedAt: string;
 }

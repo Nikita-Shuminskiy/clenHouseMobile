@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, Alert } from 'react-native';
 import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
 import Button from '@/src/shared/components/ui-kit/button';
 import { formatPrice, formatDateString } from '@/src/shared/utils/formatting';
@@ -74,6 +74,24 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
     }
   };
 
+  const handlePhonePress = (phone: string, event: any) => {
+    event.stopPropagation();
+    const phoneNumber = phone.replace(/[\s()\-]/g, '');
+    const phoneUrl = `tel:${phoneNumber}`;
+
+    Linking.canOpenURL(phoneUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(phoneUrl);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось открыть приложение для звонков');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Ошибка', 'Не удалось открыть приложение для звонков');
+      });
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -107,10 +125,24 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
           </View>
         )}
 
+        {order.numberPackages !== undefined && order.numberPackages > 0 && (
+          <View style={styles.packagesContainer}>
+            <Text style={styles.packagesIcon}>📦</Text>
+            <Text style={styles.packagesText}>
+              {order.numberPackages} {order.numberPackages === 1 ? 'пакет' : order.numberPackages < 5 ? 'пакета' : 'пакетов'}
+            </Text>
+          </View>
+        )}
+
         <View style={styles.customerContainer}>
           <Text style={styles.customerLabel}>Клиент:</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
-          <Text style={styles.customerPhone}>{order.customer.phone}</Text>
+          <TouchableOpacity
+            onPress={(e) => handlePhonePress(order.customer.phone, e)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.customerPhone}>{order.customer.phone}</Text>
+          </TouchableOpacity>
         </View>
 
         {order.currier && (
@@ -375,6 +407,26 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     color: '#1A1A1A',
+  },
+  packagesContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F0F7FF',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  packagesIcon: {
+    fontSize: 16,
+  },
+  packagesText: {
+    fontFamily: 'Onest',
+    fontWeight: '600',
+    fontSize: 12,
+    color: '#1A1A1A',
+    lineHeight: 16,
   },
   actions: {
     flexDirection: 'row',
