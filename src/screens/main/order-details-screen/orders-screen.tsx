@@ -201,11 +201,11 @@ const OrderDetailsScreen: React.FC = () => {
       // Добавляем только номер дома и корпус для навигатора
       if (order.addressDetails && !hasBuildingInAddress) {
         const navigationDetails: string[] = [];
-        
+
         if (order.addressDetails.building) {
           navigationDetails.push(String(order.addressDetails.building));
         }
-        
+
         if (order.addressDetails.buildingBlock) {
           navigationDetails.push(`корп. ${order.addressDetails.buildingBlock}`);
         }
@@ -216,7 +216,7 @@ const OrderDetailsScreen: React.FC = () => {
       }
 
       await Clipboard.setStringAsync(navigationAddress);
-      
+
       toast.success('Адрес скопирован', {
         description: 'Адрес для навигатора скопирован в буфер обмена',
         duration: 2000,
@@ -228,6 +228,23 @@ const OrderDetailsScreen: React.FC = () => {
       });
     }
   }, [order]);
+
+  const handlePhonePress = useCallback((phone: string) => {
+    const phoneNumber = phone.replace(/[\s()\-]/g, '');
+    const phoneUrl = `tel:${phoneNumber}`;
+
+    Linking.canOpenURL(phoneUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(phoneUrl);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось открыть приложение для звонков');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Ошибка', 'Не удалось открыть приложение для звонков');
+      });
+  }, []);
 
   console.log(order);
 
@@ -367,10 +384,27 @@ const OrderDetailsScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Клиент</Text>
           <Text style={styles.customerName}>{order.customer.name}</Text>
-          <Text style={styles.customerPhone}>{order.customer.phone}</Text>
+          <TouchableOpacity
+            onPress={() => handlePhonePress(order.customer.phone)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.customerPhone}>{order.customer.phone}</Text>
+          </TouchableOpacity>
 
           <Text style={styles.sectionTitle}>Сумма</Text>
           <Text style={styles.orderAmount}>{formatPrice(Number(order.price))}</Text>
+
+          {order.numberPackages !== undefined && order.numberPackages > 0 && (
+            <View style={styles.packagesContainer}>
+              <Text style={styles.sectionTitle}>Количество пакетов</Text>
+              <View style={styles.packagesBadge}>
+                <Text style={styles.packagesIcon}>📦</Text>
+                <Text style={styles.packagesText}>
+                  {order.numberPackages} {order.numberPackages === 1 ? 'пакет' : order.numberPackages < 5 ? 'пакета' : 'пакетов'}
+                </Text>
+              </View>
+            </View>
+          )}
 
           {order.notes && (
             <View key={`notes-${order.id}`}>
@@ -606,6 +640,28 @@ const styles = StyleSheet.create({
   },
   addressActionButton: {
     width: '100%',
+  },
+  packagesContainer: {
+    marginTop: 16,
+  },
+  packagesBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F7FF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 8,
+  },
+  packagesIcon: {
+    fontSize: 20,
+  },
+  packagesText: {
+    fontFamily: 'Onest',
+    fontWeight: '600',
+    fontSize: 16,
+    color: '#1A1A1A',
+    lineHeight: 24,
   },
 });
 

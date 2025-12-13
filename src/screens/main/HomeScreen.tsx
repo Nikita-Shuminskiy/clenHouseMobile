@@ -22,7 +22,7 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     async function getCurrentLocation() {
-      
+
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         return;
@@ -30,7 +30,7 @@ const HomeScreen: React.FC = () => {
 
       let location = await Location.getCurrentPositionAsync({});
       console.log(location);
-      
+
     }
 
     getCurrentLocation();
@@ -165,6 +165,15 @@ const HomeScreen: React.FC = () => {
                       </Text>
                       <Text style={styles.orderPrice}>{formatPrice(Number(order.price))}</Text>
                     </View>
+
+                    {order.numberPackages !== undefined && order.numberPackages > 0 && (
+                      <View style={styles.packagesContainer}>
+                        <Text style={styles.packagesIcon}>📦</Text>
+                        <Text style={styles.packagesText}>
+                          {order.numberPackages} {order.numberPackages === 1 ? 'пакет' : order.numberPackages < 5 ? 'пакета' : 'пакетов'}
+                        </Text>
+                      </View>
+                    )}
 
                     <Text style={styles.orderTime}>
                       📅{" "}
@@ -511,6 +520,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     color: "#7D8EAA",
+  },
+  packagesContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#F0F7FF",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginBottom: 8,
+  },
+  packagesIcon: {
+    fontSize: 16,
+  },
+  packagesText: {
+    fontFamily: "Onest",
+    fontWeight: "600",
+    fontSize: 12,
+    color: "#1A1A1A",
+    lineHeight: 16,
   },
   loadingContainer: {
     flexDirection: "row",
