@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280776555700",
+    "project_id": "chistodoma-219f2",
+    "storage_bucket": "chistodoma-219f2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280776555700:android:d8e7d2ec1c226946452be1",
+        "android_client_info": {
+          "package_name": "com.cleanhousemobile.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM9n8fBBluCmUjjaEUmcNr17JxLlHW2WM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
