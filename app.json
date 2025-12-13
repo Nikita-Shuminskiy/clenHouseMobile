@@ -42,6 +42,14 @@
       "@react-native-firebase/messaging",
       "expo-router",
       [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
@@ -61,7 +69,8 @@
           "locationAlwaysPermission": "Приложению требуется доступ к вашей геолокации для предоставления услуг.",
           "locationWhenInUsePermission": "Приложению требуется доступ к вашей геолокации для предоставления услуг."
         }
-      ]
+      ],
+      "expo-build-properties"
     ],
     "splash": {
       "image": "./assets/images/splash-icon.png",

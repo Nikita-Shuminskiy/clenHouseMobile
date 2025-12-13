@@ -100,7 +100,7 @@ export const useNotification = (isSignedIn: boolean) => {
         handleNotificationClick
       );
 
-    messaging().onNotificationOpenedApp((remoteMessage) => {
+    messaging().onNotificationOpenedApp((remoteMessage: any) => {
       const dataRoute = remoteMessage?.data?.route;
       if (dataRoute) {
         //  handleNotificationRoute(dataRoute);
@@ -117,7 +117,7 @@ export const useNotification = (isSignedIn: boolean) => {
       }
     });
 
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+    const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
       const currentRoute = getCurrentRoute();
       if (currentRoute !== "Chats" && AppState.currentState === "active") {
         await displayNotification(remoteMessage);
