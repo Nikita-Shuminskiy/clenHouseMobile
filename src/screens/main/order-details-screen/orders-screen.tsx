@@ -455,7 +455,7 @@ const OrderDetailsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFCFE",
+    backgroundColor: "#FFFFFF",
   },
   header: {
     backgroundColor: "#FFFFFF",

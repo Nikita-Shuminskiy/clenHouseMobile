@@ -228,9 +228,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     shadowColor: '#1A1A1A',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 2,
   },
   header: {
     flexDirection: 'row',
