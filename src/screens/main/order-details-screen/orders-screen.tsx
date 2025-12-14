@@ -9,7 +9,7 @@ import {
   Linking,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
 import * as Clipboard from 'expo-clipboard';
 import { toast } from 'sonner-native';
@@ -95,6 +95,7 @@ const getStatusColor = (status: OrderStatus, colors: any) => {
 };
 
 const OrderDetailsScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const { orderId } = useLocalSearchParams<{ orderId: string }>();
   const { data: user } = useGetMe();
   const { colors } = useTheme();
@@ -250,55 +251,64 @@ const OrderDetailsScreen: React.FC = () => {
 
   if (!orderId) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <Text style={{ fontSize: 24, color: "#1A1A1A" }}>←</Text>
+            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
           </TouchableOpacity>
-          <Text style={styles.title}>Детали заказа</Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Детали заказа</Text>
+          </View>
+          <View style={styles.backButton} />
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>ID заказа не указан</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <Text style={{ fontSize: 24, color: "#1A1A1A" }}>←</Text>
+            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
           </TouchableOpacity>
-          <Text style={styles.title}>Детали заказа</Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Детали заказа</Text>
+          </View>
+          <View style={styles.backButton} />
         </View>
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Загрузка...</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!order) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <Text style={{ fontSize: 24, color: "#1A1A1A" }}>←</Text>
+            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
           </TouchableOpacity>
-          <Text style={styles.title}>Детали заказа</Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Детали заказа</Text>
+          </View>
+          <View style={styles.backButton} />
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Заказ не найден</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <BackArrowIcon width={24} height={24} color="#1A1A1A" />
         </TouchableOpacity>
@@ -450,27 +460,26 @@ const OrderDetailsScreen: React.FC = () => {
           );
         })()}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFCFE",
+    backgroundColor: "#FFFFFF",
   },
   header: {
     backgroundColor: "#FFFFFF",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingBottom: 8,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: "#1A1A1A",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
     shadowRadius: 50,
     elevation: 6,
   },
