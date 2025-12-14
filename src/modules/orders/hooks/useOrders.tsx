@@ -72,24 +72,38 @@ export const useOrdersNearby = (params: {
  * Если локация доступна - использует useOrdersNearby (ближайшие заказы)
  * Если локация недоступна - использует useOrders (обычные заказы)
  */
-export const useOrderByLocation = (params?: {
-  page?: number;
-  limit?: number;
-  status?: OrderStatus;
-  customerId?: string;
-  currierId?: string;
-  maxDistance?: number;
-}) => {
+export const useOrderByLocation = (
+  params?: {
+    page?: number;
+    limit?: number;
+    status?: OrderStatus;
+    customerId?: string;
+    currierId?: string;
+    maxDistance?: number;
+  },
+  options?: {
+    enabled?: boolean;
+  }
+) => {
   const { location, hasPermission } = useLocation();
 
   const hasLocation = hasPermission && location !== null;
+
+  // Фильтруем undefined значения из параметров перед передачей в API
+  const filterUndefined = <T extends Record<string, any>>(obj: T): Partial<T> => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([_, value]) => value !== undefined)
+    ) as Partial<T>;
+  };
+
+  const filteredParams = params ? filterUndefined(params) : undefined;
 
   console.log(hasLocation, "hasLocation");
   console.log(location, "location");
   
   // Используем ближайшие заказы, если есть локация
   const nearbyQuery = useQuery<OrdersListResponse>({
-    queryKey: ["orders", "nearby", { ...params, lat: location?.latitude, lon: location?.longitude }],
+    queryKey: ["orders", "nearby", { ...filteredParams, lat: location?.latitude, lon: location?.longitude }],
     queryFn: () => {
       if (!location?.latitude || !location?.longitude) {
         throw new Error('Локация недоступна');
@@ -97,14 +111,10 @@ export const useOrderByLocation = (params?: {
       return ordersApi.findAllNearby({
         lat: location.latitude,
         lon: location.longitude,
-        maxDistance: params?.maxDistance,
-        page: params?.page,
-        limit: params?.limit,
-        status: params?.status,
-        currierId: params?.currierId,
-      });
+        ...filteredParams,
+      } as any);
     },
-    enabled: hasLocation && !!location,
+    enabled: (options?.enabled !== false) && hasLocation && !!location,
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,
     retry: 1,
@@ -113,9 +123,9 @@ export const useOrderByLocation = (params?: {
 
   // Используем обычные заказы, если локации нет или произошла ошибка в nearbyQuery
   const regularQuery = useQuery<OrdersListResponse>({
-    queryKey: ["orders", params],
-    queryFn: () => ordersApi.findAll(params),
-    enabled: !hasLocation || (nearbyQuery.isError && !nearbyQuery.isFetching),
+    queryKey: ["orders", filteredParams],
+    queryFn: () => ordersApi.findAll(filteredParams),
+    enabled: (options?.enabled !== false) && (!hasLocation || (nearbyQuery.isError && !nearbyQuery.isFetching)),
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,
     retry: 1,

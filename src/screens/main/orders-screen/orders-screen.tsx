@@ -62,6 +62,8 @@ const OrdersScreen: React.FC = () => {
   } = useOrderByLocation({
     status: myOrdersStatusFilter,
     currierId: user?.id,
+  }, {
+    enabled: !!user?.id, // Запрос выполняется только если есть ID пользователя
   });
 
   // Объединяем данные в зависимости от выбранной табы
