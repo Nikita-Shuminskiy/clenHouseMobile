@@ -98,9 +98,8 @@ export const useOrderByLocation = (
 
   const filteredParams = params ? filterUndefined(params) : undefined;
 
-  console.log(hasLocation, "hasLocation");
-  console.log(location, "location");
-  
+
+
   // Используем ближайшие заказы, если есть локация
   const nearbyQuery = useQuery<OrdersListResponse>({
     queryKey: ["orders", "nearby", { ...filteredParams, lat: location?.latitude, lon: location?.longitude }],

@@ -15,15 +15,25 @@ import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
 import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
 
+// Импортируем background handler для регистрации headless tasks
+import "@/src/shared/hooks/useNotification/backgroundHandler";
+// Импортируем useNotification для регистрации foreground handlers
+import "@/src/shared/hooks/useNotification/useNotification";
+import useUpdate from "@/src/shared/hooks/useUpdate";
+
+
 // Сохраняем splash screen видимым до готовности приложения
 SplashScreen.preventAutoHideAsync();
 
 const RootStack = () => {
   const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
+  console.log(userMe, "userMe");
+
   const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
     queryKey: ["isFirstEnter"],
     queryFn: () => getStorageIsFirstEnter(),
   });
+  const { isUpdate, onCloseUpdateModal } = useUpdate();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   // Скрываем splash screen после небольшой задержки, чтобы он успел показаться
   useEffect(() => {

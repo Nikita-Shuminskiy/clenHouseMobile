@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build_apk": "npx eas build -p android --profile preview --local",
-    "eas_update": "npx eas update --branch production --message \"fix bugs\"",
+    "eas_update": "npx eas update --branch preview --message \"fix bugs\"",
     "eas_update:android": "npx eas update --branch preview -p android --message \"fix \"",
     "build_dev": "npx eas build --profile development-simulator --platform android --local",
     "build_android_aab": "npx eas build --profile production --platform android",

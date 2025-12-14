@@ -14,6 +14,8 @@ import { instance } from "../../api/configs/config";
 export const addDeviceToken = async (
   token: string
 ): Promise<AxiosResponse<void>> => {
+  console.log(token, "tokens111");
+
   const response = await instance.patch<any>("/user/add-device-token", {
     token: token,
   });
@@ -22,7 +24,8 @@ export const addDeviceToken = async (
 
 export const requestNotificationPermission = async () => {
   try {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
 
     if (Platform.OS === "android") {
       try {
@@ -59,7 +62,10 @@ export const requestNotificationPermission = async () => {
                 criticalAlert: true,
               }),
               new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Notifee request timeout")), 5000)
+                setTimeout(
+                  () => reject(new Error("Notifee request timeout")),
+                  5000
+                )
               ),
             ]);
           } catch (error) {
@@ -101,25 +107,35 @@ export const requestMessagingPermission = async () => {
 };
 
 export const displayNotification = async (remoteMessage: any) => {
+  // Получаем данные из notification или data
+  const title =
+    remoteMessage?.notification?.title ||
+    remoteMessage?.data?.title ||
+    "Default title";
+  const body =
+    remoteMessage?.notification?.body ||
+    remoteMessage?.data?.body ||
+    "Default body";
+  const route = remoteMessage?.data?.route;
+
   const channelId = await createChannel();
 
-  if (Platform.OS === "ios" && remoteMessage?.data?.route === "Chats") {
+  if (Platform.OS === "ios" && route === "Chats") {
     await createCategoriesChatIos();
   }
 
-  const isChatNotification = remoteMessage?.data?.route === "Chats";
+  const isChatNotification = route === "Chats";
   const chatId = remoteMessage?.data?.chatId;
   const groupKey = isChatNotification && chatId ? `Chats` : "";
 
   const notificationData = {
-    route: remoteMessage?.data?.route || "1",
+    route: route || "1",
     ...remoteMessage?.data,
   };
 
   await notifee.displayNotification({
-    title:
-      remoteMessage?.data?.title || remoteMessage?.title || "Default title",
-    body: remoteMessage?.data?.body || remoteMessage?.body || "Default body",
+    title,
+    body,
     data: notificationData,
     android: {
       channelId,
@@ -128,7 +144,7 @@ export const displayNotification = async (remoteMessage: any) => {
       },
       lightUpScreen: true,
       largeIcon: "notification_icon",
-      color: "green",
+      color: "gray",
       groupId: groupKey,
       showTimestamp: true,
       sortKey: "1",

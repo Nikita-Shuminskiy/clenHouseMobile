@@ -20,11 +20,10 @@ export default function ProtectedLayout() {
   const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
-  const { data: user, isLoading: isLoadingUser } = useGetMe();
+  const { data: user } = useGetMe();
 
   // Инициализация уведомлений для авторизованного пользователя
-  // Ждем загрузки пользователя перед инициализацией
-  useNotification(!isLoadingUser && !!user?.role);
+  useNotification(!!user?.role);
 
 
   return (

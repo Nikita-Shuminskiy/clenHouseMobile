@@ -18,8 +18,12 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.cleanhousemobile.mobile",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"],
+        "NSUserNotificationsEnabled": true,
+        "FirebaseAppDelegateProxyEnabled": true
+      },
+      "backgroundModes": ["remote-notification"]
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -29,7 +33,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.cleanhousemobile.mobile",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ]
     },
     "web": {
       "bundler": "metro",
