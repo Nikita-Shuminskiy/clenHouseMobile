@@ -17,7 +17,7 @@ import { requestNotificationPermission } from "@/src/shared/hooks/useNotificatio
 
 // Импортируем background handler для регистрации headless tasks
 import "@/src/shared/hooks/useNotification/backgroundHandler";
-// Импортируем useNotification для регистрации foreground handlers
+// Импортируем useNotification для регистрации handlers на уровне модуля
 import "@/src/shared/hooks/useNotification/useNotification";
 import useUpdate from "@/src/shared/hooks/useUpdate";
 

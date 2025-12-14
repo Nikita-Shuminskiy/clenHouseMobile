@@ -14,8 +14,6 @@ import { instance } from "../../api/configs/config";
 export const addDeviceToken = async (
   token: string
 ): Promise<AxiosResponse<void>> => {
-  console.log(token, "tokens111");
-
   const response = await instance.patch<any>("/user/add-device-token", {
     token: token,
   });
@@ -23,120 +21,58 @@ export const addDeviceToken = async (
 };
 
 export const requestNotificationPermission = async () => {
-  try {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
 
-    if (Platform.OS === "android") {
-      try {
-        await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-        );
-      } catch (error) {
-        // Игнорируем ошибки
-      }
-    }
+  await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+  );
 
-    let finalStatus = existingStatus;
+  await notifee.requestPermission({
+    sound: true,
+    announcement: true,
+    alert: true,
+    criticalAlert: true,
+  });
+  let finalStatus = existingStatus;
 
-    if (existingStatus !== "granted") {
-      try {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      } catch (error) {
-        // Игнорируем ошибки
-      }
-    }
-
-    if (finalStatus === "granted") {
-      try {
-        const notifeeSettings = await notifee.getNotificationSettings();
-
-        if (notifeeSettings.authorizationStatus < 1) {
-          try {
-            await Promise.race([
-              notifee.requestPermission({
-                sound: true,
-                announcement: true,
-                alert: true,
-                criticalAlert: true,
-              }),
-              new Promise((_, reject) =>
-                setTimeout(
-                  () => reject(new Error("Notifee request timeout")),
-                  5000
-                )
-              ),
-            ]);
-          } catch (error) {
-            // Игнорируем ошибки Notifee
-          }
-        }
-      } catch (error) {
-        // Игнорируем ошибки проверки Notifee
-      }
-    }
-
-    return finalStatus === "granted";
-  } catch (error) {
-    return false;
+  if (existingStatus !== "granted") {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
   }
+  return finalStatus === "granted";
 };
 
 export const sendToken = async (token: string) => {
-  try {
-    if (!token) {
-      return;
-    }
-    await addDeviceToken(token);
-  } catch (error) {
-    throw error;
-  }
+  await addDeviceToken(token);
 };
 
 export const requestMessagingPermission = async () => {
-  try {
-    const authStatus = await messaging().requestPermission();
-    return (
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL
-    );
-  } catch (error) {
-    return false;
-  }
+  const authStatus = await messaging().requestPermission();
+  return (
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL
+  );
 };
 
 export const displayNotification = async (remoteMessage: any) => {
-  // Получаем данные из notification или data
-  const title =
-    remoteMessage?.notification?.title ||
-    remoteMessage?.data?.title ||
-    "Default title";
-  const body =
-    remoteMessage?.notification?.body ||
-    remoteMessage?.data?.body ||
-    "Default body";
-  const route = remoteMessage?.data?.route;
-
   const channelId = await createChannel();
 
-  if (Platform.OS === "ios" && route === "Chats") {
+  if (Platform.OS === "ios" && remoteMessage?.data?.route === "Chats") {
     await createCategoriesChatIos();
   }
 
-  const isChatNotification = route === "Chats";
+  const isChatNotification = remoteMessage?.data?.route === "Chats";
   const chatId = remoteMessage?.data?.chatId;
   const groupKey = isChatNotification && chatId ? `Chats` : "";
 
-  const notificationData = {
-    route: route || "1",
-    ...remoteMessage?.data,
-  };
-
   await notifee.displayNotification({
-    title,
-    body,
-    data: notificationData,
+    title:
+      remoteMessage?.data?.title || remoteMessage?.title || "Default title",
+    body: remoteMessage?.data?.body || remoteMessage?.body || "Default body",
+    data: {
+      route: remoteMessage?.data?.route || "1",
+      ...remoteMessage?.data,
+    },
     android: {
       channelId,
       pressAction: {
@@ -144,7 +80,7 @@ export const displayNotification = async (remoteMessage: any) => {
       },
       lightUpScreen: true,
       largeIcon: "notification_icon",
-      color: "gray",
+      color: "green",
       groupId: groupKey,
       showTimestamp: true,
       sortKey: "1",

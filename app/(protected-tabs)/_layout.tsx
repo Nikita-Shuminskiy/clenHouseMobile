@@ -21,6 +21,7 @@ export default function ProtectedLayout() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const { data: user } = useGetMe();
+  console.log(!!user?.role, "user");
 
   // Инициализация уведомлений для авторизованного пользователя
   useNotification(!!user?.role);
