@@ -29,6 +29,8 @@ const ProfileScreen: React.FC = () => {
   // Получаем статистику заказов пользователя - временно закомментировано
   const { data: ordersData } = useOrderByLocation({
     currierId: user?.id,
+  }, {
+    enabled: !!user?.id,
   });
 
   // Вычисляем статистику - временно закомментировано

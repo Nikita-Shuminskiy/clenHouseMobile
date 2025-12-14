@@ -44,11 +44,15 @@ const HomeScreen: React.FC = () => {
   } = useOrderByLocation({
     status: OrderStatus.ASSIGNED,
     currierId: user?.id,
+  }, {
+    enabled: !!user?.id,
   });
 
   const { data: inProgressOrdersData } = useOrderByLocation({
     status: OrderStatus.IN_PROGRESS,
     currierId: user?.id,
+  }, {
+    enabled: !!user?.id,
   });
 
   // Объединяем заказы в работе
