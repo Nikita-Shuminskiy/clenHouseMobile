@@ -68,6 +68,7 @@ const OrderList: React.FC<OrderListProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 16,
     flexGrow: 1,
   },
