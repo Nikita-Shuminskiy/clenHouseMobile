@@ -41,7 +41,7 @@ const SupportScreen: React.FC = () => {
   };
 
   const handlePhonePress = () => {
-    const phoneNumber = '+7 (800) 123-45-67';
+    const phoneNumber = '8-800-775-63-65';
     const phoneUrl = `tel:${phoneNumber}`;
     
     Linking.canOpenURL(phoneUrl)
@@ -58,7 +58,7 @@ const SupportScreen: React.FC = () => {
   };
 
   const handleTelegramPress = () => {
-    const telegramUrl = 'https://t.me/mussor_support';
+    const telegramUrl = 'https://t.me/chistodoma1';
     
     Linking.canOpenURL(telegramUrl)
       .then((supported) => {
@@ -74,18 +74,18 @@ const SupportScreen: React.FC = () => {
   };
 
   const supportOptions = [
-    {
-      icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
-      title: 'Email поддержка',
-      subtitle: 'chisto.doma1@mail.ru',
-      description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
-      onPress: handleEmailPress,
-      color: '#2196F3'
-    },
+    // {
+    //   icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
+    //   title: 'Email поддержка',
+    //   subtitle: 'chisto.doma1@mail.ru',
+    //   description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
+    //   onPress: handleEmailPress,
+    //   color: '#2196F3'
+    // },
     {
       icon: <PhoneIcon width={20} height={20} color="#FF5E00" />,
       title: 'Телефон поддержки',
-      subtitle: '+7 (921) 965-8884',
+      subtitle: '8-800-775-63-65',
       description: 'Звоните нам с 9:00 до 18:00 по московскому времени',
       onPress: handlePhonePress,
       color: '#4CAF50'
@@ -93,7 +93,7 @@ const SupportScreen: React.FC = () => {
     {
       icon: <TelegramIcon width={20} height={20} color="#FF5E00" />,
       title: 'Telegram',
-      subtitle: '@mussor_support',
+      subtitle: '@chistodoma1',
       description: 'Быстрая связь через Telegram',
       onPress: handleTelegramPress,
       color: '#0088CC'
