@@ -5,3 +5,4 @@ export { default as OrderTabs } from './OrderTabs';
 export { default as OrderStatusSelect } from './OrderStatusSelect';
 export { default as OrderSearch } from './OrderSearch';
 export { default as EmptyOrders } from './EmptyOrders';
+export { default as DateHeader } from './DateHeader';
