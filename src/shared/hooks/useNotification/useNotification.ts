@@ -125,7 +125,7 @@ const handleNotificationNavigation = async (
           router.push(route as any);
         }
         console.log(
-          `[handleNotificationNavigation] Navigation executed: ${route}`
+          `[handleNotificationNavigation] Navigation executed: pathname=${route.pathname}, orderId=${route.params.orderId}`
         );
       } catch (error) {
         console.error("[Navigation Error] Failed to execute navigation:", error);
@@ -246,7 +246,7 @@ export const useNotification = (isSignedIn: boolean) => {
                 router.push(route as any);
                 await clearPendingNavigation();
                 console.log(
-                  `[useNotification] Executed pending navigation: ${route}`
+                  `[useNotification] Executed pending navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`
                 );
               } catch (error) {
                 console.error(

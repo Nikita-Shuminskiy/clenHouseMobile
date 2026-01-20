@@ -86,7 +86,7 @@ const RootStack = () => {
               const route = buildOrderDetailsRoute(pendingNav.orderId);
               router.push(route as any);
               await clearPendingAuthNavigation();
-              console.log(`[_layout] Executed pending auth navigation: ${route}`);
+              console.log(`[_layout] Executed pending auth navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`);
             } catch (error) {
               console.error(
                 "[_layout] Error executing pending auth navigation:",

@@ -293,11 +293,14 @@ export const extractOrderIdFromNotification = (
  * Строит маршрут навигации на экран деталей заказа
  * 
  * @param orderId - Идентификатор заказа
- * @returns Маршрут для expo-router
+ * @returns Объект маршрута для expo-router с pathname и params
  */
-export const buildOrderDetailsRoute = (orderId: string): string => {
+export const buildOrderDetailsRoute = (orderId: string): { pathname: any; params: { orderId: string } } => {
   if (!orderId) {
     throw new Error("orderId is required to build order details route");
   }
-  return `/(protected)/order-details?orderId=${encodeURIComponent(orderId)}`;
+  return {
+    pathname: '/(protected)/order-details' as any,
+    params: { orderId }
+  };
 };
