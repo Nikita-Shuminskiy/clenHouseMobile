@@ -17,6 +17,7 @@ const OrderStatusSelect: React.FC<OrderStatusSelectProps> = ({ selectedStatus, o
   const statusOptions = [
     { value: undefined, label: 'Все' },
     { value: OrderStatus.IN_PROGRESS, label: 'В работе' },
+    { value: OrderStatus.ASSIGNED, label: 'Назначенные' },
     { value: OrderStatus.DONE, label: 'Завершенные' },
     { value: OrderStatus.CANCELED, label: 'Отмененные' },
   ];

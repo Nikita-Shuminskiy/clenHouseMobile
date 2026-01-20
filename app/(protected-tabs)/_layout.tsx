@@ -1,5 +1,5 @@
 import { AppointmentsIcon } from "@/src/shared/components/icons/tabs-icon/apoitments-icon";
-import { HomeIcon } from "@/src/shared/components/icons/tabs-icon/home-icon";
+// import { HomeIcon } from "@/src/shared/components/icons/tabs-icon/home-icon";
 import { ProfileIcon } from "@/src/shared/components/icons/tabs-icon/profile-icon";
 import useTheme from "@/src/shared/use-theme/use-theme";
 import { BlurView } from "expo-blur";
@@ -71,6 +71,8 @@ export default function ProtectedLayout() {
                 const { options } = descriptors[route.key];
                 const isFocused = state.index === index;
 
+                console.log(route, "route");
+                
                 return (
                   <TouchableOpacity
                     style={{
@@ -117,16 +119,16 @@ export default function ProtectedLayout() {
         name="index"
         options={{
           title: "Главная",
-          tabBarIcon: ({ color, size }) => <HomeIcon color={color} />,
+          tabBarIcon: ({ color, size }) => <AppointmentsIcon color={color} />,
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="orders"
         options={{
           title: "Заказы",
           tabBarIcon: ({ color, size }) => <AppointmentsIcon color={color} />,
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="profile"
         options={{

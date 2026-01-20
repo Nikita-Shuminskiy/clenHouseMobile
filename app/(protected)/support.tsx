@@ -24,9 +24,9 @@ const SupportScreen: React.FC = () => {
     const email = 'chisto.doma1@mail.ru';
     const subject = 'Поддержка Mussor';
     const body = 'Здравствуйте! Я обращаюсь в службу поддержки по поводу...';
-
+    
     const emailUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
+    
     Linking.canOpenURL(emailUrl)
       .then((supported) => {
         if (supported) {
@@ -41,9 +41,9 @@ const SupportScreen: React.FC = () => {
   };
 
   const handlePhonePress = () => {
-    const phoneNumber = '+7 (800) 123-45-67';
+    const phoneNumber = '8-800-775-63-65';
     const phoneUrl = `tel:${phoneNumber}`;
-
+    
     Linking.canOpenURL(phoneUrl)
       .then((supported) => {
         if (supported) {
@@ -58,8 +58,8 @@ const SupportScreen: React.FC = () => {
   };
 
   const handleTelegramPress = () => {
-    const telegramUrl = 'https://t.me/mussor_support';
-
+    const telegramUrl = 'https://t.me/chistodoma1';
+    
     Linking.canOpenURL(telegramUrl)
       .then((supported) => {
         if (supported) {
@@ -74,32 +74,50 @@ const SupportScreen: React.FC = () => {
   };
 
   const supportOptions = [
-    {
-      icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
-      title: 'Email поддержка',
-      subtitle: 'chisto.doma1@mail.ru',
-      description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
-      onPress: handleEmailPress,
-      color: '#2196F3'
-    },
+    // {
+    //   icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
+    //   title: 'Email поддержка',
+    //   subtitle: 'chisto.doma1@mail.ru',
+    //   description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
+    //   onPress: handleEmailPress,
+    //   color: '#2196F3'
+    // },
     {
       icon: <PhoneIcon width={20} height={20} color="#FF5E00" />,
       title: 'Телефон поддержки',
-      subtitle: '+7 (800) 775-63-65',
+      subtitle: '8-800-775-63-65',
       description: 'Звоните нам с 9:00 до 18:00 по московскому времени',
       onPress: handlePhonePress,
       color: '#4CAF50'
     },
-    // {
-    //   icon: <TelegramIcon width={20} height={20} color="#FF5E00" />,
-    //   title: 'Telegram',
-    //   subtitle: '@mussor_support',
-    //   description: 'Быстрая связь через Telegram',
-    //   onPress: handleTelegramPress,
-    //   color: '#0088CC'
-    // }
+    {
+      icon: <TelegramIcon width={20} height={20} color="#FF5E00" />,
+      title: 'Telegram',
+      subtitle: '@chistodoma1',
+      description: 'Быстрая связь через Telegram',
+      onPress: handleTelegramPress,
+      color: '#0088CC'
+    }
   ];
 
+  const faqItems = [
+    {
+      question: 'Как создать заказ?',
+      answer: 'Перейдите в раздел "Заказы" и нажмите кнопку "Создать заказ". Заполните все необходимые поля и подтвердите заказ.'
+    },
+    {
+      question: 'Как отследить статус заказа?',
+      answer: 'В разделе "Заказы" вы можете видеть все ваши заказы и их текущий статус. Также мы отправляем уведомления об изменениях статуса.'
+    },
+    {
+      question: 'Как отменить заказ?',
+      answer: 'Заказ можно отменить в течение 30 минут после создания. Перейдите в детали заказа и нажмите "Отменить заказ".'
+    },
+    {
+      question: 'Как изменить данные профиля?',
+      answer: 'В разделе "Профиль" нажмите "Редактировать профиль" и внесите необходимые изменения.'
+    }
+  ];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -155,7 +173,7 @@ const SupportScreen: React.FC = () => {
         </View>
 
         {/* FAQ */}
-        {/* <View style={styles.section}>
+        <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Часто задаваемые вопросы</Text>
           {faqItems.map((item, index) => (
             <View key={index} style={[styles.faqItem, { backgroundColor: theme.colors.white }]}>
@@ -167,7 +185,7 @@ const SupportScreen: React.FC = () => {
               </Text>
             </View>
           ))}
-        </View> */}
+        </View>
 
         {/* Дополнительная информация */}
         <View style={[styles.infoCard, { backgroundColor: theme.colors.primary500_12 }]}>

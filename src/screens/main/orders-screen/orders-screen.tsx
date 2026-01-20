@@ -24,7 +24,7 @@ const OrdersScreen: React.FC = () => {
   const { data: user } = useGetMe();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderTabType>('new');
-  const [myOrdersStatusFilter, setMyOrdersStatusFilter] = useState<OrderStatus | undefined>(undefined);
+  const [myOrdersStatusFilter, setMyOrdersStatusFilter] = useState<OrderStatus | undefined>(OrderStatus.IN_PROGRESS);
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);

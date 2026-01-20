@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { FlatList, View, StyleSheet, RefreshControl } from 'react-native';
-import { OrderResponseDto, OrderStatus } from '@/src/modules/orders/types/orders';
+import { OrderResponseDto } from '@/src/modules/orders/types/orders';
+import { groupOrdersByDate, flattenOrdersWithHeaders, FlatListItem } from '@/src/shared/utils/groupOrdersByDate';
 import OrderCard from './OrderCard';
 import EmptyOrders from './EmptyOrders';
+import DateHeader from './DateHeader';
 
 interface OrderListProps {
   orders: OrderResponseDto[];
@@ -23,16 +25,77 @@ const OrderList: React.FC<OrderListProps> = ({
   onOrderAction,
   onLoadMore,
 }) => {
-  const renderOrder = ({ item }: { item: OrderResponseDto }) => {
+  // Состояние для отслеживания открытых/закрытых секций
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+    // По умолчанию все секции открыты
+    const sections = groupOrdersByDate(orders);
+    return new Set(sections.map(s => s.date));
+  });
 
+  // Группируем заказы по датам
+  const sections = useMemo(() => {
+    return groupOrdersByDate(orders);
+  }, [orders]);
+
+  // Обновляем expandedSections при изменении orders
+  React.useEffect(() => {
+    const newSections = new Set(sections.map(s => s.date));
+    setExpandedSections(prev => {
+      const updated = new Set(prev);
+      // Добавляем новые секции как открытые
+      newSections.forEach(date => {
+        if (!updated.has(date)) {
+          updated.add(date);
+        }
+      });
+      // Удаляем секции, которых больше нет
+      Array.from(updated).forEach(date => {
+        if (!newSections.has(date)) {
+          updated.delete(date);
+        }
+      });
+      return updated;
+    });
+  }, [sections]);
+
+  // Преобразуем в плоский массив с учетом открытых/закрытых секций
+  const flatListData = useMemo(() => {
+    return flattenOrdersWithHeaders(sections, expandedSections);
+  }, [sections, expandedSections]);
+
+  // Обработчик переключения секции
+  const handleToggleSection = useCallback((date: string) => {
+    setExpandedSections(prev => {
+      const updated = new Set(prev);
+      if (updated.has(date)) {
+        updated.delete(date);
+      } else {
+        updated.add(date);
+      }
+      return updated;
+    });
+  }, []);
+
+  const renderItem = ({ item }: { item: FlatListItem }) => {
+    if (item.type === 'header') {
+      const isExpanded = expandedSections.has(item.date);
+      return (
+        <DateHeader 
+          title={item.title} 
+          isExpanded={isExpanded}
+          onPress={() => handleToggleSection(item.date)}
+        />
+      );
+    }
+    
     return (
       <OrderCard
-        order={item}
+        order={item.order}
         onPress={onOrderPress}
         onAction={onOrderAction}
       />
     );
-  }
+  };
 
   const renderEmpty = () => (
     <EmptyOrders />
@@ -43,11 +106,18 @@ const OrderList: React.FC<OrderListProps> = ({
     return <View style={styles.footer} />;
   };
 
+  const keyExtractor = (item: FlatListItem) => {
+    if (item.type === 'header') {
+      return item.id;
+    }
+    return item.order.id;
+  };
+
   return (
     <FlatList
-      data={orders}
-      renderItem={renderOrder}
-      keyExtractor={(item) => item.id}
+      data={flatListData}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       refreshControl={

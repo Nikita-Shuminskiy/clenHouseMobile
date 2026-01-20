@@ -96,7 +96,11 @@ export const useOrderByLocation = (
     ) as Partial<T>;
   };
 
-  const filteredParams = params ? filterUndefined(params) : undefined;
+  const filteredParams = params ? filterUndefined(params) : {};
+
+  if (filteredParams) {
+    filteredParams.limit = 100;
+  }
 
 
 

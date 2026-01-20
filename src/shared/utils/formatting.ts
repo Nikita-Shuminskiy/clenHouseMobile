@@ -167,3 +167,56 @@ export const formatPhone = (phone: string): string => {
 export const capitalizeFirst = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
+
+/**
+ * Форматирует дату для заголовка группы (как в мессенджерах)
+ * @param dateString - строка с датой
+ * @returns отформатированная строка: "Сегодня", "Вчера" или "15 января"
+ */
+export const formatDateHeader = (dateString: string): string => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  // Сбрасываем время для сравнения только дат
+  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const yesterdayOnly = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+
+  if (dateOnly.getTime() === todayOnly.getTime()) {
+    return 'Сегодня';
+  }
+
+  if (dateOnly.getTime() === yesterdayOnly.getTime()) {
+    return 'Вчера';
+  }
+
+  // Для других дат используем формат "15 января"
+  const months = [
+    'января',
+    'февраля',
+    'марта',
+    'апреля',
+    'мая',
+    'июня',
+    'июля',
+    'августа',
+    'сентября',
+    'октября',
+    'ноября',
+    'декабря',
+  ];
+
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const currentYear = today.getFullYear();
+
+  // Если год отличается от текущего, добавляем год
+  if (year !== currentYear) {
+    return `${day} ${month} ${year}`;
+  }
+
+  return `${day} ${month}`;
+};
