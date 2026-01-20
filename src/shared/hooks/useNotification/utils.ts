@@ -21,37 +21,138 @@ export const addDeviceToken = async (
 };
 
 export const requestNotificationPermission = async () => {
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  try {
+    console.log("requestNotificationPermission: checking existing permissions");
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    console.log(
+      "requestNotificationPermission: existing status",
+      existingStatus
+    );
 
-  await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-  );
+    if (Platform.OS === "android") {
+      console.log(
+        "requestNotificationPermission: requesting Android permissions"
+      );
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+    }
 
-  await notifee.requestPermission({
-    sound: true,
-    announcement: true,
-    alert: true,
-    criticalAlert: true,
-  });
-  let finalStatus = existingStatus;
+    if (Platform.OS === "ios") {
+      console.log(
+        "requestNotificationPermission: checking notifee permissions (iOS)"
+      );
 
-  if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
+      try {
+        const notifeeSettings = (await Promise.race([
+          notifee.getNotificationSettings(),
+          new Promise((resolve) =>
+            setTimeout(() => resolve({ authorizationStatus: 0 }), 2000)
+          ),
+        ])) as any;
+
+        console.log(
+          "requestNotificationPermission: notifee current settings",
+          notifeeSettings
+        );
+
+        if (notifeeSettings?.authorizationStatus !== 1) {
+          console.log(
+            "requestNotificationPermission: requesting notifee permissions"
+          );
+          const timeoutPromise = new Promise((resolve) =>
+            setTimeout(() => {
+              console.log(
+                "requestNotificationPermission: notifee request timeout, continuing"
+              );
+              resolve({ authorizationStatus: 0 });
+            }, 3000)
+          );
+
+          const permissionPromise = notifee.requestPermission({
+            sound: true,
+            announcement: true,
+            alert: true,
+            criticalAlert: true,
+          });
+
+          await Promise.race([permissionPromise, timeoutPromise]);
+          console.log(
+            "requestNotificationPermission: notifee permission completed"
+          );
+        } else {
+          console.log(
+            "requestNotificationPermission: notifee already authorized"
+          );
+        }
+      } catch (notifeeError) {
+        console.error(
+          "requestNotificationPermission: notifee error",
+          notifeeError
+        );
+      }
+    } else {
+      console.log(
+        "requestNotificationPermission: skipping notifee on Android (using system permissions)"
+      );
+    }
+
+    console.log(
+      "requestNotificationPermission: permission checks completed, continuing"
+    );
+
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      console.log(
+        "requestNotificationPermission: requesting expo notifications permissions"
+      );
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+      console.log("requestNotificationPermission: new status", status);
+    }
+    const isGranted = finalStatus === "granted";
+    console.log("requestNotificationPermission: final result", isGranted);
+    return isGranted;
+  } catch (error) {
+    console.error("requestNotificationPermission: error", error);
+    return false;
   }
-  return finalStatus === "granted";
 };
 
 export const sendToken = async (token: string) => {
-  await addDeviceToken(token);
+  if (!token) {
+    console.error("sendToken: token is empty");
+    return;
+  }
+
+  console.log("sendToken: sending token to server", token);
+  try {
+    await addDeviceToken(token);
+    console.log("sendToken: token successfully sent to server");
+  } catch (error) {
+    console.error("sendToken: error sending token", error);
+    throw error;
+  }
 };
 
 export const requestMessagingPermission = async () => {
-  const authStatus = await messaging().requestPermission();
-  return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  );
+  try {
+    console.log(
+      "requestMessagingPermission: requesting FCM messaging permission"
+    );
+    const authStatus = await messaging().requestPermission();
+    console.log("requestMessagingPermission: auth status", authStatus);
+    const isAuthorized =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    console.log("requestMessagingPermission: is authorized", isAuthorized);
+    return isAuthorized;
+  } catch (error) {
+    console.error("requestMessagingPermission: error", error);
+    return false;
+  }
 };
 
 export const displayNotification = async (remoteMessage: any) => {

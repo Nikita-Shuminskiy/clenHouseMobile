@@ -82,72 +82,135 @@ notifee.onBackgroundEvent(handleNotificationEvent);
 notifee.onForegroundEvent(handleNotificationEvent);
 
 export const useNotification = (isSignedIn: boolean) => {
-  const initializeNotifications = async () => {
-    const initialNotification = await messaging().getInitialNotification();
-    if (initialNotification) {
-      const dataRoute = initialNotification?.data?.route;
+  useEffect(() => {
+    console.log("useNotification: useEffect triggered", { isSignedIn });
 
-      setTimeout(() => {
+    if (!isSignedIn) {
+      console.log(
+        "useNotification: user is not signed in, skipping notification initialization"
+      );
+      return;
+    }
+
+    console.log(
+      "useNotification: user is signed in, initializing notifications"
+    );
+
+    let notificationClickSubscription: any;
+    let unsubscribe: (() => void) | undefined;
+
+    const initializeNotifications = async () => {
+      try {
+        console.log(
+          "useNotification: initializeNotifications started",
+          isSignedIn
+        );
+
+        const initialNotification = await messaging().getInitialNotification();
+        if (initialNotification) {
+          const dataRoute = initialNotification?.data?.route;
+
+          setTimeout(() => {
+            if (dataRoute) {
+              handleNotificationRoute(dataRoute);
+            }
+          }, 1000);
+        }
+
+        console.log("useNotification: requesting notification permission");
+        const notificationPermission = await requestNotificationPermission();
+        console.log(
+          "useNotification: notification permission granted",
+          notificationPermission
+        );
+
+        console.log("useNotification: requesting messaging permission");
+        const hasMessagingPermission = await requestMessagingPermission();
+        console.log(
+          "useNotification: messaging permission granted",
+          hasMessagingPermission
+        );
+
+        if (hasMessagingPermission) {
+          console.log("useNotification: getting FCM token");
+          let token = await messaging().getToken();
+          console.log("useNotification: FCM token received", token);
+
+          if (!token) {
+            console.log(
+              "useNotification: token not received, retrying after delay"
+            );
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            token = await messaging().getToken();
+            console.log("useNotification: FCM token after retry", token);
+          }
+
+          if (token) {
+            console.log("useNotification: sending token to server");
+            await sendToken(token);
+            console.log("useNotification: token sent successfully");
+          } else {
+            console.error("useNotification: FCM token is empty after retry");
+          }
+        } else {
+          console.log(
+            "useNotification: messaging permission denied, skipping token registration"
+          );
+        }
+      } catch (error) {
+        console.error(
+          "useNotification: error in initializeNotifications",
+          error
+        );
+      }
+
+      const handleNotificationClick = async (response: any) => {
+        const notificationData = response?.notification?.request?.content?.data;
+        const dataRoute =
+          notificationData?.data?.route || notificationData?.route;
         if (dataRoute) {
           handleNotificationRoute(dataRoute);
         }
-      }, 1000);
-    }
+      };
 
-    await requestNotificationPermission();
+      notificationClickSubscription =
+        Notifications.addNotificationResponseReceivedListener(
+          handleNotificationClick
+        );
 
-    const hasMessagingPermission = await requestMessagingPermission();
-    if (hasMessagingPermission) {
-      const token = await messaging().getToken();
-      await sendToken(token);
-    }
-
-    const handleNotificationClick = async (response: any) => {
-      const notificationData = response?.notification?.request?.content?.data;
-      const dataRoute =
-        notificationData?.data?.route || notificationData?.route;
-      if (dataRoute) {
-        handleNotificationRoute(dataRoute);
-      }
-    };
-
-    const notificationClickSubscription =
-      Notifications.addNotificationResponseReceivedListener(
-        handleNotificationClick
-      );
-
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      const dataRoute = remoteMessage?.data?.route;
-      if (dataRoute) {
-        handleNotificationRoute(dataRoute);
-      } else {
-        handleNotificationClick({
-          notification: {
-            request: {
-              content: {
-                data: remoteMessage.data,
+      messaging().onNotificationOpenedApp((remoteMessage) => {
+        const dataRoute = remoteMessage?.data?.route;
+        if (dataRoute) {
+          handleNotificationRoute(dataRoute);
+        } else {
+          handleNotificationClick({
+            notification: {
+              request: {
+                content: {
+                  data: remoteMessage.data,
+                },
               },
             },
-          },
-        });
-      }
-    });
+          });
+        }
+      });
 
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      if (AppState.currentState === "active") {
-        await displayNotification(remoteMessage);
-      }
-    });
+      unsubscribe = messaging().onMessage(async (remoteMessage) => {
+        if (AppState.currentState === "active") {
+          await displayNotification(remoteMessage);
+        }
+      });
+    };
+
+    initializeNotifications();
 
     return () => {
-      unsubscribe();
-      notificationClickSubscription.remove();
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      if (notificationClickSubscription) {
+        notificationClickSubscription.remove();
+      }
     };
-  };
-
-  useEffect(() => {
-    if (isSignedIn) {
-      initializeNotifications();
-    }
   }, [isSignedIn]);
 };
