@@ -128,13 +128,24 @@ const handleNotificationNavigation = async (
           `[handleNotificationNavigation] Navigation executed: pathname=${route.pathname}, orderId=${route.params.orderId}`
         );
       } catch (error) {
-        console.error("[Navigation Error] Failed to execute navigation:", error);
-        // Логируем детали для диагностики
-        console.error("[Navigation Error] Route:", route);
+        // Формируем полный путь для логирования
+        const fullPath = typeof route === 'string' 
+          ? route 
+          : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`;
+        
+        console.error("[Navigation Error] ❌ Failed to execute navigation");
+        console.error("[Navigation Error] Attempted route:", fullPath);
+        console.error("[Navigation Error] Route object:", JSON.stringify(route, null, 2));
         console.error("[Navigation Error] Error details:", {
           message: error instanceof Error ? error.message : String(error),
           stack: error instanceof Error ? error.stack : undefined,
         });
+        
+        // Сохраняем информацию о неудачной навигации для отображения на экране not-found
+        if (typeof route === 'object' && route.pathname) {
+          console.error(`[Navigation Error] Pathname: ${route.pathname}`);
+          console.error(`[Navigation Error] Params: ${JSON.stringify(route.params)}`);
+        }
       } finally {
         navigationTimeoutRef.current = null;
       }
@@ -249,10 +260,17 @@ export const useNotification = (isSignedIn: boolean) => {
                   `[useNotification] Executed pending navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`
                 );
               } catch (error) {
-                console.error(
-                  "[useNotification] Error executing pending navigation:",
-                  error
-                );
+                const fullPath = typeof route === 'string' 
+                  ? route 
+                  : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`;
+                
+                console.error("[useNotification] ❌ Error executing pending navigation");
+                console.error("[useNotification] Attempted route:", fullPath);
+                console.error("[useNotification] Route object:", JSON.stringify(route, null, 2));
+                console.error("[useNotification] Error details:", {
+                  message: error instanceof Error ? error.message : String(error),
+                  stack: error instanceof Error ? error.stack : undefined,
+                });
               }
             } else {
               // Если все еще не готово, оставляем pending navigation

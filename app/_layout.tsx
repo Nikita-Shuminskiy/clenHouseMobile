@@ -13,12 +13,11 @@ import { useEffect, useState } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
-import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
+import { requestNotificationPermission , buildOrderDetailsRoute } from "@/src/shared/hooks/useNotification/utils";
 import {
   loadPendingAuthNavigation,
   clearPendingAuthNavigation,
 } from "@/src/shared/utils/pendingNavigation";
-import { buildOrderDetailsRoute } from "@/src/shared/hooks/useNotification/utils";
 import { setNavigationReadyState } from "@/src/shared/hooks/useNotification/useNotification";
 
 // Импортируем background handler для регистрации headless tasks
@@ -82,16 +81,29 @@ const RootStack = () => {
           );
           // Выполняем навигацию после небольшой задержки
           setTimeout(async () => {
+            let route: ReturnType<typeof buildOrderDetailsRoute> | null = null;
             try {
-              const route = buildOrderDetailsRoute(pendingNav.orderId);
+              route = buildOrderDetailsRoute(pendingNav.orderId);
               router.push(route as any);
               await clearPendingAuthNavigation();
               console.log(`[_layout] Executed pending auth navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`);
             } catch (error) {
-              console.error(
-                "[_layout] Error executing pending auth navigation:",
-                error
-              );
+              const fullPath = route 
+                ? (typeof route === 'string' 
+                    ? route 
+                    : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`)
+                : `orderId=${pendingNav.orderId}`;
+              
+              console.error("[_layout] ❌ Error executing pending auth navigation");
+              console.error("[_layout] Attempted route:", fullPath);
+              if (route) {
+                console.error("[_layout] Route object:", JSON.stringify(route, null, 2));
+              }
+              console.error("[_layout] Error details:", {
+                message: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+              });
+              
               // В случае ошибки перенаправляем на главный экран
               if (!currentPath.includes('protected')) {
                 router.replace("/(protected-tabs)");
