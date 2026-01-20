@@ -103,7 +103,9 @@ const OrderDetailsScreen: React.FC = () => {
   // Получаем конкретный заказ по ID
   const {
     data: order,
-    isLoading
+    isLoading,
+    isError,
+    error
   } = useOrder(orderId || '');
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
@@ -287,7 +289,8 @@ const OrderDetailsScreen: React.FC = () => {
     );
   }
 
-  if (!order) {
+  // Показываем сообщение об ошибке если заказ не найден или произошла ошибка
+  if (isError || (!isLoading && !order) || !order) {
     return (
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={[styles.header, { paddingTop: insets.top + 8 }]}>

@@ -14,6 +14,12 @@ import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
 import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
+import {
+  loadPendingAuthNavigation,
+  clearPendingAuthNavigation,
+} from "@/src/shared/utils/pendingNavigation";
+import { buildOrderDetailsRoute } from "@/src/shared/hooks/useNotification/utils";
+import { setNavigationReadyState } from "@/src/shared/hooks/useNotification/useNotification";
 
 // Импортируем background handler для регистрации headless tasks
 import "@/src/shared/hooks/useNotification/backgroundHandler";
@@ -56,6 +62,10 @@ const RootStack = () => {
 
 
   useEffect(() => {
+    // Обновляем глобальное состояние готовности навигации
+    const isAuthorized = !!userMe?.role;
+    setNavigationReadyState(isNavigationReady, isAuthorized);
+
     if (isLoadingGetMe || isLoadingGetIsFirstEnter || !isNavigationReady) {
       return;
     }
@@ -64,10 +74,37 @@ const RootStack = () => {
     const currentPath = router.canGoBack() ? 'unknown' : 'initial';
 
     if (userMe?.role) {
-      // Перенаправляем только если не находимся уже на защищенных экранах
-      if (!currentPath.includes('protected')) {
-        router.replace("/(protected-tabs)");
-      }
+      // Проверяем наличие pending navigation после успешной авторизации
+      loadPendingAuthNavigation().then((pendingNav) => {
+        if (pendingNav) {
+          console.log(
+            `[_layout] Found pending auth navigation: orderId=${pendingNav.orderId}`
+          );
+          // Выполняем навигацию после небольшой задержки
+          setTimeout(async () => {
+            try {
+              const route = buildOrderDetailsRoute(pendingNav.orderId);
+              router.push(route as any);
+              await clearPendingAuthNavigation();
+              console.log(`[_layout] Executed pending auth navigation: ${route}`);
+            } catch (error) {
+              console.error(
+                "[_layout] Error executing pending auth navigation:",
+                error
+              );
+              // В случае ошибки перенаправляем на главный экран
+              if (!currentPath.includes('protected')) {
+                router.replace("/(protected-tabs)");
+              }
+            }
+          }, 300);
+        } else {
+          // Если нет pending navigation, выполняем обычную логику
+          if (!currentPath.includes('protected')) {
+            router.replace("/(protected-tabs)");
+          }
+        }
+      });
     } else if (isFirstEnter === "true") {
       router.replace("/(auth)/onboarding");
     } else {

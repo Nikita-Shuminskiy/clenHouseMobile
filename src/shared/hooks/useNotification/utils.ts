@@ -166,13 +166,16 @@ export const displayNotification = async (remoteMessage: any) => {
   const chatId = remoteMessage?.data?.chatId;
   const groupKey = isChatNotification && chatId ? `Chats` : "";
 
+  // Сохраняем все данные уведомления, включая orderId для навигации
   await notifee.displayNotification({
     title:
       remoteMessage?.data?.title || remoteMessage?.title || "Default title",
     body: remoteMessage?.data?.body || remoteMessage?.body || "Default body",
     data: {
-      route: remoteMessage?.data?.route || "1",
+      // Сохраняем все данные из remoteMessage.data для последующей обработки
       ...remoteMessage?.data,
+      // Сохраняем route для обратной совместимости
+      route: remoteMessage?.data?.route || remoteMessage?.data?.orderId ? "1" : "1",
     },
     android: {
       channelId,
@@ -231,4 +234,70 @@ const createCategoriesChatIos = async () => {
       ],
     },
   ]);
+};
+
+/**
+ * Извлекает orderId из данных push-уведомления
+ * Поддерживает как новый формат (data.orderId), так и legacy формат (data.route как JSON строка)
+ * 
+ * @param notificationData - Данные из push-уведомления
+ * @returns orderId или null если не найден
+ */
+export const extractOrderIdFromNotification = (
+  notificationData: any
+): string | null => {
+  if (!notificationData) {
+    return null;
+  }
+
+  // Приоритет 1: Новый формат - orderId как отдельное поле
+  if (notificationData.orderId) {
+    return String(notificationData.orderId);
+  }
+
+  // Приоритет 2: Legacy формат - route как JSON строка
+  if (notificationData.route) {
+    try {
+      const parsed = JSON.parse(notificationData.route);
+      if (typeof parsed === "object" && parsed !== null && parsed.orderId) {
+        return String(parsed.orderId);
+      }
+      if (typeof parsed === "string") {
+        // Если route это просто строка маршрута, пытаемся извлечь orderId из query параметров
+        const match = parsed.match(/orderId=([^&]+)/);
+        if (match && match[1]) {
+          return match[1];
+        }
+      }
+    } catch (error) {
+      // Если не JSON, логируем предупреждение для диагностики
+      console.warn(
+        "[extractOrderIdFromNotification] Failed to parse route as JSON (invalid format):",
+        error
+      );
+      console.warn(
+        "[extractOrderIdFromNotification] Route value:",
+        notificationData.route
+      );
+    }
+  }
+
+  // Если orderId не найден ни в одном формате
+  console.warn(
+    "[extractOrderIdFromNotification] No orderId found in notification data"
+  );
+  return null;
+};
+
+/**
+ * Строит маршрут навигации на экран деталей заказа
+ * 
+ * @param orderId - Идентификатор заказа
+ * @returns Маршрут для expo-router
+ */
+export const buildOrderDetailsRoute = (orderId: string): string => {
+  if (!orderId) {
+    throw new Error("orderId is required to build order details route");
+  }
+  return `/(protected)/order-details?orderId=${encodeURIComponent(orderId)}`;
 };
