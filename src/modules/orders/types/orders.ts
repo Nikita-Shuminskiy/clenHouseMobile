@@ -73,6 +73,8 @@ export interface OrderResponseDto {
   };
   addressDetails?: AddressDetailsDto;
   numberPackages?: number;
+  isOverdue?: boolean;
+  overdueMinutes?: number;
   createdAt: string;
   updatedAt: string;
 }

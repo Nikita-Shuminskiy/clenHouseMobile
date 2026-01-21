@@ -5,6 +5,7 @@ import Button from '@/src/shared/components/ui-kit/button';
 import { formatPrice, formatDateString } from '@/src/shared/utils/formatting';
 import { useLocation } from '@/src/shared/hooks/useLocation';
 import { calculateDistance, formatDistance } from '@/src/shared/utils/distance';
+import { formatOverdueTime } from '@/src/shared/utils/overdueUtils';
 import useTheme from '@/src/shared/use-theme/use-theme';
 
 interface OrderCardProps {
@@ -94,15 +95,25 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
       });
   };
 
+  const isOverdue = order.isOverdue === true;
+
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[
+        styles.container,
+        isOverdue && styles.containerOverdue,
+      ]}
       onPress={() => onPress?.(order)}
       activeOpacity={0.7}
     >
       <View style={styles.header}>
         <View style={styles.orderInfo}>
           <Text style={styles.orderId}>#{order.id.slice(-8)}</Text>
+          {isOverdue && (
+            <View style={styles.overdueBadge}>
+              <Text style={styles.overdueBadgeText}>Просрочено</Text>
+            </View>
+          )}
           <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
             <Text style={styles.statusText}>{getStatusText(order.status)}</Text>
           </View>
@@ -159,12 +170,19 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
           <Text style={styles.date}>{formatDateString(order.createdAt)}</Text>
         </View>
 
-        {order.scheduledAt && (
+        {isOverdue && order.overdueMinutes !== undefined ? (
+          <View style={styles.scheduledContainer}>
+            <Text style={styles.scheduledLabel}>Просрочено:</Text>
+            <Text style={styles.overdueText}>
+              {formatOverdueTime(order.overdueMinutes)}
+            </Text>
+          </View>
+        ) : order.scheduledAt ? (
           <View style={styles.scheduledContainer}>
             <Text style={styles.scheduledLabel}>Запланирован на:</Text>
             <Text style={styles.scheduledDate}>{formatDateString(order.scheduledAt)}</Text>
           </View>
-        )}
+        ) : null}
       </View>
 
       {order.status === OrderStatus.NEW && onAction && (
@@ -233,6 +251,30 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
+  },
+  containerOverdue: {
+    borderLeftWidth: 3,
+    borderLeftColor: '#F44336',
+  },
+  overdueBadge: {
+    backgroundColor: '#F44336',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  overdueBadgeText: {
+    fontFamily: 'Onest',
+    fontWeight: '500',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#FFFFFF',
+  },
+  overdueText: {
+    fontFamily: 'Onest',
+    fontWeight: '500',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#F44336',
   },
   header: {
     flexDirection: 'row',

@@ -5,6 +5,7 @@ import { VerifySmsRequest } from '../types';
 import { router } from 'expo-router';
 import { setRefreshToken, setToken } from '@/src/shared/utils/token';
 import { requestLocationPermission, checkLocationPermission } from '@/src/shared/utils/location-permission';
+import { UserRole } from '@/src/shared/api/types/data-contracts';
 
 export const useVerifySms = () => {
     const queryClient = useQueryClient();
@@ -20,6 +21,16 @@ export const useVerifySms = () => {
                     duration: 5000,
                 });
                 throw new Error('Некорректные данные ответа от сервера');
+            }
+
+            // Проверка роли пользователя - доступ только для курьеров
+            if (data.user.role !== UserRole.CURRIER) {
+                console.warn('Попытка входа пользователя с ролью:', data.user.role);
+                toast.error('Доступ запрещен', {
+                    description: 'Мобильное приложение доступно только для курьеров',
+                    duration: 5000,
+                });
+                throw new Error('Доступ разрешен только для курьеров');
             }
 
             try {

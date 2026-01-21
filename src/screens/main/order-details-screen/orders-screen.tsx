@@ -21,6 +21,7 @@ import Button from "@/src/shared/components/ui-kit/button";
 import useTheme from "@/src/shared/use-theme/use-theme";
 import { BackArrowIcon, PhoneIcon } from "@/src/shared/components/icons";
 import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
+import { formatOverdueTime } from "@/src/shared/utils/overdueUtils";
 
 // Вспомогательные функции для определения доступных действий
 const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
@@ -326,8 +327,18 @@ const OrderDetailsScreen: React.FC = () => {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.orderDetails}>
-          <Text style={[styles.sectionTitle, { marginTop: 0 }]}>Номер заказа</Text>
+        <View style={[
+          styles.orderDetails,
+          order.isOverdue && styles.orderDetailsOverdue
+        ]}>
+          <View style={styles.orderHeader}>
+            <Text style={[styles.sectionTitle, { marginTop: 0 }]}>Номер заказа</Text>
+            {order.isOverdue && (
+              <View style={styles.overdueBadge}>
+                <Text style={styles.overdueBadgeText}>Просрочено</Text>
+              </View>
+            )}
+          </View>
           <Text style={styles.orderNumber}>#{order.id.toString().slice(-8)}</Text>
 
           {order.description && (
@@ -428,10 +439,21 @@ const OrderDetailsScreen: React.FC = () => {
             </View>
           )}
 
-          <Text style={styles.sectionTitle}>Запланировано на</Text>
-          <Text style={styles.scheduledAt}>
-            {formatDateStringFull(order.scheduledAt)}
-          </Text>
+          {order.isOverdue && order.overdueMinutes !== undefined ? (
+            <>
+              <Text style={styles.sectionTitle}>Просрочено</Text>
+              <Text style={styles.overdueText}>
+                {formatOverdueTime(order.overdueMinutes)}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.sectionTitle}>Запланировано на</Text>
+              <Text style={styles.scheduledAt}>
+                {formatDateStringFull(order.scheduledAt)}
+              </Text>
+            </>
+          )}
         </View>
 
         {/* Кнопки действий с заказом */}
@@ -521,6 +543,38 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  orderDetailsOverdue: {
+    borderLeftWidth: 3,
+    borderLeftColor: '#F44336',
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  overdueBadge: {
+    backgroundColor: '#F44336',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  overdueBadgeText: {
+    fontFamily: 'Onest',
+    fontWeight: '500',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#FFFFFF',
+  },
+  overdueText: {
+    fontFamily: 'Onest',
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#F44336',
   },
   sectionTitle: {
     fontFamily: "Onest",
