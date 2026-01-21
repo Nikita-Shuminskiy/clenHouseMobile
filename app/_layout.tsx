@@ -19,6 +19,7 @@ import {
   clearPendingAuthNavigation,
 } from "@/src/shared/utils/pendingNavigation";
 import { setNavigationReadyState } from "@/src/shared/hooks/useNotification/useNotification";
+import { isValidUUID } from "@/src/shared/utils/uuidValidation";
 
 // Импортируем background handler для регистрации headless tasks
 import "@/src/shared/hooks/useNotification/backgroundHandler";
@@ -79,6 +80,19 @@ const RootStack = () => {
           console.log(
             `[_layout] Found pending auth navigation: orderId=${pendingNav.orderId}`
           );
+          
+          // Валидируем UUID перед выполнением pending auth navigation
+          if (!isValidUUID(pendingNav.orderId)) {
+            console.warn(
+              `[_layout] Invalid orderId in pending auth navigation: ${pendingNav.orderId}, clearing`
+            );
+            clearPendingAuthNavigation();
+            if (!currentPath.includes('protected')) {
+              router.replace("/(protected-tabs)");
+            }
+            return;
+          }
+          
           // Выполняем навигацию после небольшой задержки
           setTimeout(async () => {
             let route: ReturnType<typeof buildOrderDetailsRoute> | null = null;
@@ -103,6 +117,9 @@ const RootStack = () => {
                 message: error instanceof Error ? error.message : String(error),
                 stack: error instanceof Error ? error.stack : undefined,
               });
+              
+              // Очищаем pending navigation при ошибке
+              await clearPendingAuthNavigation();
               
               // В случае ошибки перенаправляем на главный экран
               if (!currentPath.includes('protected')) {

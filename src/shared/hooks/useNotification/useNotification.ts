@@ -20,6 +20,7 @@ import {
   clearPendingNavigation,
 } from "@/src/shared/utils/pendingNavigation";
 import { isAppReadyForNavigation } from "@/src/shared/utils/navigationReady";
+import { isValidUUID } from "@/src/shared/utils/uuidValidation";
 
 messaging().setBackgroundMessageHandler(displayNotification);
 
@@ -82,6 +83,18 @@ const handleNotificationNavigation = async (
       return;
     }
 
+    // Валидация UUID перед навигацией
+    if (!isValidUUID(orderId)) {
+      console.warn(
+        `[handleNotificationNavigation] Invalid orderId format: ${orderId}, navigating to home`
+      );
+      // Если orderId невалидный, перенаправляем на главный экран
+      if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
+        router.replace("/(protected-tabs)");
+      }
+      return;
+    }
+
     // Проверяем готовность приложения
     const isReady = isAppReadyForNavigation(
       globalIsNavigationReady,
@@ -92,6 +105,13 @@ const handleNotificationNavigation = async (
       console.log(
         "[handleNotificationNavigation] App not ready, saving pending navigation"
       );
+      // Валидируем UUID перед сохранением pending navigation
+      if (!isValidUUID(orderId)) {
+        console.warn(
+          `[handleNotificationNavigation] Invalid orderId format for pending navigation: ${orderId}, skipping`
+        );
+        return;
+      }
       // Сохраняем pending navigation для выполнения после готовности
       if (!globalIsAuthorized) {
         await savePendingAuthNavigation(orderId);
@@ -141,10 +161,13 @@ const handleNotificationNavigation = async (
           stack: error instanceof Error ? error.stack : undefined,
         });
         
-        // Сохраняем информацию о неудачной навигации для отображения на экране not-found
-        if (typeof route === 'object' && route.pathname) {
-          console.error(`[Navigation Error] Pathname: ${route.pathname}`);
-          console.error(`[Navigation Error] Params: ${JSON.stringify(route.params)}`);
+        // При ошибке навигации редиректим на главный экран
+        if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
+          try {
+            router.replace("/(protected-tabs)");
+          } catch (fallbackError) {
+            console.error("[Navigation Error] Failed to navigate to home:", fallbackError);
+          }
         }
       } finally {
         navigationTimeoutRef.current = null;
@@ -173,6 +196,9 @@ const handleNotificationNavigation = async (
     }
   }
 };
+
+// Экспортируем функцию для использования в тестах
+export { handleNotificationNavigation };
 
 // Ref для хранения timeout ID текущей навигации (для отмены предыдущих)
 const navigationTimeoutRef: { current: ReturnType<typeof setTimeout> | null } = { current: null };
@@ -249,28 +275,42 @@ export const useNotification = (isSignedIn: boolean) => {
           console.log(
             `[useNotification] Found pending navigation: orderId=${pendingNav.orderId}`
           );
+          
+          // Валидируем UUID перед выполнением pending navigation
+          if (!isValidUUID(pendingNav.orderId)) {
+            console.warn(
+              `[useNotification] Invalid orderId in pending navigation: ${pendingNav.orderId}, clearing`
+            );
+            await clearPendingNavigation();
+            return;
+          }
+          
           // Выполняем pending navigation после небольшой задержки
           setTimeout(async () => {
             if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
-              const route = buildOrderDetailsRoute(pendingNav.orderId);
               try {
+                const route = buildOrderDetailsRoute(pendingNav.orderId);
                 router.push(route as any);
                 await clearPendingNavigation();
                 console.log(
                   `[useNotification] Executed pending navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`
                 );
               } catch (error) {
-                const fullPath = typeof route === 'string' 
-                  ? route 
-                  : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`;
-                
                 console.error("[useNotification] ❌ Error executing pending navigation");
-                console.error("[useNotification] Attempted route:", fullPath);
-                console.error("[useNotification] Route object:", JSON.stringify(route, null, 2));
                 console.error("[useNotification] Error details:", {
                   message: error instanceof Error ? error.message : String(error),
                   stack: error instanceof Error ? error.stack : undefined,
                 });
+                
+                // Очищаем pending navigation при ошибке
+                await clearPendingNavigation();
+                
+                // Редиректим на главный экран при ошибке
+                try {
+                  router.replace("/(protected-tabs)");
+                } catch (fallbackError) {
+                  console.error("[useNotification] Failed to navigate to home:", fallbackError);
+                }
               }
             } else {
               // Если все еще не готово, оставляем pending navigation

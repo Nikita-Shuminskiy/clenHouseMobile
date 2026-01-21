@@ -22,6 +22,7 @@ import useTheme from "@/src/shared/use-theme/use-theme";
 import { BackArrowIcon, PhoneIcon } from "@/src/shared/components/icons";
 import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
 import { formatOverdueTime } from "@/src/shared/utils/overdueUtils";
+import { normalizeOrderId, isValidUUID } from "@/src/shared/utils/uuidValidation";
 
 // Вспомогательные функции для определения доступных действий
 const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
@@ -97,17 +98,23 @@ const getStatusColor = (status: OrderStatus, colors: any) => {
 
 const OrderDetailsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const { orderId } = useLocalSearchParams<{ orderId: string }>();
+  const { orderId: rawOrderId } = useLocalSearchParams<{ orderId: string | string[] }>();
   const { data: user } = useGetMe();
   const { colors } = useTheme();
 
-  // Получаем конкретный заказ по ID
+  // Нормализуем orderId (обрабатываем массив и пустые значения)
+  const normalizedOrderId = normalizeOrderId(rawOrderId);
+  
+  // Валидируем UUID
+  const isValidOrderId = normalizedOrderId ? isValidUUID(normalizedOrderId) : false;
+
+  // Получаем конкретный заказ по ID (только если orderId валидный)
   const {
     data: order,
     isLoading,
     isError,
     error
-  } = useOrder(orderId || '');
+  } = useOrder(isValidOrderId ? normalizedOrderId! : '');
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
 
@@ -250,9 +257,8 @@ const OrderDetailsScreen: React.FC = () => {
       });
   }, []);
 
-  console.log(order);
-
-  if (!orderId) {
+  // Проверяем валидность orderId
+  if (!normalizedOrderId || !isValidOrderId) {
     return (
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
@@ -265,7 +271,15 @@ const OrderDetailsScreen: React.FC = () => {
           <View style={styles.backButton} />
         </View>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>ID заказа не указан</Text>
+          <Text style={styles.errorText}>
+            {!normalizedOrderId ? 'ID заказа не указан' : 'Неверный формат ID заказа'}
+          </Text>
+          <TouchableOpacity 
+            style={styles.backButtonError} 
+            onPress={handleGoBack}
+          >
+            <Text style={styles.backButtonText}>Вернуться назад</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -291,7 +305,14 @@ const OrderDetailsScreen: React.FC = () => {
   }
 
   // Показываем сообщение об ошибке если заказ не найден или произошла ошибка
-  if (isError || (!isLoading && !order) || !order) {
+  if (isError || (!isLoading && !order)) {
+    // Проверяем, является ли ошибка ошибкой валидации UUID
+    const isValidationError = error && (
+      (error as any)?.message?.includes('uuid is expected') ||
+      (error as any)?.response?.data?.message?.includes('uuid is expected') ||
+      (error as any)?.response?.data?.message?.includes('Validation failed')
+    );
+
     return (
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
@@ -304,7 +325,15 @@ const OrderDetailsScreen: React.FC = () => {
           <View style={styles.backButton} />
         </View>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Заказ не найден</Text>
+          <Text style={styles.errorText}>
+            {isValidationError ? 'Неверный формат ID заказа' : 'Заказ не найден'}
+          </Text>
+          <TouchableOpacity 
+            style={styles.backButtonError} 
+            onPress={handleGoBack}
+          >
+            <Text style={styles.backButtonText}>Вернуться назад</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -681,6 +710,22 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 16,
     color: "#FF6B6B",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  backButtonError: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  backButtonText: {
+    fontFamily: "Onest",
+    fontWeight: "600",
+    fontSize: 16,
+    color: "#FFFFFF",
+    textAlign: "center",
   },
   actionsContainer: {
     backgroundColor: "#FFFFFF",

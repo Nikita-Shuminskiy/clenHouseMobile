@@ -10,6 +10,7 @@ import { api } from "../../api/utils/axios-api-base";
 import { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { instance } from "../../api/configs/config";
+import { isValidUUID } from "@/src/shared/utils/uuidValidation";
 
 export const addDeviceToken = async (
   token: string
@@ -299,6 +300,12 @@ export const buildOrderDetailsRoute = (orderId: string): { pathname: any; params
   if (!orderId) {
     throw new Error("orderId is required to build order details route");
   }
+  
+  // Валидация UUID перед построением маршрута
+  if (!isValidUUID(orderId)) {
+    throw new Error(`Invalid orderId format: ${orderId}. Expected UUID format.`);
+  }
+  
   return {
     pathname: '/(protected)/order-details' as any,
     params: { orderId }
