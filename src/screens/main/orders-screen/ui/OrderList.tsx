@@ -82,6 +82,7 @@ const OrderList: React.FC<OrderListProps> = ({
       const section = sections.find(s => s.date === item.date);
       const orderCount = section?.data.length || 0;
       const overdueCount = section?.data.filter(order => order.isOverdue).length || 0;
+      const isOverdueGroup = item.date === 'overdue';
 
       return (
         <DateHeader
@@ -89,6 +90,7 @@ const OrderList: React.FC<OrderListProps> = ({
           count={orderCount}
           overdueCount={overdueCount}
           isExpanded={isExpanded}
+          isOverdueGroup={isOverdueGroup}
           onPress={() => handleToggleSection(item.date)}
         />
       );

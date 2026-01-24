@@ -9,6 +9,7 @@ interface DateHeaderProps {
   overdueCount?: number;
   isExpanded?: boolean;
   onPress?: () => void;
+  isOverdueGroup?: boolean;
 }
 
 const DateHeader: React.FC<DateHeaderProps> = ({
@@ -16,11 +17,12 @@ const DateHeader: React.FC<DateHeaderProps> = ({
   count,
   overdueCount = 0,
   isExpanded = true,
-  onPress
+  onPress,
+  isOverdueGroup = false,
 }) => {
   const theme = useTheme();
   const rotateAnim = React.useRef(new Animated.Value(isExpanded ? 1 : 0)).current;
-  const hasOverdue = overdueCount > 0;
+  const hasOverdue = overdueCount > 0 || isOverdueGroup;
 
   React.useEffect(() => {
     Animated.spring(rotateAnim, {
@@ -41,36 +43,66 @@ const DateHeader: React.FC<DateHeaderProps> = ({
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={onPress}
-        style={styles.container}
+        style={[
+          styles.container,
+          isOverdueGroup && {
+            backgroundColor: '#FFEBEE',
+            borderColor: '#F44336',
+          }
+        ]}
       >
         <View style={styles.leftContent}>
           <View style={styles.dateBlock}>
-            <Text style={[styles.title, { color: theme.colors.grey900 }]}>
+            {isOverdueGroup && (
+              <Ionicons 
+                name="alert-circle" 
+                size={18} 
+                color="#F44336" 
+                style={{ marginRight: 6 }}
+              />
+            )}
+            <Text style={[
+              styles.title, 
+              { 
+                color: isOverdueGroup ? '#F44336' : theme.colors.grey900,
+                fontWeight: isOverdueGroup ? '700' : '600',
+              }
+            ]}>
               {title}
             </Text>
             <View style={styles.badges}>
-              {count !== undefined && (
-                <View style={[
-                  styles.countBadge,
-                  { backgroundColor: hasOverdue ? 'rgba(244, 67, 54, 0.08)' : 'rgba(0, 0, 0, 0.04)' }
+            {count !== undefined && (
+              <View style={[
+                styles.countBadge, 
+                { 
+                  backgroundColor: isOverdueGroup 
+                    ? 'rgba(244, 67, 54, 0.15)' 
+                    : hasOverdue 
+                      ? 'rgba(244, 67, 54, 0.08)' 
+                      : 'rgba(0, 0, 0, 0.04)' 
+                }
+              ]}>
+                <Text style={[
+                  styles.countText, 
+                  { 
+                    color: isOverdueGroup || hasOverdue 
+                      ? '#F44336' 
+                      : theme.colors.grey600 
+                  }
                 ]}>
-                  <Text style={[
-                    styles.countText,
-                    { color: hasOverdue ? '#F44336' : theme.colors.grey600 }
-                  ]}>
-                    {count} {count === 1 ? 'заказ' : count < 5 ? 'заказа' : 'заказов'}
-                  </Text>
-                </View>
-              )}
-
-              {hasOverdue && (
-                <View style={[styles.overdueBadge, { backgroundColor: '#F44336' }]}>
-                  <Ionicons name="alert-circle" size={12} color="#FFFFFF" />
-                  <Text style={styles.overdueText}>
-                    {overdueCount} {overdueCount === 1 ? 'просрочен' : 'просрочено'}
-                  </Text>
-                </View>
-              )}
+                  {count} {count === 1 ? 'заказ' : count < 5 ? 'заказа' : 'заказов'}
+                </Text>
+              </View>
+            )}
+            
+            {hasOverdue && !isOverdueGroup && (
+              <View style={[styles.overdueBadge, { backgroundColor: '#F44336' }]}>
+                <Ionicons name="alert-circle" size={12} color="#FFFFFF" />
+                <Text style={styles.overdueText}>
+                  {overdueCount} {overdueCount === 1 ? 'просрочен' : 'просрочено'}
+                </Text>
+              </View>
+            )}
             </View>
           </View>
         </View>

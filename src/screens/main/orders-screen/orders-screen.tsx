@@ -11,6 +11,8 @@ import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useOrderByLocation, useUpdateOrderStatus, useTakeOrder, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
+import { useLocation } from "@/src/shared/hooks/useLocation";
+import { calculateDistance } from "@/src/shared/utils/distance";
 
 // UI Components
 import { OrderSearch, OrderTabs, OrderList, OrderStatusSelect } from "./ui";
@@ -22,14 +24,18 @@ type OrderTabType = 'new' | 'my' | 'overdue';
 const OrdersScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { data: user } = useGetMe();
+  const { location, hasPermission } = useLocation();
+  const hasLocation = hasPermission && location !== null;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderTabType>('new');
-  const [myOrdersStatusFilter, setMyOrdersStatusFilter] = useState<OrderStatus | undefined>(OrderStatus.IN_PROGRESS);
+  // По умолчанию показываем ASSIGNED и IN_PROGRESS (в работе)
+  // Для этого используем undefined чтобы показать все, но можно фильтровать
+  const [myOrdersStatusFilter, setMyOrdersStatusFilter] = useState<OrderStatus | undefined>(undefined);
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
-  // Для табы "Новые заказы" - загружаем заказы со статусами NEW и PAID без currierId
+  // Для табы "Новые заказы" - загружаем только PAID заказы (NEW нельзя взять)
   const {
     data: newOrdersData,
     isLoading: isLoadingNew,
@@ -37,22 +43,39 @@ const OrdersScreen: React.FC = () => {
     refetch: refetchNew,
     error: newOrdersError
   } = useOrderByLocation({
-    status: OrderStatus.NEW,
-    currierId: undefined,
-  });
-
-  const {
-    data: paidOrdersData,
-    isLoading: isLoadingPaid,
-    isFetching: isFetchingPaid,
-    refetch: refetchPaid,
-    error: paidOrdersError
-  } = useOrderByLocation({
     status: OrderStatus.PAID,
     currierId: undefined,
   });
 
-  // Для табы "Мои заказы" - загружаем заказы курьера с учетом выбранного фильтра статуса
+  // Для табы "Мои заказы" - загружаем заказы курьера
+  // Если фильтр undefined, загружаем ASSIGNED и IN_PROGRESS (в работе)
+  const {
+    data: assignedOrdersData,
+    isLoading: isLoadingAssigned,
+    isFetching: isFetchingAssigned,
+    refetch: refetchAssigned,
+    error: assignedOrdersError
+  } = useOrderByLocation({
+    status: OrderStatus.ASSIGNED,
+    currierId: user?.id,
+  }, {
+    enabled: !!user?.id && activeTab === 'my' && myOrdersStatusFilter === undefined,
+  });
+
+  const {
+    data: inProgressOrdersData,
+    isLoading: isLoadingInProgress,
+    isFetching: isFetchingInProgress,
+    refetch: refetchInProgress,
+    error: inProgressOrdersError
+  } = useOrderByLocation({
+    status: OrderStatus.IN_PROGRESS,
+    currierId: user?.id,
+  }, {
+    enabled: !!user?.id && activeTab === 'my' && myOrdersStatusFilter === undefined,
+  });
+
+  // Если выбран конкретный статус, загружаем его
   const {
     data: myOrdersData,
     isLoading: isLoadingMy,
@@ -63,7 +86,7 @@ const OrdersScreen: React.FC = () => {
     status: myOrdersStatusFilter,
     currierId: user?.id,
   }, {
-    enabled: !!user?.id && activeTab === 'my', // Запрос выполняется только если есть ID пользователя и активна таба "Мои заказы"
+    enabled: !!user?.id && activeTab === 'my' && myOrdersStatusFilter !== undefined,
   });
 
   // Для табы "Просроченные заказы" - загружаем просроченные заказы
@@ -80,37 +103,141 @@ const OrdersScreen: React.FC = () => {
     enabled: activeTab === 'overdue', // Запрос выполняется только если активна таба "Просроченные"
   });
 
-  // Объединяем данные в зависимости от выбранной табы
+  // Объединяем и сортируем данные в зависимости от выбранной табы
   const ordersData = useMemo(() => {
+    let data;
+
     if (activeTab === 'new') {
-      const newOrders = newOrdersData?.orders?.filter(order => order?.status === OrderStatus.PAID) || [];
-      const paidOrders = paidOrdersData?.orders || [];
-      return {
-        orders: [...newOrders, ...paidOrders],
-        total: (newOrdersData?.total || 0) + (paidOrdersData?.total || 0),
-      };
+      data = newOrdersData;
     } else if (activeTab === 'overdue') {
-      return overdueOrdersData;
+      data = overdueOrdersData;
     } else {
-      return myOrdersData;
+      // Для "Мои заказы": если фильтр undefined, объединяем ASSIGNED и IN_PROGRESS
+      if (myOrdersStatusFilter === undefined) {
+        const assignedOrders = assignedOrdersData?.orders || [];
+        const inProgressOrders = inProgressOrdersData?.orders || [];
+        data = {
+          orders: [...assignedOrders, ...inProgressOrders],
+          total: (assignedOrdersData?.total || 0) + (inProgressOrdersData?.total || 0),
+        };
+      } else {
+        data = myOrdersData;
+      }
     }
-  }, [activeTab, newOrdersData, paidOrdersData, myOrdersData, overdueOrdersData]);
+
+    if (!data?.orders) {
+      return { orders: [], total: 0 };
+    }
+
+    // Для табы "Новые заказы" - исключаем просроченные
+    if (activeTab === 'new') {
+      data = {
+        ...data,
+        orders: data.orders.filter(order => !order.isOverdue),
+      };
+    }
+
+    // Вычисляем расстояния для всех заказов (если есть локация)
+    const ordersWithDistance = data.orders.map(order => {
+      let distance: number | null = null;
+
+      if (hasLocation && location && order.coordinates) {
+        distance = calculateDistance(
+          {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+          {
+            latitude: order.coordinates.lat,
+            longitude: order.coordinates.lon,
+          }
+        );
+      }
+
+      return { order, distance };
+    });
+
+    // Сортируем: просроченные вверху, затем по расстоянию (если есть), затем по времени
+    const sorted = ordersWithDistance.sort((a, b) => {
+      // 1. Просроченные всегда вверху
+      if (a.order.isOverdue && !b.order.isOverdue) return -1;
+      if (!a.order.isOverdue && b.order.isOverdue) return 1;
+
+      // 2. Если оба просроченные, сортируем по времени просрочки (больше просрочки = выше)
+      if (a.order.isOverdue && b.order.isOverdue) {
+        const aMinutes = a.order.overdueMinutes || 0;
+        const bMinutes = b.order.overdueMinutes || 0;
+        if (aMinutes !== bMinutes) return bMinutes - aMinutes;
+      }
+
+      // 3. Если есть локация, сортируем по расстоянию (ближе = выше)
+      if (hasLocation && a.distance !== null && b.distance !== null) {
+        if (a.distance !== b.distance) {
+          return a.distance - b.distance;
+        }
+      }
+
+      // 4. По времени создания (новые сверху)
+      return new Date(b.order.createdAt).getTime() - new Date(a.order.createdAt).getTime();
+    });
+
+    return {
+      orders: sorted.map(item => item.order),
+      total: data.total || 0,
+    };
+  }, [
+    activeTab,
+    newOrdersData,
+    myOrdersData,
+    assignedOrdersData,
+    inProgressOrdersData,
+    overdueOrdersData,
+    hasLocation,
+    location,
+    myOrdersStatusFilter
+  ]);
 
   const isLoading = activeTab === 'new'
-    ? (isLoadingNew || isLoadingPaid)
+    ? isLoadingNew
     : activeTab === 'overdue'
       ? isLoadingOverdue
-      : isLoadingMy;
+      : myOrdersStatusFilter === undefined
+        ? (isLoadingAssigned || isLoadingInProgress)
+        : isLoadingMy;
   const isFetching = activeTab === 'new'
-    ? (isFetchingNew || isFetchingPaid)
+    ? isFetchingNew
     : activeTab === 'overdue'
       ? isFetchingOverdue
-      : isFetchingMy;
+      : myOrdersStatusFilter === undefined
+        ? (isFetchingAssigned || isFetchingInProgress)
+        : isFetchingMy;
   const ordersError = activeTab === 'new'
-    ? (newOrdersError || paidOrdersError)
+    ? newOrdersError
     : activeTab === 'overdue'
       ? overdueOrdersError
-      : myOrdersError;
+      : myOrdersStatusFilter === undefined
+        ? (assignedOrdersError || inProgressOrdersError)
+        : myOrdersError;
+
+  // Счетчики для табов
+  const tabCounts = useMemo(() => {
+    const myCount = myOrdersStatusFilter === undefined
+      ? ((assignedOrdersData?.total || 0) + (inProgressOrdersData?.total || 0))
+      : (myOrdersData?.total || 0);
+
+    return {
+      new: newOrdersData?.orders?.filter(order => !order.isOverdue).length || 0,
+      my: myCount,
+      overdue: overdueOrdersData?.total || 0,
+    };
+  }, [
+    newOrdersData?.orders,
+    assignedOrdersData?.total,
+    inProgressOrdersData?.total,
+    myOrdersData?.total,
+    overdueOrdersData?.total,
+    myOrdersStatusFilter
+  ]);
   const updateStatusMutation = useUpdateOrderStatus();
   const takeOrderMutation = useTakeOrder();
   const cancelOrderMutation = useCancelOrder();
@@ -198,13 +325,17 @@ const OrdersScreen: React.FC = () => {
   const handleRefresh = useCallback(() => {
     if (activeTab === 'new') {
       refetchNew();
-      refetchPaid();
     } else if (activeTab === 'overdue') {
       refetchOverdue();
     } else {
-      refetchMy();
+      if (myOrdersStatusFilter === undefined) {
+        refetchAssigned();
+        refetchInProgress();
+      } else {
+        refetchMy();
+      }
     }
-  }, [activeTab, refetchNew, refetchPaid, refetchMy, refetchOverdue]);
+  }, [activeTab, refetchNew, refetchMy, refetchOverdue, refetchAssigned, refetchInProgress, myOrdersStatusFilter]);
 
   const handleConfirmComplete = useCallback(() => {
     if (selectedOrder) {
@@ -257,15 +388,16 @@ const OrdersScreen: React.FC = () => {
       </View>
 
       <View style={styles.content}>
-        {/* <OrderSearch
+        <OrderSearch
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Поиск по описанию, адресу, клиенту..."
-        /> */}
+        />
 
         <OrderTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          counts={tabCounts}
         />
 
         {activeTab === 'my' && (

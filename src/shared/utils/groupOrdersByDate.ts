@@ -12,21 +12,50 @@ export type FlatListItem =
   | { type: 'order'; order: OrderResponseDto };
 
 /**
- * Группирует заказы по датам создания
+ * Группирует заказы по датам создания с отдельной группой для просроченных
  * @param orders - массив заказов
- * @returns массив секций с заголовками дат
+ * @returns массив секций с заголовками дат (просроченные вверху)
  */
 export const groupOrdersByDate = (orders: OrderResponseDto[]): OrderSection[] => {
   if (!orders || orders.length === 0) {
     return [];
   }
 
-  // Группируем заказы по дате (без учета времени)
-  const groupedMap = new Map<string, OrderResponseDto[]>();
+  // Разделяем просроченные и обычные заказы
+  const overdueOrders: OrderResponseDto[] = [];
+  const normalOrders: OrderResponseDto[] = [];
 
   orders.forEach((order) => {
+    if (order.isOverdue) {
+      overdueOrders.push(order);
+    } else {
+      normalOrders.push(order);
+    }
+  });
+
+  const sections: OrderSection[] = [];
+
+  // Добавляем группу просроченных вверху, если есть
+  if (overdueOrders.length > 0) {
+    sections.push({
+      title: 'Просроченные',
+      date: 'overdue',
+      data: overdueOrders.sort((a, b) => {
+        // Сортируем по времени просрочки (больше просрочки = выше)
+        const aMinutes = a.overdueMinutes || 0;
+        const bMinutes = b.overdueMinutes || 0;
+        if (aMinutes !== bMinutes) return bMinutes - aMinutes;
+        // Затем по времени создания
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }),
+    });
+  }
+
+  // Группируем обычные заказы по дате
+  const groupedMap = new Map<string, OrderResponseDto[]>();
+
+  normalOrders.forEach((order) => {
     const orderDate = new Date(order.createdAt);
-    // Создаем ключ в формате YYYY-MM-DD для группировки
     const dateKey = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}`;
     
     if (!groupedMap.has(dateKey)) {
@@ -36,19 +65,14 @@ export const groupOrdersByDate = (orders: OrderResponseDto[]): OrderSection[] =>
   });
 
   // Преобразуем Map в массив секций
-  const sections: OrderSection[] = Array.from(groupedMap.entries())
+  const dateSections: OrderSection[] = Array.from(groupedMap.entries())
     .map(([dateKey, ordersInGroup]) => {
-      // Используем дату первого заказа для форматирования заголовка
       const firstOrderDate = ordersInGroup[0].createdAt;
       return {
         title: formatDateHeader(firstOrderDate),
         date: dateKey,
         data: ordersInGroup.sort((a, b) => {
-          // 1. Просроченные заказы всегда вверху
-          if (a.isOverdue && !b.isOverdue) return -1;
-          if (!a.isOverdue && b.isOverdue) return 1;
-          
-          // 2. Внутри каждой группы сортируем по времени создания (новые сверху)
+          // Сортируем по времени создания (новые сверху)
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         }),
       };
@@ -57,6 +81,8 @@ export const groupOrdersByDate = (orders: OrderResponseDto[]): OrderSection[] =>
       // Сортируем секции по дате (новые сверху)
       return b.date.localeCompare(a.date);
     });
+
+  sections.push(...dateSections);
 
   return sections;
 };

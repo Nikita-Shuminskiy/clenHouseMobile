@@ -15,14 +15,14 @@ const OrderStatusSelect: React.FC<OrderStatusSelectProps> = ({ selectedStatus, o
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   const statusOptions = [
-    { value: undefined, label: 'Все' },
-    { value: OrderStatus.IN_PROGRESS, label: 'В работе' },
+    { value: undefined, label: 'В работе' }, // ASSIGNED + IN_PROGRESS
     { value: OrderStatus.ASSIGNED, label: 'Назначенные' },
+    { value: OrderStatus.IN_PROGRESS, label: 'В процессе' },
     { value: OrderStatus.DONE, label: 'Завершенные' },
     { value: OrderStatus.CANCELED, label: 'Отмененные' },
   ];
 
-  const selectedLabel = statusOptions.find(opt => opt.value === selectedStatus)?.label || 'Все';
+  const selectedLabel = statusOptions.find(opt => opt.value === selectedStatus)?.label || 'В работе';
 
   useEffect(() => {
     if (modalVisible) {

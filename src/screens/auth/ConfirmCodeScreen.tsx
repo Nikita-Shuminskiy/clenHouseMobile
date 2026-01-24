@@ -18,6 +18,7 @@ import Button from '@/src/shared/components/ui-kit/button';
 import { BackArrowIcon } from '@/src/shared/components/icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
+
 const ConfirmCodeScreen: React.FC = () => {
   const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
 
@@ -91,7 +92,6 @@ const ConfirmCodeScreen: React.FC = () => {
       }
     } catch (error) {
       console.error('Ошибка автозаполнения:', error);
-      Alert.alert('Ошибка', 'Не удалось получить код');
     }
   };
 
@@ -199,6 +199,8 @@ const ConfirmCodeScreen: React.FC = () => {
           </View>
 
           {/* Dev кнопка автозаполнения */}
+
+
           <Button
             type="secondary"
             onPress={handleAutoFill}

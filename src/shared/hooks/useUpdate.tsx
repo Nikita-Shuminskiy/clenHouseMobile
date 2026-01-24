@@ -1,45 +1,57 @@
 import * as Updates from "expo-updates";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 type UseUpdateReturnType = {
-  isUpdate: boolean;
+  isUpdateAvailable: boolean;
+  isDownloading: boolean;
   onCloseUpdateModal: () => void;
+  onApplyUpdate: () => Promise<void>;
 };
 
 const useUpdate = (): UseUpdateReturnType => {
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  const checkUpdate = async () => {
+  const checkUpdate = useCallback(async () => {
     try {
-      // Проверяем, что Updates доступен (не работает в dev режиме)
       if (!Updates.isEnabled) {
         return;
       }
 
-      // Проверяем наличие обновлений
       const update = await Updates.checkForUpdateAsync();
 
       if (update.isAvailable) {
-        setIsUpdate(true);
-
-        // Загружаем обновление в фоне
-        const result = await Updates.fetchUpdateAsync();
-
-        if (result.isNew) {
-          // Перезагружаем приложение с новым обновлением
-          await Updates.reloadAsync();
-        }
+        setIsUpdateAvailable(true);
       }
     } catch (error) {
-      // Игнорируем ошибки проверки обновлений
+      console.error("[useUpdate] Error checking for updates:", error);
     }
-  };
+  }, []);
+
+  const onApplyUpdate = useCallback(async () => {
+    try {
+      if (!Updates.isEnabled) {
+        return;
+      }
+
+      setIsDownloading(true);
+      const result = await Updates.fetchUpdateAsync();
+
+      if (result.isNew) {
+        await Updates.reloadAsync();
+      } else {
+        setIsDownloading(false);
+        setIsUpdateAvailable(false);
+      }
+    } catch (error) {
+      console.error("[useUpdate] Error applying update:", error);
+      setIsDownloading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // Проверяем обновления при монтировании компонента
     checkUpdate();
 
-    // Периодическая проверка обновлений каждые 5 минут
     const interval = setInterval(() => {
       checkUpdate();
     }, 5 * 60 * 1000);
@@ -47,11 +59,15 @@ const useUpdate = (): UseUpdateReturnType => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [checkUpdate]);
 
   return {
-    isUpdate,
-    onCloseUpdateModal: () => setIsUpdate(false),
+    isUpdateAvailable,
+    isDownloading,
+    onCloseUpdateModal: () => {
+      setIsUpdateAvailable(false);
+    },
+    onApplyUpdate,
   };
 };
 

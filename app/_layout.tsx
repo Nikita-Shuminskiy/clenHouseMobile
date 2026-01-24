@@ -29,6 +29,7 @@ import "@/src/shared/hooks/useNotification/backgroundHandler";
 // Импортируем useNotification для регистрации handlers на уровне модуля
 import "@/src/shared/hooks/useNotification/useNotification";
 import useUpdate from "@/src/shared/hooks/useUpdate";
+import UpdateAvailableModal from "@/src/shared/components/modals/UpdateAvailableModal";
 
 
 // Сохраняем splash screen видимым до готовности приложения
@@ -43,7 +44,7 @@ const RootStack = () => {
     queryKey: ["isFirstEnter"],
     queryFn: () => getStorageIsFirstEnter(),
   });
-  const { isUpdate, onCloseUpdateModal } = useUpdate();
+  const { isUpdateAvailable, isDownloading, onCloseUpdateModal, onApplyUpdate } = useUpdate();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   // Скрываем splash screen после небольшой задержки, чтобы он успел показаться
   useEffect(() => {
@@ -161,12 +162,20 @@ const RootStack = () => {
   }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter, isNavigationReady]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(protected-tabs)" />
-      <Stack.Screen name="(protected)" />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(protected-tabs)" />
+        <Stack.Screen name="(protected)" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <UpdateAvailableModal
+        visible={isUpdateAvailable}
+        isDownloading={isDownloading}
+        onClose={onCloseUpdateModal}
+        onApply={onApplyUpdate}
+      />
+    </>
   );
 };
 
