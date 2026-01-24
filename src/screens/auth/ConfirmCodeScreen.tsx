@@ -70,7 +70,7 @@ const ConfirmCodeScreen: React.FC = () => {
 
   const handleResendCode = async () => {
     try {
-      await sendSms({ phoneNumber, isDev: true });
+      await sendSms({ phoneNumber, isDev: false });
       Alert.alert('Код отправлен', 'Новый код подтверждения отправлен на ваш номер');
     } catch (error) {
       Alert.alert('Ошибка', 'Не удалось отправить код');
@@ -201,14 +201,14 @@ const ConfirmCodeScreen: React.FC = () => {
           {/* Dev кнопка автозаполнения */}
 
 
-          <Button
+          {/* <Button
             type="secondary"
             onPress={handleAutoFill}
             disabled={isLoading}
             style={styles.autoFillButton}
           >
             Автоввод (Dev)
-          </Button>
+          </Button> */}
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
