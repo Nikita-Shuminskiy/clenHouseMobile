@@ -79,15 +79,21 @@ const OrderList: React.FC<OrderListProps> = ({
   const renderItem = ({ item }: { item: FlatListItem }) => {
     if (item.type === 'header') {
       const isExpanded = expandedSections.has(item.date);
+      const section = sections.find(s => s.date === item.date);
+      const orderCount = section?.data.length || 0;
+      const overdueCount = section?.data.filter(order => order.isOverdue).length || 0;
+
       return (
-        <DateHeader 
-          title={item.title} 
+        <DateHeader
+          title={item.title}
+          count={orderCount}
+          overdueCount={overdueCount}
           isExpanded={isExpanded}
           onPress={() => handleToggleSection(item.date)}
         />
       );
     }
-    
+
     return (
       <OrderCard
         order={item.order}

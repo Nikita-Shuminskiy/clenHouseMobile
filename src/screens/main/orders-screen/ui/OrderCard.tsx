@@ -200,27 +200,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
         )}
       </View>
 
-      {order.status === OrderStatus.NEW && onAction && (
-        <View style={styles.actions}>
-          <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.primary500 }]}
-            onPress={() => onAction(order, 'accept')}
-          >
-            <Text style={styles.acceptButtonText}>Принять</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.cancelButton]}
-            onPress={() => onAction(order, 'cancel')}
-          >
-            <Text style={styles.cancelButtonText}>Отменить</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
       {order.status === OrderStatus.PAID && onAction && (
         <View style={styles.actions}>
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.blue }]}
+            style={[styles.actionButton, { backgroundColor: colors.primary500 }]}
             onPress={() => onAction(order, 'accept')}
           >
             <Text style={styles.acceptButtonText}>Принять</Text>

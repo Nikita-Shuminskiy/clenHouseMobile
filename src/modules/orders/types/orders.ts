@@ -73,6 +73,7 @@ export interface OrderResponseDto {
   };
   addressDetails?: AddressDetailsDto;
   numberPackages?: number;
+  assignedAt?: string | null;
   isOverdue: boolean;
   overdueMinutes?: number;
   createdAt: string;
@@ -99,4 +100,8 @@ export interface CompleteOrderDto {
 export interface CancelOrderDto {
   courierId: string;
   reason?: string;
+}
+
+export interface ReassignOrderDto {
+  newCourierId: string;
 }

@@ -44,7 +44,11 @@ export const groupOrdersByDate = (orders: OrderResponseDto[]): OrderSection[] =>
         title: formatDateHeader(firstOrderDate),
         date: dateKey,
         data: ordersInGroup.sort((a, b) => {
-          // Сортируем заказы внутри группы по времени создания (новые сверху)
+          // 1. Просроченные заказы всегда вверху
+          if (a.isOverdue && !b.isOverdue) return -1;
+          if (!a.isOverdue && b.isOverdue) return 1;
+          
+          // 2. Внутри каждой группы сортируем по времени создания (новые сверху)
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         }),
       };

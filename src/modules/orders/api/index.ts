@@ -8,6 +8,7 @@ import {
   StartOrderDto,
   CompleteOrderDto,
   CancelOrderDto,
+  ReassignOrderDto,
   OrderStatus,
 } from "../types/orders";
 import { AxiosResponse } from "axios";
@@ -90,6 +91,14 @@ export const ordersApi = {
     instance
       .patch<CancelOrderDto, AxiosResponse<OrderResponseDto>>(
         `/orders/${id}/cancel`,
+        data
+      )
+      .then((res) => res.data),
+
+  reassignOrder: (id: string, data: ReassignOrderDto) =>
+    instance
+      .patch<ReassignOrderDto, AxiosResponse<OrderResponseDto>>(
+        `/orders/${id}/reassign`,
         data
       )
       .then((res) => res.data),

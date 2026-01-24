@@ -8,6 +8,7 @@ import {
   OrderResponseDto,
   OrdersListResponse,
   OrderStatus,
+  TakeOrderDto,
   UpdateOrderStatusDto,
 } from "../types/orders";
 import { useLocation } from "@/src/shared/hooks/useLocation";
@@ -177,6 +178,38 @@ export const useUpdateOrderStatus = () => {
       const errorMessage =
         (error?.response?.data as { message?: string })?.message ||
         "Ошибка обновления статуса";
+      toast.error("Ошибка", {
+        description: errorMessage,
+        duration: 5000,
+      });
+    },
+  });
+};
+
+// Взять заказ (только для PAID)
+export const useTakeOrder = () => {
+  const queryClient = useQueryClient();
+  const { data: user } = useGetMe();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TakeOrderDto }) =>
+      ordersApi.takeOrder(id, data),
+    onSuccess: (data) => {
+      toast.success("Заказ принят!", {
+        duration: 4000,
+      });
+
+      // Обновляем кэш заказов
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["order", data.id] });
+      queryClient.invalidateQueries({
+        queryKey: ["customer-orders", user?.id],
+      });
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage =
+        (error?.response?.data as { message?: string })?.message ||
+        "Ошибка принятия заказа";
       toast.error("Ошибка", {
         description: errorMessage,
         duration: 5000,

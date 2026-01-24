@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
-import { useOrderByLocation, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
+import { useOrderByLocation, useUpdateOrderStatus, useTakeOrder, useCancelOrder } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 
 // UI Components
@@ -96,22 +96,23 @@ const OrdersScreen: React.FC = () => {
     }
   }, [activeTab, newOrdersData, paidOrdersData, myOrdersData, overdueOrdersData]);
 
-  const isLoading = activeTab === 'new' 
-    ? (isLoadingNew || isLoadingPaid) 
+  const isLoading = activeTab === 'new'
+    ? (isLoadingNew || isLoadingPaid)
     : activeTab === 'overdue'
-    ? isLoadingOverdue
-    : isLoadingMy;
-  const isFetching = activeTab === 'new' 
-    ? (isFetchingNew || isFetchingPaid) 
+      ? isLoadingOverdue
+      : isLoadingMy;
+  const isFetching = activeTab === 'new'
+    ? (isFetchingNew || isFetchingPaid)
     : activeTab === 'overdue'
-    ? isFetchingOverdue
-    : isFetchingMy;
-  const ordersError = activeTab === 'new' 
-    ? (newOrdersError || paidOrdersError) 
+      ? isFetchingOverdue
+      : isFetchingMy;
+  const ordersError = activeTab === 'new'
+    ? (newOrdersError || paidOrdersError)
     : activeTab === 'overdue'
-    ? overdueOrdersError
-    : myOrdersError;
+      ? overdueOrdersError
+      : myOrdersError;
   const updateStatusMutation = useUpdateOrderStatus();
+  const takeOrderMutation = useTakeOrder();
   const cancelOrderMutation = useCancelOrder();
 
   const filteredOrders = React.useMemo(() => {
@@ -142,16 +143,15 @@ const OrdersScreen: React.FC = () => {
           Alert.alert('Ошибка', 'Не удалось определить пользователя');
           return;
         }
-        updateStatusMutation.mutate({
+        // Используем takeOrder для PAID заказов
+        takeOrderMutation.mutate({
           id: order.id,
           data: {
-            status: OrderStatus.ASSIGNED,
-            currierId: user.id
+            courierId: user.id
           }
         }, {
           onError: (error) => {
             console.error('Ошибка при принятии заказа:', error);
-            // Ошибка уже обрабатывается в хуке useUpdateOrderStatus
           }
         });
         break;
@@ -186,7 +186,7 @@ const OrdersScreen: React.FC = () => {
         );
         break;
     }
-  }, [user?.id, updateStatusMutation, cancelOrderMutation]);
+  }, [user?.id, takeOrderMutation, updateStatusMutation, cancelOrderMutation]);
 
   const handleOrderPress = useCallback((order: any) => {
     router.push({

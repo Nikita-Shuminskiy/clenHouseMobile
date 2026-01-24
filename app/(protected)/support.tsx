@@ -24,9 +24,9 @@ const SupportScreen: React.FC = () => {
     const email = 'chisto.doma1@mail.ru';
     const subject = 'Поддержка Mussor';
     const body = 'Здравствуйте! Я обращаюсь в службу поддержки по поводу...';
-    
+
     const emailUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
+
     Linking.canOpenURL(emailUrl)
       .then((supported) => {
         if (supported) {
@@ -43,7 +43,7 @@ const SupportScreen: React.FC = () => {
   const handlePhonePress = () => {
     const phoneNumber = '8-800-775-63-65';
     const phoneUrl = `tel:${phoneNumber}`;
-    
+
     Linking.canOpenURL(phoneUrl)
       .then((supported) => {
         if (supported) {
@@ -59,7 +59,7 @@ const SupportScreen: React.FC = () => {
 
   const handleTelegramPress = () => {
     const telegramUrl = 'https://t.me/chistodoma1';
-    
+
     Linking.canOpenURL(telegramUrl)
       .then((supported) => {
         if (supported) {
@@ -172,7 +172,7 @@ const SupportScreen: React.FC = () => {
           ))}
         </View>
 
-        {/* FAQ */}
+        {/* FAQ
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Часто задаваемые вопросы</Text>
           {faqItems.map((item, index) => (
@@ -185,7 +185,7 @@ const SupportScreen: React.FC = () => {
               </Text>
             </View>
           ))}
-        </View>
+        </View> */}
 
         {/* Дополнительная информация */}
         <View style={[styles.infoCard, { backgroundColor: theme.colors.primary500_12 }]}>
