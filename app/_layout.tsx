@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { queryClient } from "@/src/shared/api/configs/query-client-config";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
 import { ThemeProvider } from "../src/shared/use-theme";
@@ -14,6 +14,9 @@ import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
 import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
+import { UserRole } from "@/src/shared/api/types/data-contracts";
+import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
+import { toast } from "sonner-native";
 
 // Импортируем background handler для регистрации headless tasks
 import "@/src/shared/hooks/useNotification/backgroundHandler";
@@ -27,6 +30,7 @@ SplashScreen.preventAutoHideAsync();
 
 const RootStack = () => {
   const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
+  const queryClient = useQueryClient();
   console.log(userMe, "userMe");
 
   const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
@@ -64,9 +68,24 @@ const RootStack = () => {
     const currentPath = router.canGoBack() ? 'unknown' : 'initial';
 
     if (userMe?.role) {
-      // Перенаправляем только если не находимся уже на защищенных экранах
-      if (!currentPath.includes('protected')) {
-        router.replace("/(protected-tabs)");
+      // Проверка роли курьера - приложение предназначено только для курьеров
+      if (userMe.role === UserRole.CURRIER) {
+        // Перенаправляем только если не находимся уже на защищенных экранах
+        if (!currentPath.includes('protected')) {
+          router.replace("/(protected-tabs)");
+        }
+      } else {
+        // Пользователь не курьер - показываем ошибку и редиректим на логин
+        toast.error('Доступ запрещен', {
+          description: 'Это приложение предназначено только для курьеров',
+          duration: 5000,
+        });
+        // Очищаем токены
+        await removeToken();
+        await removeRefreshToken();
+        // Очищаем кэш пользователя
+        queryClient.setQueryData(['me'], null);
+        router.replace("/(auth)");
       }
     } else if (isFirstEnter === "true") {
       router.replace("/(auth)/onboarding");

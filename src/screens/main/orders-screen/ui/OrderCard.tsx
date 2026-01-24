@@ -107,7 +107,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
             <Text style={styles.statusText}>{getStatusText(order.status)}</Text>
           </View>
         </View>
-        <Text style={styles.price}>{formatPrice(Number(order.price))}</Text>
+        <Text style={styles.price}>{formatPrice(order.price)}</Text>
       </View>
 
       <View style={styles.content}>
@@ -163,6 +163,21 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
           <View style={styles.scheduledContainer}>
             <Text style={styles.scheduledLabel}>Запланирован на:</Text>
             <Text style={styles.scheduledDate}>{formatDateString(order.scheduledAt)}</Text>
+          </View>
+        )}
+
+        {order.isOverdue && (
+          <View style={[styles.overdueContainer, { backgroundColor: colors.error || '#FFEBEE' }]}>
+            <Text style={[styles.overdueLabel, { color: colors.error || '#DC2626' }]}>
+              ⚠️ Просрочен
+            </Text>
+            {order.overdueMinutes !== undefined && (
+              <Text style={[styles.overdueMinutes, { color: colors.error || '#DC2626' }]}>
+                {order.overdueMinutes >= 60
+                  ? `${Math.floor(order.overdueMinutes / 60)} ч ${order.overdueMinutes % 60} мин`
+                  : `${order.overdueMinutes} мин`}
+              </Text>
+            )}
           </View>
         )}
       </View>
@@ -409,6 +424,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     color: '#1A1A1A',
+  },
+  overdueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  overdueLabel: {
+    fontFamily: 'Onest',
+    fontWeight: '600',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  overdueMinutes: {
+    fontFamily: 'Onest',
+    fontWeight: '600',
+    fontSize: 13,
+    lineHeight: 18,
   },
   packagesContainer: {
     flexDirection: 'row',

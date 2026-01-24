@@ -36,6 +36,7 @@ export const useOrders = (params?: {
   status?: OrderStatus;
   customerId?: string;
   currierId?: string;
+  isOverdue?: boolean;
 }) => {
   return useQuery<OrdersListResponse>({
     queryKey: ["orders", params],
@@ -57,6 +58,7 @@ export const useOrdersNearby = (params: {
   limit?: number;
   status?: OrderStatus;
   currierId?: string;
+  isOverdue?: boolean;
 }) => {
   return useQuery<OrdersListResponse>({
     queryKey: ["orders", "nearby", params],
@@ -80,6 +82,7 @@ export const useOrderByLocation = (
     customerId?: string;
     currierId?: string;
     maxDistance?: number;
+    isOverdue?: boolean;
   },
   options?: {
     enabled?: boolean;

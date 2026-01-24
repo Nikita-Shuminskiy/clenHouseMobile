@@ -3,8 +3,9 @@ import { toast } from 'sonner-native';
 import { authApi } from '../api';
 import { VerifySmsRequest } from '../types';
 import { router } from 'expo-router';
-import { setRefreshToken, setToken } from '@/src/shared/utils/token';
+import { setRefreshToken, setToken, removeToken, removeRefreshToken } from '@/src/shared/utils/token';
 import { requestLocationPermission, checkLocationPermission } from '@/src/shared/utils/location-permission';
+import { UserRole } from '@/src/shared/api/types/data-contracts';
 
 export const useVerifySms = () => {
     const queryClient = useQueryClient();
@@ -20,6 +21,18 @@ export const useVerifySms = () => {
                     duration: 5000,
                 });
                 throw new Error('Некорректные данные ответа от сервера');
+            }
+
+            // Проверка роли курьера - приложение предназначено только для курьеров
+            if (data.user.role !== UserRole.CURRIER) {
+                toast.error('Доступ запрещен', {
+                    description: 'Это приложение предназначено только для курьеров',
+                    duration: 5000,
+                });
+                // Очищаем токены если они были сохранены
+                await removeToken();
+                await removeRefreshToken();
+                throw new Error('Доступ разрешен только курьерам');
             }
 
             try {

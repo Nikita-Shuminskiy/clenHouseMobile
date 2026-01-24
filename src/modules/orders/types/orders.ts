@@ -26,7 +26,7 @@ export interface UpdateOrderStatusDto {
 export interface PaymentDto {
   id: string;
   orderId: string;
-  amount: string;
+  amount: number;
   status: string;
   method: string;
   createdAt: string;
@@ -62,9 +62,9 @@ export interface OrderResponseDto {
   currier: UserDto | null;
   address: string;
   description: string;
-  price: string;
+  price: number;
   status: OrderStatus;
-  scheduledAt: string;
+  scheduledAt?: string | null;
   notes: string;
   payments: PaymentDto[];
   coordinates?: {
@@ -73,6 +73,8 @@ export interface OrderResponseDto {
   };
   addressDetails?: AddressDetailsDto;
   numberPackages?: number;
+  isOverdue: boolean;
+  overdueMinutes?: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -24,6 +24,7 @@ export const ordersApi = {
     status?: OrderStatus;
     customerId?: string;
     currierId?: string;
+    isOverdue?: boolean;
   }) =>
     instance
       .get<OrdersListResponse>("/orders", { params })
@@ -37,6 +38,7 @@ export const ordersApi = {
     limit?: number;
     currierId?: string;
     status?: OrderStatus;
+    isOverdue?: boolean;
   }) =>
     instance
       .get<OrdersListResponse>("/orders/nearby", { params })

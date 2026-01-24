@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import useTheme from '@/src/shared/use-theme/use-theme';
 
-type OrderTabType = 'new' | 'my';
+type OrderTabType = 'new' | 'my' | 'overdue';
 
 interface OrderTabsProps {
   activeTab: OrderTabType;
@@ -61,6 +61,31 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange }) => {
           ]}
         >
           Мои заказы
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          styles.tab,
+          activeTab === 'overdue' && {
+            backgroundColor: colors.error || '#DC2626',
+          },
+          activeTab !== 'overdue' && {
+            backgroundColor: colors.grey100,
+          },
+        ]}
+        onPress={() => onTabChange('overdue')}
+        activeOpacity={0.7}
+      >
+        <Text
+          style={[
+            styles.tabText,
+            {
+              color: activeTab === 'overdue' ? colors.white : colors.muted,
+            },
+          ]}
+        >
+          Просроченные
         </Text>
       </TouchableOpacity>
     </View>

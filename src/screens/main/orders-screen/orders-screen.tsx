@@ -17,7 +17,7 @@ import { OrderSearch, OrderTabs, OrderList, OrderStatusSelect } from "./ui";
 import CompleteOrderModal from "@/src/shared/components/modals/CompleteOrderModal";
 import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
 
-type OrderTabType = 'new' | 'my';
+type OrderTabType = 'new' | 'my' | 'overdue';
 
 const OrdersScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -63,7 +63,21 @@ const OrdersScreen: React.FC = () => {
     status: myOrdersStatusFilter,
     currierId: user?.id,
   }, {
-    enabled: !!user?.id, // Запрос выполняется только если есть ID пользователя
+    enabled: !!user?.id && activeTab === 'my', // Запрос выполняется только если есть ID пользователя и активна таба "Мои заказы"
+  });
+
+  // Для табы "Просроченные заказы" - загружаем просроченные заказы
+  const {
+    data: overdueOrdersData,
+    isLoading: isLoadingOverdue,
+    isFetching: isFetchingOverdue,
+    refetch: refetchOverdue,
+    error: overdueOrdersError
+  } = useOrderByLocation({
+    isOverdue: true,
+    currierId: undefined,
+  }, {
+    enabled: activeTab === 'overdue', // Запрос выполняется только если активна таба "Просроченные"
   });
 
   // Объединяем данные в зависимости от выбранной табы
@@ -75,14 +89,28 @@ const OrdersScreen: React.FC = () => {
         orders: [...newOrders, ...paidOrders],
         total: (newOrdersData?.total || 0) + (paidOrdersData?.total || 0),
       };
+    } else if (activeTab === 'overdue') {
+      return overdueOrdersData;
     } else {
       return myOrdersData;
     }
-  }, [activeTab, newOrdersData, paidOrdersData, myOrdersData]);
+  }, [activeTab, newOrdersData, paidOrdersData, myOrdersData, overdueOrdersData]);
 
-  const isLoading = activeTab === 'new' ? (isLoadingNew || isLoadingPaid) : isLoadingMy;
-  const isFetching = activeTab === 'new' ? (isFetchingNew || isFetchingPaid) : isFetchingMy;
-  const ordersError = activeTab === 'new' ? (newOrdersError || paidOrdersError) : myOrdersError;
+  const isLoading = activeTab === 'new' 
+    ? (isLoadingNew || isLoadingPaid) 
+    : activeTab === 'overdue'
+    ? isLoadingOverdue
+    : isLoadingMy;
+  const isFetching = activeTab === 'new' 
+    ? (isFetchingNew || isFetchingPaid) 
+    : activeTab === 'overdue'
+    ? isFetchingOverdue
+    : isFetchingMy;
+  const ordersError = activeTab === 'new' 
+    ? (newOrdersError || paidOrdersError) 
+    : activeTab === 'overdue'
+    ? overdueOrdersError
+    : myOrdersError;
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
 
@@ -171,10 +199,12 @@ const OrdersScreen: React.FC = () => {
     if (activeTab === 'new') {
       refetchNew();
       refetchPaid();
+    } else if (activeTab === 'overdue') {
+      refetchOverdue();
     } else {
       refetchMy();
     }
-  }, [activeTab, refetchNew, refetchPaid, refetchMy]);
+  }, [activeTab, refetchNew, refetchPaid, refetchMy, refetchOverdue]);
 
   const handleConfirmComplete = useCallback(() => {
     if (selectedOrder) {

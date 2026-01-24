@@ -167,7 +167,7 @@ const HomeScreen: React.FC = () => {
                       <Text style={styles.orderAddress} numberOfLines={1}>
                         📍 {order.address}
                       </Text>
-                      <Text style={styles.orderPrice}>{formatPrice(Number(order.price))}</Text>
+                      <Text style={styles.orderPrice}>{formatPrice(order.price)}</Text>
                     </View>
 
                     {order.numberPackages !== undefined && order.numberPackages > 0 && (

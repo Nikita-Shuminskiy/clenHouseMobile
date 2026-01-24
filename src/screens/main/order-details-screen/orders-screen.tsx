@@ -404,7 +404,7 @@ const OrderDetailsScreen: React.FC = () => {
           </TouchableOpacity>
 
           <Text style={styles.sectionTitle}>Сумма</Text>
-          <Text style={styles.orderAmount}>{formatPrice(Number(order.price))}</Text>
+          <Text style={styles.orderAmount}>{formatPrice(order.price)}</Text>
 
           {order.numberPackages !== undefined && order.numberPackages > 0 && (
             <View style={styles.packagesContainer}>
@@ -425,10 +425,29 @@ const OrderDetailsScreen: React.FC = () => {
             </View>
           )}
 
-          <Text style={styles.sectionTitle}>Запланировано на</Text>
-          <Text style={styles.scheduledAt}>
-            {formatDateStringFull(order.scheduledAt)}
-          </Text>
+          {order.scheduledAt && (
+            <>
+              <Text style={styles.sectionTitle}>Запланировано на</Text>
+              <Text style={styles.scheduledAt}>
+                {formatDateStringFull(order.scheduledAt)}
+              </Text>
+            </>
+          )}
+
+          {order.isOverdue && (
+            <View style={[styles.overdueContainer, { backgroundColor: colors.error || '#FFEBEE' }]}>
+              <Text style={[styles.overdueLabel, { color: colors.error || '#DC2626' }]}>
+                ⚠️ Заказ просрочен
+              </Text>
+              {order.overdueMinutes !== undefined && (
+                <Text style={[styles.overdueMinutes, { color: colors.error || '#DC2626' }]}>
+                  Просрочка: {order.overdueMinutes >= 60
+                    ? `${Math.floor(order.overdueMinutes / 60)} ч ${order.overdueMinutes % 60} мин`
+                    : `${order.overdueMinutes} мин`}
+                </Text>
+              )}
+            </View>
+          )}
         </View>
 
         {/* Кнопки действий с заказом */}
@@ -601,6 +620,26 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 14,
     color: "#1A1A1A",
+    lineHeight: 20,
+  },
+  overdueContainer: {
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginTop: 16,
+    gap: 8,
+  },
+  overdueLabel: {
+    fontFamily: "Onest",
+    fontWeight: "600",
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  overdueMinutes: {
+    fontFamily: "Onest",
+    fontWeight: "500",
+    fontSize: 14,
     lineHeight: 20,
   },
   loadingContainer: {
