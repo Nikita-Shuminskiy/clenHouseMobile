@@ -13,7 +13,13 @@ import { useEffect, useState } from "react";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
-import { requestNotificationPermission } from "@/src/shared/hooks/useNotification/utils";
+import { requestNotificationPermission , buildOrderDetailsRoute } from "@/src/shared/hooks/useNotification/utils";
+import {
+  loadPendingAuthNavigation,
+  clearPendingAuthNavigation,
+} from "@/src/shared/utils/pendingNavigation";
+import { setNavigationReadyState } from "@/src/shared/hooks/useNotification/useNotification";
+import { isValidUUID } from "@/src/shared/utils/uuidValidation";
 import { UserRole } from "@/src/shared/api/types/data-contracts";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
 import { toast } from "sonner-native";
@@ -60,6 +66,10 @@ const RootStack = () => {
 
 
   useEffect(() => {
+    // Обновляем глобальное состояние готовности навигации
+    const isAuthorized = !!userMe?.role;
+    setNavigationReadyState(isNavigationReady, isAuthorized);
+
     if (isLoadingGetMe || isLoadingGetIsFirstEnter || !isNavigationReady) {
       return;
     }
@@ -70,10 +80,66 @@ const RootStack = () => {
     if (userMe?.role) {
       // Проверка роли курьера - приложение предназначено только для курьеров
       if (userMe.role === UserRole.CURRIER) {
-        // Перенаправляем только если не находимся уже на защищенных экранах
-        if (!currentPath.includes('protected')) {
-          router.replace("/(protected-tabs)");
-        }
+        // Проверяем наличие pending navigation после успешной авторизации
+        loadPendingAuthNavigation().then((pendingNav) => {
+          if (pendingNav) {
+            console.log(
+              `[_layout] Found pending auth navigation: orderId=${pendingNav.orderId}`
+            );
+            
+            // Валидируем UUID перед выполнением pending auth navigation
+            if (!isValidUUID(pendingNav.orderId)) {
+              console.warn(
+                `[_layout] Invalid orderId in pending auth navigation: ${pendingNav.orderId}, clearing`
+              );
+              clearPendingAuthNavigation();
+              if (!currentPath.includes('protected')) {
+                router.replace("/(protected-tabs)");
+              }
+              return;
+            }
+            
+            // Выполняем навигацию после небольшой задержки
+            setTimeout(async () => {
+              let route: ReturnType<typeof buildOrderDetailsRoute> | null = null;
+              try {
+                route = buildOrderDetailsRoute(pendingNav.orderId);
+                router.push(route as any);
+                await clearPendingAuthNavigation();
+                console.log(`[_layout] Executed pending auth navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`);
+              } catch (error) {
+                const fullPath = route 
+                  ? (typeof route === 'string' 
+                      ? route 
+                      : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`)
+                  : `orderId=${pendingNav.orderId}`;
+                
+                console.error("[_layout] ❌ Error executing pending auth navigation");
+                console.error("[_layout] Attempted route:", fullPath);
+                if (route) {
+                  console.error("[_layout] Route object:", JSON.stringify(route, null, 2));
+                }
+                console.error("[_layout] Error details:", {
+                  message: error instanceof Error ? error.message : String(error),
+                  stack: error instanceof Error ? error.stack : undefined,
+                });
+                
+                // Очищаем pending navigation при ошибке
+                await clearPendingAuthNavigation();
+                
+                // В случае ошибки перенаправляем на главный экран
+                if (!currentPath.includes('protected')) {
+                  router.replace("/(protected-tabs)");
+                }
+              }
+            }, 300);
+          } else {
+            // Если нет pending navigation, выполняем обычную логику
+            if (!currentPath.includes('protected')) {
+              router.replace("/(protected-tabs)");
+            }
+          }
+        });
       } else {
         // Пользователь не курьер - показываем ошибку и редиректим на логин
         toast.error('Доступ запрещен', {
@@ -81,8 +147,8 @@ const RootStack = () => {
           duration: 5000,
         });
         // Очищаем токены
-        await removeToken();
-        await removeRefreshToken();
+        removeToken();
+        removeRefreshToken();
         // Очищаем кэш пользователя
         queryClient.setQueryData(['me'], null);
         router.replace("/(auth)");
