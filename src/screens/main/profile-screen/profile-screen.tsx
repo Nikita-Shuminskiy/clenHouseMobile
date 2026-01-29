@@ -109,11 +109,13 @@ const ProfileScreen: React.FC = () => {
             <Text style={styles.userName}>{user?.name}</Text>
             <Text style={styles.userPhone}>{user?.phone}</Text>
             <Text style={styles.userRole}>
-              {user?.role === UserRole.ADMIN
+              {user?.roles?.includes(UserRole.ADMIN)
                 ? "Администратор"
-                : user?.role === UserRole.CUSTOMER
+                : user?.roles?.includes(UserRole.CUSTOMER)
                 ? "Пользователь"
-                : "Курьер"}
+                : user?.roles?.includes(UserRole.CURRIER)
+                ? "Курьер"
+                : "Нет ролей"}
             </Text>
           </View>
         </View>

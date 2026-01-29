@@ -7,7 +7,7 @@ export enum UserRole {
 
 export type IUserDto = {
   id: string;
-  role: UserRole;
+  roles: UserRole[];
   name: string;
   phone: string;
   isPhoneVerified: boolean;

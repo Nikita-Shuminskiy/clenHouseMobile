@@ -24,8 +24,8 @@ export const useVerifySms = () => {
             }
 
             // Проверка роли пользователя - доступ только для курьеров
-            if (data.user.role !== UserRole.CURRIER) {
-                console.warn('Попытка входа пользователя с ролью:', data.user.role);
+            if (!data.user.roles?.includes(UserRole.CURRIER)) {
+                console.warn('Попытка входа пользователя с ролями:', data.user.roles);
                 toast.error('Доступ запрещен', {
                     description: 'Мобильное приложение доступно только для курьеров',
                     duration: 5000,
