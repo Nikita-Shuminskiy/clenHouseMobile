@@ -43,6 +43,7 @@ export interface UserDto {
   hash_password: string | null;
   refreshTokenHash: string | null;
   lastLoginAt: string | null;
+  telegramUsername?: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -95,6 +95,22 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
       });
   };
 
+  const handleTelegramPress = (username: string, event: any) => {
+    event.stopPropagation();
+    const telegramUrl = `https://t.me/${username}`;
+    Linking.canOpenURL(telegramUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(telegramUrl);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось открыть Telegram');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Ошибка', 'Не удалось открыть Telegram');
+      });
+  };
+
   const isOverdue = order.isOverdue === true;
 
   return (
@@ -156,6 +172,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress, onAction }) => {
           >
             <Text style={styles.customerPhone}>{order.customer.phone}</Text>
           </TouchableOpacity>
+          {order.customer.telegramUsername && (
+            <TouchableOpacity
+              onPress={(e) => handleTelegramPress(order.customer.telegramUsername!, e)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.customerTelegram}>@{order.customer.telegramUsername}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {order.currier && (
@@ -389,6 +413,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     color: '#5A6E8A',
+  },
+  customerTelegram: {
+    fontFamily: 'Onest',
+    fontWeight: '400',
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#2196F3',
+    marginLeft: 8,
   },
   courierContainer: {
     flexDirection: 'row',

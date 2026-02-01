@@ -19,7 +19,7 @@ import { useOrder, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/or
 import { OrderStatus, OrderResponseDto } from "@/src/modules/orders/types/orders";
 import Button from "@/src/shared/components/ui-kit/button";
 import useTheme from "@/src/shared/use-theme/use-theme";
-import { BackArrowIcon, PhoneIcon } from "@/src/shared/components/icons";
+import { BackArrowIcon, PhoneIcon, TelegramIcon } from "@/src/shared/components/icons";
 import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
 import { formatOverdueTime } from "@/src/shared/utils/overdueUtils";
 import { normalizeOrderId, isValidUUID } from "@/src/shared/utils/uuidValidation";
@@ -257,6 +257,21 @@ const OrderDetailsScreen: React.FC = () => {
       });
   }, []);
 
+  const handleTelegramPress = useCallback((username: string) => {
+    const telegramUrl = `https://t.me/${username}`;
+    Linking.canOpenURL(telegramUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(telegramUrl);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось открыть Telegram');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Ошибка', 'Не удалось открыть Telegram');
+      });
+  }, []);
+
   // Проверяем валидность orderId
   if (!normalizedOrderId || !isValidOrderId) {
     return (
@@ -445,6 +460,18 @@ const OrderDetailsScreen: React.FC = () => {
             <PhoneIcon width={16} height={16} color={colors.primary500} />
             <Text style={[styles.customerPhone, { color: colors.primary500 }]}>{order.customer.phone}</Text>
           </TouchableOpacity>
+          {order.customer.telegramUsername && (
+            <TouchableOpacity
+              onPress={() => handleTelegramPress(order.customer.telegramUsername!)}
+              activeOpacity={0.7}
+              style={styles.phoneContainer}
+            >
+              <TelegramIcon width={16} height={16} color={colors.primary500} />
+              <Text style={[styles.customerPhone, { color: colors.primary500 }]}>
+                @{order.customer.telegramUsername}
+              </Text>
+            </TouchableOpacity>
+          )}
 
           <Text style={styles.sectionTitle}>Сумма</Text>
           <Text style={styles.orderAmount}>{formatPrice(order.price)}</Text>
