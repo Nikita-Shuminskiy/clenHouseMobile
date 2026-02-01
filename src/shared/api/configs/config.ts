@@ -11,8 +11,8 @@ import {
 } from "../../utils/token";
 import { QS_OPTIONS } from "../constants/qs-options";
 
-export const API_URL = "https://cleanhouse123-cleanhouseapi-209c.twc1.net/";
-//https://cleanhouse123-cleanhouseapi-209c.twc1.net/
+export const API_URL = "https://cleanhouse123-cleanhouseapi-4d55.twc1.net/";
+//https://cleanhouse123-cleanhouseapi-4d55.twc1.net/
 //http://192.168.0.11:3000/
 //http://192.168.0.50:3000/api
 export const instance = axios.create({
