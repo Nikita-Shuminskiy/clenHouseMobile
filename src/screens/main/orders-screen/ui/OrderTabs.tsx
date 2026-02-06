@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import useTheme from '@/src/shared/use-theme/use-theme';
+
+const NARROW_SCREEN_WIDTH = 360;
 
 type OrderTabType = 'new' | 'my' | 'overdue';
 
@@ -16,6 +18,9 @@ interface OrderTabsProps {
 
 const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts }) => {
   const { colors } = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
+  const isNarrowScreen = screenWidth < NARROW_SCREEN_WIDTH;
+  const overdueLabel = isNarrowScreen ? 'Просроч.' : 'Просроченные';
 
   return (
     <View style={styles.container}>
@@ -40,6 +45,10 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
                 color: activeTab === 'new' ? colors.white : colors.muted,
               },
             ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
           >
             Новые
           </Text>
@@ -82,6 +91,10 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
                 color: activeTab === 'my' ? colors.white : colors.muted,
               },
             ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
           >
             Мои
           </Text>
@@ -124,8 +137,12 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
                 color: activeTab === 'overdue' ? colors.white : colors.muted,
               },
             ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
           >
-            Просроченные
+            {overdueLabel}
           </Text>
           {counts?.overdue !== undefined && counts.overdue > 0 && (
             <View style={[

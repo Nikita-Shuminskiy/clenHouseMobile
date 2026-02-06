@@ -21,16 +21,21 @@ import {
   Image,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Logo from "../../../assets/images/logo.png";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const SMALL_SCREEN_WIDTH = 380;
+
 const AuthScreen: React.FC = () => {
+  const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { colors, sizes, fonts, weights } = useTheme();
   const { mutateAsync: signInWithSms, isPending } = useSendSms();
+  const isSmallScreen = screenWidth < SMALL_SCREEN_WIDTH;
 
   const {
     control,
@@ -44,7 +49,14 @@ const AuthScreen: React.FC = () => {
   });
 
   const phoneValue = watch("phone");
-  const styles = createStyles({ colors, sizes, fonts, weights, insets });
+  const styles = createStyles({
+    colors,
+    sizes,
+    fonts,
+    weights,
+    insets,
+    isSmallScreen,
+  });
 
   const onSubmit = async (data: SignInSoftFormData) => {
     try {
@@ -140,12 +152,14 @@ const createStyles = ({
   fonts,
   weights,
   insets,
+  isSmallScreen,
 }: {
   colors: ThemeColors;
   sizes: any;
   fonts: ThemeFonts;
   weights: ThemeWeights;
   insets: { top: number; bottom: number };
+  isSmallScreen: boolean;
 }) =>
   StyleSheet.create({
     container: {
@@ -168,15 +182,15 @@ const createStyles = ({
     },
     topSection: {
       paddingTop: sizes.xxl + Math.max(insets.top, 0),
-      paddingBottom: sizes.xl,
+      paddingBottom: isSmallScreen ? sizes.m : sizes.xl,
       alignItems: "center",
       justifyContent: "center",
-      minHeight: 200,
+      minHeight: isSmallScreen ? 120 : 200,
     },
     logoWrapper: {
-      width: 140,
-      height: 140,
-      borderRadius: 70,
+      width: isSmallScreen ? 90 : 140,
+      height: isSmallScreen ? 90 : 140,
+      borderRadius: isSmallScreen ? 45 : 70,
       backgroundColor: "rgba(255, 255, 255, 0.2)",
       justifyContent: "center",
       alignItems: "center",
@@ -190,15 +204,15 @@ const createStyles = ({
       elevation: 5,
     },
     logoImage: {
-      width: 100,
-      height: 100,
+      width: isSmallScreen ? 64 : 100,
+      height: isSmallScreen ? 64 : 100,
     },
     formCard: {
       backgroundColor: colors.white,
       borderTopLeftRadius: 40,
       borderTopRightRadius: 40,
-      marginTop: sizes.xl,
-      height: "100%",
+      marginTop: isSmallScreen ? sizes.m : sizes.xl,
+      ...(isSmallScreen ? { flexGrow: 1 } : { height: "100%" }),
       shadowColor: colors.black,
       shadowOffset: {
         width: 0,
@@ -209,7 +223,7 @@ const createStyles = ({
       elevation: 12,
     },
     formHeader: {
-      paddingTop: sizes.xxl,
+      paddingTop: isSmallScreen ? sizes.l : sizes.xxl,
       paddingHorizontal: sizes.xl,
       paddingBottom: sizes.l,
       alignItems: "center",
@@ -218,8 +232,8 @@ const createStyles = ({
     titleText: {
       fontFamily: fonts.h1,
       fontWeight: weights.bold,
-      fontSize: sizes.h1 || 32,
-      lineHeight: 40,
+      fontSize: isSmallScreen ? 24 : sizes.h1 || 32,
+      lineHeight: isSmallScreen ? 30 : 40,
       letterSpacing: -0.8,
       color: colors.grey900,
       textAlign: "center",

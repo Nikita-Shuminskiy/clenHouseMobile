@@ -5,7 +5,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TextInput
+  TextInput,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -19,10 +20,28 @@ import { BackArrowIcon } from '@/src/shared/components/icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
 
+const OTP_CELL_COUNT = 6;
+const OTP_GAP = 12;
+const OTP_CELL_SIZE = 40;
+const OTP_CONTAINER_HORIZONTAL = 20;
+const SCREEN_PADDING = 16;
+
 const ConfirmCodeScreen: React.FC = () => {
+  const { width: screenWidth } = useWindowDimensions();
   const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
 
   const { mutateAsync: verifySms } = useVerifySms();
+
+  const containerMargin = Math.min(OTP_CONTAINER_HORIZONTAL, screenWidth * 0.05);
+  const containerPadding = screenWidth < 360 ? 12 : 20;
+  const availableWidth =
+    screenWidth - SCREEN_PADDING * 2 - containerMargin * 2 - containerPadding * 2;
+  const gap = screenWidth < 360 ? 6 : OTP_GAP;
+  const totalGapWidth = gap * (OTP_CELL_COUNT - 1);
+  const calculatedCellSize = Math.floor(
+    (availableWidth - totalGapWidth) / OTP_CELL_COUNT,
+  );
+  const cellSize = Math.max(28, Math.min(OTP_CELL_SIZE, calculatedCellSize));
   const { mutateAsync: sendSms } = useSendSms();
   const [otpCode, setOtpCode] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
@@ -133,7 +152,12 @@ const ConfirmCodeScreen: React.FC = () => {
           </View>
 
           {/* OTP Input */}
-          <View style={styles.otpContainer}>
+          <View
+            style={[
+              styles.otpContainer,
+              { marginHorizontal: containerMargin, padding: containerPadding },
+            ]}
+          >
             <OTPInput
               maxLength={6}
               value={otpCode}
@@ -141,13 +165,14 @@ const ConfirmCodeScreen: React.FC = () => {
               onComplete={handleVerifyCode}
               textAlign="center"
               editable={!isLoading}
-              render={({ slots, isFocused }) => (
-                <View style={styles.otpInputContainer}>
+              render={({ slots }) => (
+                <View style={[styles.otpInputContainer, { gap }]}>
                   {slots.map((slot, index) => (
                     <View
                       key={index}
                       style={[
                         styles.otpInput,
+                        { width: cellSize, height: Math.min(56, cellSize + 16) },
                         slot.isActive && styles.otpInputFocus,
                         isError && styles.otpInputError,
                       ]}
@@ -293,17 +318,12 @@ const styles = StyleSheet.create({
     elevation: 10,
     backgroundColor: 'white',
     borderRadius: 16,
-    padding: 20,
-    marginHorizontal: 20,
   },
   otpInputContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 12,
   },
   otpInput: {
-    width: 40,
-    height: 56,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E1EAF0',
