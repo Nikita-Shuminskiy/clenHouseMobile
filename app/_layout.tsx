@@ -68,8 +68,9 @@ const RootStack = () => {
 
   useEffect(() => {
     // Обновляем глобальное состояние готовности навигации
-    const isAuthorized = !!userMe?.role;
-    setNavigationReadyState(isNavigationReady, isAuthorized);
+    const isCourier =
+      Array.isArray(userMe?.roles) && userMe.roles.includes(UserRole.CURRIER);
+    setNavigationReadyState(isNavigationReady, isCourier);
 
     if (isLoadingGetMe || isLoadingGetIsFirstEnter || !isNavigationReady) {
       return;
@@ -78,82 +79,84 @@ const RootStack = () => {
     // Проверяем, находимся ли мы уже на нужном экране, чтобы избежать лишних переходов
     const currentPath = router.canGoBack() ? 'unknown' : 'initial';
 
-    if (userMe?.role) {
-      // Проверка роли курьера - приложение предназначено только для курьеров
-      if (userMe.role === UserRole.CURRIER) {
-        // Проверяем наличие pending navigation после успешной авторизации
-        loadPendingAuthNavigation().then((pendingNav) => {
-          if (pendingNav) {
-            console.log(
-              `[_layout] Found pending auth navigation: orderId=${pendingNav.orderId}`
+    const isCourierUser =
+      Array.isArray(userMe?.roles) &&
+      userMe.roles.includes(UserRole.CURRIER);
+
+    if (isCourierUser) {
+      // Пользователь курьер - разрешаем доступ в приложение
+      // Проверяем наличие pending navigation после успешной авторизации
+      loadPendingAuthNavigation().then((pendingNav) => {
+        if (pendingNav) {
+          console.log(
+            `[_layout] Found pending auth navigation: orderId=${pendingNav.orderId}`
+          );
+          
+          // Валидируем UUID перед выполнением pending auth navigation
+          if (!isValidUUID(pendingNav.orderId)) {
+            console.warn(
+              `[_layout] Invalid orderId in pending auth navigation: ${pendingNav.orderId}, clearing`
             );
-            
-            // Валидируем UUID перед выполнением pending auth navigation
-            if (!isValidUUID(pendingNav.orderId)) {
-              console.warn(
-                `[_layout] Invalid orderId in pending auth navigation: ${pendingNav.orderId}, clearing`
-              );
-              clearPendingAuthNavigation();
-              if (!currentPath.includes('protected')) {
-                router.replace("/(protected-tabs)");
-              }
-              return;
-            }
-            
-            // Выполняем навигацию после небольшой задержки
-            setTimeout(async () => {
-              let route: ReturnType<typeof buildOrderDetailsRoute> | null = null;
-              try {
-                route = buildOrderDetailsRoute(pendingNav.orderId);
-                router.push(route as any);
-                await clearPendingAuthNavigation();
-                console.log(`[_layout] Executed pending auth navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`);
-              } catch (error) {
-                const fullPath = route 
-                  ? (typeof route === 'string' 
-                      ? route 
-                      : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`)
-                  : `orderId=${pendingNav.orderId}`;
-                
-                console.error("[_layout] ❌ Error executing pending auth navigation");
-                console.error("[_layout] Attempted route:", fullPath);
-                if (route) {
-                  console.error("[_layout] Route object:", JSON.stringify(route, null, 2));
-                }
-                console.error("[_layout] Error details:", {
-                  message: error instanceof Error ? error.message : String(error),
-                  stack: error instanceof Error ? error.stack : undefined,
-                });
-                
-                // Очищаем pending navigation при ошибке
-                await clearPendingAuthNavigation();
-                
-                // В случае ошибки перенаправляем на главный экран
-                if (!currentPath.includes('protected')) {
-                  router.replace("/(protected-tabs)");
-                }
-              }
-            }, 300);
-          } else {
-            // Если нет pending navigation, выполняем обычную логику
+            clearPendingAuthNavigation();
             if (!currentPath.includes('protected')) {
               router.replace("/(protected-tabs)");
             }
+            return;
           }
-        });
-      } else {
-        // Пользователь не курьер - показываем ошибку и редиректим на логин
-        toast.error('Доступ запрещен', {
-          description: 'Это приложение предназначено только для курьеров',
-          duration: 5000,
-        });
-        // Очищаем токены
-        removeToken();
-        removeRefreshToken();
-        // Очищаем кэш пользователя
-        queryClient.setQueryData(['me'], null);
-        router.replace("/(auth)");
-      }
+          
+          // Выполняем навигацию после небольшой задержки
+          setTimeout(async () => {
+            let route: ReturnType<typeof buildOrderDetailsRoute> | null = null;
+            try {
+              route = buildOrderDetailsRoute(pendingNav.orderId);
+              router.push(route as any);
+              await clearPendingAuthNavigation();
+              console.log(`[_layout] Executed pending auth navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`);
+            } catch (error) {
+              const fullPath = route 
+                ? (typeof route === 'string' 
+                    ? route 
+                    : `${route.pathname}?${Object.entries(route.params || {}).map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`).join('&')}`)
+                : `orderId=${pendingNav.orderId}`;
+              
+              console.error("[_layout] ❌ Error executing pending auth navigation");
+              console.error("[_layout] Attempted route:", fullPath);
+              if (route) {
+                console.error("[_layout] Route object:", JSON.stringify(route, null, 2));
+              }
+              console.error("[_layout] Error details:", {
+                message: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+              });
+              
+              // Очищаем pending navigation при ошибке
+              await clearPendingAuthNavigation();
+              
+              // В случае ошибки перенаправляем на главный экран
+              if (!currentPath.includes('protected')) {
+                router.replace("/(protected-tabs)");
+              }
+            }
+          }, 300);
+        } else {
+          // Если нет pending navigation, выполняем обычную логику
+          if (!currentPath.includes('protected')) {
+            router.replace("/(protected-tabs)");
+          }
+        }
+      });
+    } else if (Array.isArray(userMe?.roles) && userMe.roles.length > 0) {
+      // Пользователь не курьер - показываем ошибку и редиректим на логин
+      toast.error('Доступ запрещен', {
+        description: 'Это приложение предназначено только для курьеров',
+        duration: 5000,
+      });
+      // Очищаем токены
+      removeToken();
+      removeRefreshToken();
+      // Очищаем кэш пользователя
+      queryClient.setQueryData(['me'], null);
+      router.replace("/(auth)");
     } else if (isFirstEnter === "true") {
       router.replace("/(auth)/onboarding");
     } else {
