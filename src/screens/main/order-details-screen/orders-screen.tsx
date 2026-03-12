@@ -58,44 +58,6 @@ const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
   return actions;
 };
 
-const getStatusText = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.NEW:
-      return 'Новый';
-    case OrderStatus.PAID:
-      return 'Оплачен';
-    case OrderStatus.ASSIGNED:
-      return 'Назначен';
-    case OrderStatus.IN_PROGRESS:
-      return 'В работе';
-    case OrderStatus.DONE:
-      return 'Завершен';
-    case OrderStatus.CANCELED:
-      return 'Отменен';
-    default:
-      return 'Неизвестно';
-  }
-};
-
-const getStatusColor = (status: OrderStatus, colors: any) => {
-  switch (status) {
-    case OrderStatus.NEW:
-      return colors.green;
-    case OrderStatus.PAID:
-      return colors.blue;
-    case OrderStatus.ASSIGNED:
-      return colors.primary500;
-    case OrderStatus.IN_PROGRESS:
-      return colors.accent500;
-    case OrderStatus.DONE:
-      return colors.grey500;
-    case OrderStatus.CANCELED:
-      return colors.destructive;
-    default:
-      return colors.grey500;
-  }
-};
-
 const OrderDetailsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { orderId: rawOrderId } = useLocalSearchParams<{ orderId: string | string[] }>();
@@ -372,6 +334,12 @@ const OrderDetailsScreen: React.FC = () => {
     );
   }
 
+  // На этом этапе заказ гарантированно должен быть, но добавляем
+  // дополнительную защиту для TypeScript и на случай непредвиденных состояний.
+  if (!order) {
+    return null;
+  }
+
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
@@ -536,9 +504,7 @@ const OrderDetailsScreen: React.FC = () => {
               </Text>
               {order.overdueMinutes !== undefined && (
                 <Text style={[styles.overdueMinutes, { color: colors.error || '#DC2626' }]}>
-                  Просрочка: {order.overdueMinutes >= 60
-                    ? `${Math.floor(order.overdueMinutes / 60)} ч ${order.overdueMinutes % 60} мин`
-                    : `${order.overdueMinutes} мин`}
+                  Просрочка: {formatOverdueTime(order.overdueMinutes)}
                 </Text>
               )}
             </View>

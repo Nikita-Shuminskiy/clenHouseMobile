@@ -20,7 +20,7 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
   const { colors } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
   const isNarrowScreen = screenWidth < NARROW_SCREEN_WIDTH;
-  const overdueLabel = isNarrowScreen ? 'Просроч.' : 'Просроченные';
+  const overdueLabel = 'Просроч.';
   const tabs = [
     { key: 'new' as OrderTabType, label: 'Новые', count: counts?.new, activeColor: colors.primary500 },
     { key: 'my' as OrderTabType, label: 'Мои', count: counts?.my, activeColor: colors.primary500 },

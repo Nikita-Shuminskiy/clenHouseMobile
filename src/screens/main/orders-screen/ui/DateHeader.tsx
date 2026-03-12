@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Platform } from 'react-native';
 import useTheme from '@/src/shared/use-theme/use-theme';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -41,77 +41,82 @@ const DateHeader: React.FC<DateHeaderProps> = ({
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity
-        activeOpacity={0.7}
+        activeOpacity={0.75}
         onPress={onPress}
         style={[
           styles.container,
-          isOverdueGroup && {
-            backgroundColor: '#FFEBEE',
-            borderColor: '#F44336',
-          }
+          isOverdueGroup && styles.containerOverdue,
         ]}
       >
         <View style={styles.leftContent}>
           <View style={styles.dateBlock}>
-            {isOverdueGroup && (
-              <Ionicons 
-                name="alert-circle" 
-                size={18} 
-                color="#F44336" 
-                style={{ marginRight: 6 }}
-              />
-            )}
-            <Text style={[
-              styles.title, 
-              { 
-                color: isOverdueGroup ? '#F44336' : theme.colors.grey900,
-                fontWeight: isOverdueGroup ? '700' : '600',
-              }
-            ]}>
-              {title}
-            </Text>
-            <View style={styles.badges}>
-            {count !== undefined && (
-              <View style={[
-                styles.countBadge, 
-                { 
-                  backgroundColor: isOverdueGroup 
-                    ? 'rgba(244, 67, 54, 0.15)' 
-                    : hasOverdue 
-                      ? 'rgba(244, 67, 54, 0.08)' 
-                      : 'rgba(0, 0, 0, 0.04)' 
-                }
+            <View style={styles.titleRow}>
+              {isOverdueGroup && (
+                <Ionicons
+                  name="alert-circle"
+                  size={18}
+                  color="#F44336"
+                  style={styles.alertIcon}
+                />
+              )}
+              <Text style={[
+                styles.title,
+                {
+                  color: isOverdueGroup ? '#C62828' : theme.colors.grey900,
+                  fontWeight: isOverdueGroup ? '700' : '600',
+                },
               ]}>
-                <Text style={[
-                  styles.countText, 
-                  { 
-                    color: isOverdueGroup || hasOverdue 
-                      ? '#F44336' 
-                      : theme.colors.grey600 
-                  }
-                ]}>
-                  {count} {count === 1 ? 'заказ' : count < 5 ? 'заказа' : 'заказов'}
-                </Text>
-              </View>
-            )}
-            
-            {hasOverdue && !isOverdueGroup && (
-              <View style={[styles.overdueBadge, { backgroundColor: '#F44336' }]}>
-                <Ionicons name="alert-circle" size={12} color="#FFFFFF" />
-                <Text style={styles.overdueText}>
-                  {overdueCount} {overdueCount === 1 ? 'просрочен' : 'просрочено'}
-                </Text>
-              </View>
-            )}
+                {title}
+              </Text>
+            </View>
+            <View style={styles.badges}>
+              {count !== undefined && (
+                <View
+                  style={[
+                    styles.countBadge,
+                    {
+                      backgroundColor: isOverdueGroup
+                        ? 'rgba(244, 67, 54, 0.12)'
+                        : hasOverdue
+                          ? 'rgba(244, 67, 54, 0.1)'
+                          : 'rgba(0, 0, 0, 0.06)',
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.countText,
+                      {
+                        color:
+                          isOverdueGroup || hasOverdue
+                            ? '#C62828'
+                            : theme.colors.grey600,
+                      },
+                    ]}
+                  >
+                    {count}{' '}
+                    {count === 1 ? 'заказ' : count < 5 ? 'заказа' : 'заказов'}
+                  </Text>
+                </View>
+              )}
+              {hasOverdue && !isOverdueGroup && (
+                <View style={styles.overdueBadge}>
+                  <Ionicons name="alert-circle" size={12} color="#FFFFFF" />
+                  <Text style={styles.overdueText}>
+                    {overdueCount}{' '}
+                    {overdueCount === 1 ? 'просрочен' : 'просрочено'}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
 
-        <Animated.View style={{ transform: [{ rotate }] }}>
+        <Animated.View style={[styles.chevronWrapper, { transform: [{ rotate }] }]}>
           <Ionicons
             name="chevron-down"
-            size={18}
-            color={theme.colors.grey400}
+            size={20}
+            color={isOverdueGroup ? '#C62828' : (theme.colors.grey500 ?? theme.colors.grey400)}
           />
         </Animated.View>
       </TouchableOpacity>
@@ -123,16 +128,35 @@ const DateHeader: React.FC<DateHeaderProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 8,
-    backgroundColor: '#F3F3F3',
+    marginBottom: 10,
+    marginHorizontal: 4,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    backgroundColor: '#F3F3F3',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+  },
+  containerOverdue: {
+    backgroundColor: '#FFF5F5',
+    borderLeftWidth: 3,
+    borderLeftColor: '#F44336',
   },
   leftContent: {
     flexDirection: 'row',
@@ -141,7 +165,15 @@ const styles = StyleSheet.create({
   },
   dateBlock: {
     flex: 1,
+    gap: 8,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
+  },
+  alertIcon: {
+    marginRight: 2,
   },
   title: {
     fontFamily: 'Onest',
@@ -154,27 +186,28 @@ const styles = StyleSheet.create({
   badges: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     flexWrap: 'wrap',
   },
   countBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   countText: {
     fontFamily: 'Onest',
     fontWeight: '500',
-    fontSize: 11,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 16,
   },
   overdueBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: '#F44336',
   },
   overdueText: {
     fontFamily: 'Onest',
@@ -183,9 +216,20 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     color: '#FFFFFF',
   },
+  chevronWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    marginLeft: 8,
+  },
   divider: {
     height: 1,
-    marginTop: 4,
+    marginHorizontal: 16,
+    marginBottom: 4,
+    opacity: 0.5,
   },
 });
 

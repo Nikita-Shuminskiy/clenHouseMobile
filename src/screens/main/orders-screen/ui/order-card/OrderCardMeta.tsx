@@ -73,9 +73,7 @@ const OrderCardMeta: React.FC<OrderCardMetaProps> = ({ order, distance }) => {
           </Text>
           {order.overdueMinutes !== undefined && (
             <Text style={[styles.overdueMinutes, { color: colors.error || "#DC2626" }]}>
-              {order.overdueMinutes >= 60
-                ? `${Math.floor(order.overdueMinutes / 60)} ч ${order.overdueMinutes % 60} мин`
-                : `${order.overdueMinutes} мин`}
+              {formatOverdueTime(order.overdueMinutes)}
             </Text>
           )}
         </View>
