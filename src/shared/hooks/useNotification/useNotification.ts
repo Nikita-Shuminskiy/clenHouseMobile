@@ -239,6 +239,28 @@ const handleNotificationEvent = async ({ type, detail }: any) => {
 notifee.onBackgroundEvent(handleNotificationEvent);
 notifee.onForegroundEvent(handleNotificationEvent);
 
+/**
+ * Получает FCM токен и отправляет на сервер. Вызывается при каждом заходе в приложение.
+ */
+const refreshAndSendToken = async (): Promise<void> => {
+  try {
+    const hasMessagingPermission = await requestMessagingPermission();
+    if (!hasMessagingPermission) return;
+
+    let token = await messaging().getToken();
+    if (!token) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      token = await messaging().getToken();
+    }
+    if (token) {
+      await sendToken(token);
+      console.log("useNotification: token sent to server (on app entry)");
+    }
+  } catch (error) {
+    console.error("useNotification: refreshAndSendToken error", error);
+  }
+};
+
 export const useNotification = (isSignedIn: boolean) => {
   const localNavigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -261,6 +283,7 @@ export const useNotification = (isSignedIn: boolean) => {
 
     let notificationClickSubscription: any;
     let unsubscribe: (() => void) | undefined;
+    let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null;
 
     const initializeNotifications = async () => {
       try {
@@ -343,39 +366,18 @@ export const useNotification = (isSignedIn: boolean) => {
           notificationPermission
         );
 
-        console.log("useNotification: requesting messaging permission");
-        const hasMessagingPermission = await requestMessagingPermission();
-        console.log(
-          "useNotification: messaging permission granted",
-          hasMessagingPermission
+        // Отправка токена при каждом заходе в приложение
+        await refreshAndSendToken();
+
+        // Повторная отправка токена при возврате в приложение (background -> active)
+        appStateSubscription = AppState.addEventListener(
+          "change",
+          (nextAppState) => {
+            if (nextAppState === "active" && globalIsAuthorized) {
+              refreshAndSendToken();
+            }
+          }
         );
-
-        if (hasMessagingPermission) {
-          console.log("useNotification: getting FCM token");
-          let token = await messaging().getToken();
-          console.log("useNotification: FCM token received", token);
-
-          if (!token) {
-            console.log(
-              "useNotification: token not received, retrying after delay"
-            );
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            token = await messaging().getToken();
-            console.log("useNotification: FCM token after retry", token);
-          }
-
-          if (token) {
-            console.log("useNotification: sending token to server");
-            await sendToken(token);
-            console.log("useNotification: token sent successfully");
-          } else {
-            console.error("useNotification: FCM token is empty after retry");
-          }
-        } else {
-          console.log(
-            "useNotification: messaging permission denied, skipping token registration"
-          );
-        }
       } catch (error) {
         console.error(
           "useNotification: error in initializeNotifications",
@@ -441,6 +443,7 @@ export const useNotification = (isSignedIn: boolean) => {
         clearTimeout(localNavigationTimeoutRef.current);
         localNavigationTimeoutRef.current = null;
       }
+      appStateSubscription?.remove();
       if (unsubscribe) {
         unsubscribe();
       }
