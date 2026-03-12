@@ -10,6 +10,7 @@ import { Toaster } from "sonner-native";
 import { ThemeProvider } from "../src/shared/use-theme";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useEffect, useState } from "react";
+import { ActivityIndicator, View } from "react-native";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
 import { requestLocationPermission } from "@/src/shared/utils/location-permission";
@@ -36,9 +37,14 @@ import UpdateAvailableModal from "@/src/shared/components/modals/UpdateAvailable
 SplashScreen.preventAutoHideAsync();
 
 const RootStack = () => {
-  const { data: userMe, isLoading: isLoadingGetMe } = useGetMe();
+  const {
+    data: userMe,
+    isLoading: isLoadingGetMe,
+    isFetching: isFetchingGetMe,
+    hasToken,
+    isTokenChecked,
+  } = useGetMe();
   const queryClient = useQueryClient();
-  console.log(userMe, "userMe");
 
   const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
     queryKey: ["isFirstEnter"],
@@ -46,6 +52,9 @@ const RootStack = () => {
   });
   const { isUpdateAvailable, isDownloading, onCloseUpdateModal, onApplyUpdate } = useUpdate();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
+  const isAuthBootstrapLoading =
+    !isTokenChecked ||
+    (hasToken && (isLoadingGetMe || isFetchingGetMe));
   // Скрываем splash screen после небольшой задержки, чтобы он успел показаться
   useEffect(() => {
     const prepareApp = async () => {
@@ -72,7 +81,7 @@ const RootStack = () => {
       Array.isArray(userMe?.roles) && userMe.roles.includes(UserRole.CURRIER);
     setNavigationReadyState(isNavigationReady, isCourier);
 
-    if (isLoadingGetMe || isLoadingGetIsFirstEnter || !isNavigationReady) {
+    if (isAuthBootstrapLoading || isLoadingGetIsFirstEnter || !isNavigationReady) {
       return;
     }
 
@@ -88,10 +97,6 @@ const RootStack = () => {
       // Проверяем наличие pending navigation после успешной авторизации
       loadPendingAuthNavigation().then((pendingNav) => {
         if (pendingNav) {
-          console.log(
-            `[_layout] Found pending auth navigation: orderId=${pendingNav.orderId}`
-          );
-          
           // Валидируем UUID перед выполнением pending auth navigation
           if (!isValidUUID(pendingNav.orderId)) {
             console.warn(
@@ -111,7 +116,6 @@ const RootStack = () => {
               route = buildOrderDetailsRoute(pendingNav.orderId);
               router.push(route as any);
               await clearPendingAuthNavigation();
-              console.log(`[_layout] Executed pending auth navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`);
             } catch (error) {
               const fullPath = route 
                 ? (typeof route === 'string' 
@@ -157,12 +161,34 @@ const RootStack = () => {
       // Очищаем кэш пользователя
       queryClient.setQueryData(['me'], null);
       router.replace("/(auth)");
-    } else if (isFirstEnter === "true") {
+    } else if (!hasToken && isFirstEnter === "true") {
       router.replace("/(auth)/onboarding");
     } else {
       router.replace("/(auth)");
     }
-  }, [userMe, isLoadingGetMe, isFirstEnter, isLoadingGetIsFirstEnter, isNavigationReady]);
+  }, [
+    userMe,
+    hasToken,
+    isAuthBootstrapLoading,
+    isFirstEnter,
+    isLoadingGetIsFirstEnter,
+    isNavigationReady,
+  ]);
+
+  if (isAuthBootstrapLoading || isLoadingGetIsFirstEnter || !isNavigationReady) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#FFFFFF",
+        }}
+      >
+        <ActivityIndicator size="large" color="#FF5E00" />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -185,7 +211,7 @@ const RootStack = () => {
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
         <ThemeProvider>
           <ErrorBoundary>
             <Toaster
@@ -232,7 +258,7 @@ export default function RootLayout() {
               position="top-center"
             />
             <RootStack />
-            <StatusBar style="auto" />
+            <StatusBar style="dark" backgroundColor="#FFFFFF" />
           </ErrorBoundary>
         </ThemeProvider>
       </GestureHandlerRootView>

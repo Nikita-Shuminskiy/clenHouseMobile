@@ -65,11 +65,9 @@ export const RegistrationDataScreen: React.FC = () => {
   const onSubmit = async (data: any) => {
     try {
       // await signUpWithEmail(data);
-      console.log("Регистрация успешна");
       // setRegistrationData({ ...data, role: registrationData?.role });
       router.push("/(auth)/registration-role");
     } catch (error) {
-      console.log("Регистрация не успешна");
       console.error("Ошибка регистрации:", error);
     }
   };
@@ -242,8 +240,6 @@ export const RegistrationDataScreen: React.FC = () => {
         <View style={styles.buttonContainer}>
           <Button
             onPress={() => {
-              console.log("Button pressed, agreeToTerms:", agreeToTerms);
-              console.log("Form errors:", errors);
               handleSubmit(onSubmit)();
             }}
             isLoading={false}

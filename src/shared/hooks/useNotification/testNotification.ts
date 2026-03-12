@@ -41,8 +41,6 @@ export const simulatePushNotification = async (
     return;
   }
   try {
-    console.log("[TEST] Simulating push notification with orderId:", orderId);
-
     // Формируем данные уведомления
     const mockNotificationData = {
       orderId: orderId,
@@ -59,8 +57,6 @@ export const simulatePushNotification = async (
       console.warn("[TEST] Notification data:", JSON.stringify(mockNotificationData, null, 2));
       return;
     }
-
-    console.log("[TEST] Extracted orderId:", extractedOrderId, "Type:", typeof extractedOrderId);
 
     // Валидация UUID перед навигацией
     if (!isValidUUID(extractedOrderId)) {
@@ -83,12 +79,10 @@ export const simulatePushNotification = async (
 
     // Строим маршрут
     const route = buildOrderDetailsRoute(extractedOrderId);
-    console.log("[TEST] Built route:", JSON.stringify(route, null, 2));
 
     // Выполняем навигацию
     try {
       router.push(route as any);
-      console.log("[TEST] Navigation executed successfully");
     } catch (error) {
       console.error("[TEST] Navigation error:", error);
       const fullPath = `${route.pathname}?${Object.entries(route.params || {})

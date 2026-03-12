@@ -65,7 +65,6 @@ const AuthScreen: React.FC = () => {
         phoneNumber,
         isDev: true,
       });
-      console.log(res);
       router.push({
         pathname: "/(auth)/confirm-code",
         params: { phoneNumber },

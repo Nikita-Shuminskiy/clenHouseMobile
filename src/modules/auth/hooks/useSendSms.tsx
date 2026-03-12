@@ -14,10 +14,6 @@ export const useSendSms = () => {
                     : 'Проверьте ваш телефон и введите полученный код',
                 duration: 5000,
             });
-
-            if (isDev) {
-                console.log('🔧 DEV MODE: SMS код отправлен для номера', variables.phoneNumber);
-            }
         },
         onError: (error: any) => {
             console.error('Ошибка отправки SMS:', error);

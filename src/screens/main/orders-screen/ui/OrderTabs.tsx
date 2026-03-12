@@ -21,147 +21,75 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
   const { width: screenWidth } = useWindowDimensions();
   const isNarrowScreen = screenWidth < NARROW_SCREEN_WIDTH;
   const overdueLabel = isNarrowScreen ? 'Просроч.' : 'Просроченные';
+  const tabs = [
+    { key: 'new' as OrderTabType, label: 'Новые', count: counts?.new, activeColor: colors.primary500 },
+    { key: 'my' as OrderTabType, label: 'Мои', count: counts?.my, activeColor: colors.primary500 },
+    { key: 'overdue' as OrderTabType, label: overdueLabel, count: counts?.overdue, activeColor: '#DC2626' },
+  ];
+
+  const renderTab = (tab: (typeof tabs)[number], isFullWidth = false) => {
+    const isActive = activeTab === tab.key;
+    return (
+      <TouchableOpacity
+        key={tab.key}
+        style={[
+          styles.tab,
+          isFullWidth && styles.fullWidthTab,
+          {
+            backgroundColor: isActive ? tab.activeColor : colors.grey100,
+          },
+        ]}
+        onPress={() => onTabChange(tab.key)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.tabContent}>
+          <Text
+            style={[
+              styles.tabText,
+              {
+                color: isActive ? colors.white : colors.muted,
+              },
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {tab.label}
+          </Text>
+          {tab.count !== undefined && tab.count > 0 && (
+            <View
+              style={[
+                styles.badge,
+                {
+                  backgroundColor: isActive ? 'rgba(255, 255, 255, 0.3)' : tab.activeColor,
+                },
+              ]}
+            >
+              <Text style={styles.badgeText}>{tab.count}</Text>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={[
-          styles.tab,
-          activeTab === 'new' && {
-            backgroundColor: colors.primary500,
-          },
-          activeTab !== 'new' && {
-            backgroundColor: colors.grey100,
-          },
-        ]}
-        onPress={() => onTabChange('new')}
-        activeOpacity={0.7}
-      >
-        <View style={styles.tabContent}>
-          <Text
-            style={[
-              styles.tabText,
-              {
-                color: activeTab === 'new' ? colors.white : colors.muted,
-              },
-            ]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            Новые
-          </Text>
-          {counts?.new !== undefined && counts.new > 0 && (
-            <View style={[
-              styles.badge,
-              {
-                backgroundColor: activeTab === 'new' ? 'rgba(255, 255, 255, 0.3)' : colors.primary500,
-              }
-            ]}>
-              <Text style={[
-                styles.badgeText,
-                { color: activeTab === 'new' ? colors.white : colors.white }
-              ]}>
-                {counts.new}
-              </Text>
-            </View>
-          )}
+    isNarrowScreen ? (
+      <View style={styles.containerNarrow}>
+        <View style={styles.row}>
+          {renderTab(tabs[0])}
+          {renderTab(tabs[1])}
         </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.tab,
-          activeTab === 'my' && {
-            backgroundColor: colors.primary500,
-          },
-          activeTab !== 'my' && {
-            backgroundColor: colors.grey100,
-          },
-        ]}
-        onPress={() => onTabChange('my')}
-        activeOpacity={0.7}
-      >
-        <View style={styles.tabContent}>
-          <Text
-            style={[
-              styles.tabText,
-              {
-                color: activeTab === 'my' ? colors.white : colors.muted,
-              },
-            ]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            Мои
-          </Text>
-          {counts?.my !== undefined && counts.my > 0 && (
-            <View style={[
-              styles.badge,
-              {
-                backgroundColor: activeTab === 'my' ? 'rgba(255, 255, 255, 0.3)' : colors.primary500,
-              }
-            ]}>
-              <Text style={[
-                styles.badgeText,
-                { color: activeTab === 'my' ? colors.white : colors.white }
-              ]}>
-                {counts.my}
-              </Text>
-            </View>
-          )}
+        <View style={styles.row}>
+          {renderTab(tabs[2], true)}
         </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.tab,
-          activeTab === 'overdue' && {
-            backgroundColor: colors.error || '#DC2626',
-          },
-          activeTab !== 'overdue' && {
-            backgroundColor: colors.grey100,
-          },
-        ]}
-        onPress={() => onTabChange('overdue')}
-        activeOpacity={0.7}
-      >
-        <View style={styles.tabContent}>
-          <Text
-            style={[
-              styles.tabText,
-              {
-                color: activeTab === 'overdue' ? colors.white : colors.muted,
-              },
-            ]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-          >
-            {overdueLabel}
-          </Text>
-          {counts?.overdue !== undefined && counts.overdue > 0 && (
-            <View style={[
-              styles.badge,
-              {
-                backgroundColor: activeTab === 'overdue' ? 'rgba(255, 255, 255, 0.3)' : colors.error || '#DC2626',
-              }
-            ]}>
-              <Text style={[
-                styles.badgeText,
-                { color: activeTab === 'overdue' ? colors.white : colors.white }
-              ]}>
-                {counts.overdue}
-              </Text>
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
-    </View>
+      </View>
+    ) : (
+      <View style={styles.container}>
+        {tabs.map((tab) => renderTab(tab))}
+      </View>
+    )
   );
 };
 
@@ -170,6 +98,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 16,
     marginBottom: 16,
+    gap: 8,
+  },
+  containerNarrow: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    gap: 8,
+  },
+  row: {
+    flexDirection: 'row',
     gap: 8,
   },
   tab: {
@@ -184,6 +121,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
+  },
+  fullWidthTab: {
+    flex: 1,
   },
   tabContent: {
     flexDirection: 'row',
@@ -209,6 +149,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 11,
     lineHeight: 16,
+    color: '#FFFFFF',
   },
 });
 

@@ -21,12 +21,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ containerStyle }) => {
 
   const handleOpenPrivacyPolicy = () => {
     // Заглушка - ничего не делаем
-    console.log('Нажата ссылка "Политика конфиденциальности"');
   };
 
   const handleOpenTerms = () => {
     // Заглушка - ничего не делаем
-    console.log('Нажата ссылка "Пользовательское соглашение"');
   };
 
   return (

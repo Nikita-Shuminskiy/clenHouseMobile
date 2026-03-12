@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.log('ErrorBoundary caught an error:', {
+    console.error('ErrorBoundary caught an error:', {
       error: error.message,
       stack: error.stack,
       componentStack: errorInfo.componentStack,
@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
         {
           text: 'Отправить',
           onPress: () => {
-            console.log('User reported error:', { error, errorInfo });
+            console.error('User reported error:', { error, errorInfo });
             Alert.alert('Спасибо!', 'Отчет отправлен разработчикам.');
           },
         },
@@ -213,7 +213,7 @@ export function useErrorHandler() {
 
   React.useEffect(() => {
     if (error) {
-      console.log('Unhandled error in component:', error);
+      console.error('Unhandled error in component:', error);
     }
   }, [error]);
 

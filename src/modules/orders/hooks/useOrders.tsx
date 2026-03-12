@@ -87,6 +87,7 @@ export const useOrderByLocation = (
   },
   options?: {
     enabled?: boolean;
+    pollingIntervalMs?: number | false;
   }
 ) => {
   const { location, hasPermission } = useLocation();
@@ -123,7 +124,7 @@ export const useOrderByLocation = (
     },
     enabled: (options?.enabled !== false) && hasLocation && !!location,
     staleTime: 2 * 60 * 1000,
-    refetchInterval: 2 * 60 * 1000,
+    refetchInterval: options?.pollingIntervalMs ?? 2 * 60 * 1000,
     retry: 1,
     retryOnMount: false,
   });
@@ -134,7 +135,7 @@ export const useOrderByLocation = (
     queryFn: () => ordersApi.findAll(filteredParams),
     enabled: (options?.enabled !== false) && (!hasLocation || (nearbyQuery.isError && !nearbyQuery.isFetching)),
     staleTime: 2 * 60 * 1000,
-    refetchInterval: 2 * 60 * 1000,
+    refetchInterval: options?.pollingIntervalMs ?? 2 * 60 * 1000,
     retry: 1,
   });
 

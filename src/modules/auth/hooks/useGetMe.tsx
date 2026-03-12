@@ -15,7 +15,7 @@ export const useGetMe = () => {
         checkToken();
     }, []);
 
-    return useQuery<IUserDto>({
+    const query = useQuery<IUserDto>({
         queryKey: ['me'],
         queryFn: () => authApi.getMe(),
         enabled: hasToken === true, // Выполнять запрос только если есть токен
@@ -31,5 +31,11 @@ export const useGetMe = () => {
             // Повторить максимум 2 раза для других ошибок
             return failureCount < 2;
         },
-    })
+    });
+
+    return {
+        ...query,
+        hasToken: hasToken === true,
+        isTokenChecked: hasToken !== null,
+    };
 }

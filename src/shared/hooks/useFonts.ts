@@ -9,9 +9,7 @@ export const useFonts = () => {
   });
 
   if (error) {
-    console.log("Font loading error:", error);
+    console.error("Font loading error:", error);
   }
-
-  console.log("Fonts loaded:", fontsLoaded, "Error:", error);
   return fontsLoaded;
 };

@@ -113,7 +113,9 @@ const OrderDetailsScreen: React.FC = () => {
     data: order,
     isLoading,
     isError,
-    error
+    isFetching,
+    error,
+    refetch,
   } = useOrder(isValidOrderId ? normalizedOrderId! : '');
   const updateStatusMutation = useUpdateOrderStatus();
   const cancelOrderMutation = useCancelOrder();
@@ -178,6 +180,22 @@ const OrderDetailsScreen: React.FC = () => {
   const handleGoBack = useCallback(() => {
     router.back();
   }, []);
+
+  const handleManualRefresh = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  const renderHeaderRefreshButton = (disabled: boolean) => (
+    <Button
+      type="secondary"
+      size="small"
+      onPress={handleManualRefresh}
+      disabled={disabled}
+      containerStyle={styles.headerRefreshButton}
+    >
+      🔄
+    </Button>
+  );
 
   const handleOpenMaps = useCallback(() => {
     if (!order?.coordinates) {
@@ -283,7 +301,7 @@ const OrderDetailsScreen: React.FC = () => {
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Детали заказа</Text>
           </View>
-          <View style={styles.backButton} />
+          {renderHeaderRefreshButton(true)}
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
@@ -310,7 +328,7 @@ const OrderDetailsScreen: React.FC = () => {
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Детали заказа</Text>
           </View>
-          <View style={styles.backButton} />
+          {renderHeaderRefreshButton(true)}
         </View>
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Загрузка...</Text>
@@ -337,7 +355,7 @@ const OrderDetailsScreen: React.FC = () => {
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Детали заказа</Text>
           </View>
-          <View style={styles.backButton} />
+          {renderHeaderRefreshButton(false)}
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
@@ -363,7 +381,7 @@ const OrderDetailsScreen: React.FC = () => {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Детали заказа</Text>
         </View>
-        <View style={styles.backButton} />
+        {renderHeaderRefreshButton(isLoading || isFetching)}
       </View>
 
       <ScrollView
@@ -584,6 +602,13 @@ const styles = StyleSheet.create({
     width: 40,
     alignItems: "center",
     justifyContent: "center",
+  },
+  headerRefreshButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   titleContainer: {
     flex: 1,

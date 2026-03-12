@@ -61,9 +61,6 @@ const ConfirmCodeScreen: React.FC = () => {
     setIsError(false);
 
     try {
-      console.log('Verifying code:', code);
-      console.log('Phone number:', phoneNumber);
-
       const res = await verifySms({
         phoneNumber: phoneNumber,
         code: code,
@@ -100,7 +97,6 @@ const ConfirmCodeScreen: React.FC = () => {
     try {
       // Запрашиваем код с сервера в dev режиме
       const res = await sendSms({ phoneNumber, isDev: true });
-      console.log('Auto-fill response:', res);
 
       // Если сервер возвращает код, используем его
       if (res && res.code) {

@@ -1,6 +1,14 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { PrivacyIcon, SupportIcon } from '@/src/shared/components/icons';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { AppState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  NotificationIcon,
+  PrivacyIcon,
+  SupportIcon,
+} from "@/src/shared/components/icons";
+import {
+  ensurePushTokenRegistered,
+  getPushNotificationStatus,
+} from "@/src/shared/hooks/useNotification/utils";
 
 interface ProfileSettingsProps {
   onEditProfile?: () => void;
@@ -15,8 +23,63 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   onChangePassword,
   onNotifications,
   onPrivacy,
-  onSupport
+  onSupport,
 }) => {
+  const [isPushEnabled, setIsPushEnabled] = useState<boolean | null>(null);
+  const [isLoadingPushStatus, setIsLoadingPushStatus] = useState(false);
+
+  const syncPushStatus = useCallback(async () => {
+    const enabled = await getPushNotificationStatus();
+    setIsPushEnabled(enabled);
+  }, []);
+
+  useEffect(() => {
+    syncPushStatus();
+  }, [syncPushStatus]);
+
+  useEffect(() => {
+    const appStateSubscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") {
+        syncPushStatus();
+      }
+    });
+
+    return () => {
+      appStateSubscription.remove();
+    };
+  }, [syncPushStatus]);
+
+  const handleNotificationsPress = useCallback(async () => {
+    if (onNotifications) {
+      onNotifications();
+      return;
+    }
+
+    if (isLoadingPushStatus || isPushEnabled) {
+      return;
+    }
+
+    setIsLoadingPushStatus(true);
+    try {
+      await ensurePushTokenRegistered();
+      await syncPushStatus();
+    } finally {
+      setIsLoadingPushStatus(false);
+    }
+  }, [isLoadingPushStatus, isPushEnabled, onNotifications, syncPushStatus]);
+
+  const notificationSubtitle = useMemo(() => {
+    if (isLoadingPushStatus) {
+      return "Запрашиваем разрешение...";
+    }
+    if (isPushEnabled === null) {
+      return "Проверяем статус push-уведомлений";
+    }
+    return isPushEnabled
+      ? "Push-уведомления включены"
+      : "Push-уведомления выключены";
+  }, [isLoadingPushStatus, isPushEnabled]);
+
   const settingsItems = [
     // {
     //   icon: '✏️',
@@ -30,22 +93,22 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     //   subtitle: 'Обновить пароль для безопасности',
     //   onPress: onChangePassword,
     // },
-    // {
-    //   icon: '🔔',
-    //   title: 'Уведомления',
-    //   subtitle: 'Настройки push-уведомлений',
-    //   onPress: onNotifications,
-    // },
+    {
+      icon: <NotificationIcon width={20} height={20} color="#FF5E00" />,
+      title: "Уведомления",
+      subtitle: notificationSubtitle,
+      onPress: handleNotificationsPress,
+    },
     {
       icon: <PrivacyIcon width={20} height={20} color="#FF5E00" />,
-      title: 'Конфиденциальность',
-      subtitle: 'Управление данными',
+      title: "Конфиденциальность",
+      subtitle: "Управление данными",
       onPress: onPrivacy,
     },
     {
       icon: <SupportIcon width={20} height={20} color="#FF5E00" />,
-      title: 'Поддержка',
-      subtitle: 'Связаться с нами',
+      title: "Поддержка",
+      subtitle: "Связаться с нами",
       onPress: onSupport,
     },
   ];
@@ -59,9 +122,10 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
             key={index}
             style={[
               styles.settingItem,
-              index === settingsItems.length - 1 && styles.lastItem
+              index === settingsItems.length - 1 && styles.lastItem,
             ]}
             onPress={item.onPress}
+            disabled={isLoadingPushStatus && item.title === "Уведомления"}
             activeOpacity={0.7}
           >
             <View style={styles.settingContent}>

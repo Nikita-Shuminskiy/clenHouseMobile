@@ -11,6 +11,12 @@ import {
 } from "../../utils/token";
 import { QS_OPTIONS } from "../constants/qs-options";
 
+let manualLogoutInProgress = false;
+
+export const setManualLogoutInProgress = (value: boolean) => {
+  manualLogoutInProgress = value;
+};
+
 export const API_URL = "https://cleanhouse123-cleanhouseapi-4d55.twc1.net/";
 //https://cleanhouse123-cleanhouseapi-4d55.twc1.net/
 //http://192.168.0.11:3000/
@@ -46,7 +52,17 @@ instance.interceptors.response.use(
   async function (error) {
     const originalRequest = error.config;
 
-    if (error?.response?.status === 401 && !originalRequest._retry) {
+    if (manualLogoutInProgress) {
+      await removeToken();
+      await removeRefreshToken();
+      return Promise.reject(error);
+    }
+
+    if (
+      error?.response?.status === 401 &&
+      !originalRequest._retry &&
+      !manualLogoutInProgress
+    ) {
       originalRequest._retry = true;
       try {
         const refreshToken = await getRefreshToken();

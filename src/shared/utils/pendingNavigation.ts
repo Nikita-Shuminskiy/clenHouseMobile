@@ -27,9 +27,6 @@ export const savePendingNavigation = async (
       PENDING_NAVIGATION_KEY,
       JSON.stringify(pendingState)
     );
-    console.log(
-      `[PendingNavigation] Saved pending navigation: orderId=${orderId}`
-    );
   } catch (error) {
     console.error("[PendingNavigation] Error saving pending navigation:", error);
     throw error;
@@ -51,9 +48,6 @@ export const savePendingAuthNavigation = async (
     await AsyncStorage.setItem(
       PENDING_AUTH_NAVIGATION_KEY,
       JSON.stringify(pendingState)
-    );
-    console.log(
-      `[PendingNavigation] Saved pending auth navigation: orderId=${orderId}`
     );
   } catch (error) {
     console.error(
@@ -81,16 +75,10 @@ export const loadPendingNavigation = async (): Promise<PendingNavigationState | 
 
     // Очищаем устаревшие записи (старше 5 минут)
     if (age > 5 * 60 * 1000) {
-      console.log(
-        `[PendingNavigation] Pending navigation expired (age: ${age}ms), clearing`
-      );
       await clearPendingNavigation();
       return null;
     }
 
-    console.log(
-      `[PendingNavigation] Loaded pending navigation: orderId=${pendingState.orderId}`
-    );
     return pendingState;
   } catch (error) {
     console.error("[PendingNavigation] Error loading pending navigation:", error);
@@ -114,16 +102,10 @@ export const loadPendingAuthNavigation = async (): Promise<PendingNavigationStat
 
     // Очищаем устаревшие записи (старше 5 минут)
     if (age > 5 * 60 * 1000) {
-      console.log(
-        `[PendingNavigation] Pending auth navigation expired (age: ${age}ms), clearing`
-      );
       await clearPendingAuthNavigation();
       return null;
     }
 
-    console.log(
-      `[PendingNavigation] Loaded pending auth navigation: orderId=${pendingState.orderId}`
-    );
     return pendingState;
   } catch (error) {
     console.error(
@@ -140,7 +122,6 @@ export const loadPendingAuthNavigation = async (): Promise<PendingNavigationStat
 export const clearPendingNavigation = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(PENDING_NAVIGATION_KEY);
-    console.log("[PendingNavigation] Cleared pending navigation");
   } catch (error) {
     console.error(
       "[PendingNavigation] Error clearing pending navigation:",
@@ -155,7 +136,6 @@ export const clearPendingNavigation = async (): Promise<void> => {
 export const clearPendingAuthNavigation = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(PENDING_AUTH_NAVIGATION_KEY);
-    console.log("[PendingNavigation] Cleared pending auth navigation");
   } catch (error) {
     console.error(
       "[PendingNavigation] Error clearing pending auth navigation:",

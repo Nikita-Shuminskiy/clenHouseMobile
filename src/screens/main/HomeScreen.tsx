@@ -28,8 +28,7 @@ const HomeScreen: React.FC = () => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      console.log(location);
+      await Location.getCurrentPositionAsync({});
 
     }
 

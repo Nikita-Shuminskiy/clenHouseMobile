@@ -2,6 +2,4 @@ export const errorLogger = (...message: any[]) => {
     console.error(...message);
 }
 
-export const infoLogger = (...message: any[]) => {
-    console.log(...message);
-}
+export const infoLogger = (..._message: any[]) => {};

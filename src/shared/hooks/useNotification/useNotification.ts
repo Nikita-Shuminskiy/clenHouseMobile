@@ -3,9 +3,7 @@ import * as Notifications from "expo-notifications";
 import { useEffect, useRef } from "react";
 import {
   displayNotification,
-  requestMessagingPermission,
-  requestNotificationPermission,
-  sendToken,
+  ensurePushTokenRegistered,
   extractOrderIdFromNotification,
   buildOrderDetailsRoute,
 } from "./utils";
@@ -76,9 +74,6 @@ const handleNotificationNavigation = async (
         router.replace("/(protected-tabs)");
       } else {
         // Если приложение не готово, не сохраняем pending navigation для отсутствующего orderId
-        console.log(
-          "[handleNotificationNavigation] App not ready, but no orderId to save"
-        );
       }
       return;
     }
@@ -102,9 +97,6 @@ const handleNotificationNavigation = async (
     );
 
     if (!isReady) {
-      console.log(
-        "[handleNotificationNavigation] App not ready, saving pending navigation"
-      );
       // Валидируем UUID перед сохранением pending navigation
       if (!isValidUUID(orderId)) {
         console.warn(
@@ -144,9 +136,6 @@ const handleNotificationNavigation = async (
           // Иначе добавляем в стек
           router.push(route as any);
         }
-        console.log(
-          `[handleNotificationNavigation] Navigation executed: pathname=${route.pathname}, orderId=${route.params.orderId}`
-        );
       } catch (error) {
         // Формируем полный путь для логирования
         const fullPath = typeof route === 'string' 
@@ -244,18 +233,7 @@ notifee.onForegroundEvent(handleNotificationEvent);
  */
 const refreshAndSendToken = async (): Promise<void> => {
   try {
-    const hasMessagingPermission = await requestMessagingPermission();
-    if (!hasMessagingPermission) return;
-
-    let token = await messaging().getToken();
-    if (!token) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      token = await messaging().getToken();
-    }
-    if (token) {
-      await sendToken(token);
-      console.log("useNotification: token sent to server (on app entry)");
-    }
+    await ensurePushTokenRegistered();
   } catch (error) {
     console.error("useNotification: refreshAndSendToken error", error);
   }
@@ -265,21 +243,12 @@ export const useNotification = (isSignedIn: boolean) => {
   const localNavigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    console.log("useNotification: useEffect triggered", { isSignedIn });
-
     // Обновляем глобальное состояние авторизации
     globalIsAuthorized = isSignedIn;
 
     if (!isSignedIn) {
-      console.log(
-        "useNotification: user is not signed in, skipping notification initialization"
-      );
       return;
     }
-
-    console.log(
-      "useNotification: user is signed in, initializing notifications"
-    );
 
     let notificationClickSubscription: any;
     let unsubscribe: (() => void) | undefined;
@@ -287,18 +256,9 @@ export const useNotification = (isSignedIn: boolean) => {
 
     const initializeNotifications = async () => {
       try {
-        console.log(
-          "useNotification: initializeNotifications started",
-          isSignedIn
-        );
-
         // Проверяем и выполняем pending navigation при инициализации
         const pendingNav = await loadPendingNavigation();
         if (pendingNav) {
-          console.log(
-            `[useNotification] Found pending navigation: orderId=${pendingNav.orderId}`
-          );
-          
           // Валидируем UUID перед выполнением pending navigation
           if (!isValidUUID(pendingNav.orderId)) {
             console.warn(
@@ -315,9 +275,6 @@ export const useNotification = (isSignedIn: boolean) => {
                 const route = buildOrderDetailsRoute(pendingNav.orderId);
                 router.push(route as any);
                 await clearPendingNavigation();
-                console.log(
-                  `[useNotification] Executed pending navigation: pathname=${route.pathname}, orderId=${route.params.orderId}`
-                );
               } catch (error) {
                 console.error("[useNotification] ❌ Error executing pending navigation");
                 console.error("[useNotification] Error details:", {
@@ -337,9 +294,6 @@ export const useNotification = (isSignedIn: boolean) => {
               }
             } else {
               // Если все еще не готово, оставляем pending navigation
-              console.log(
-                "[useNotification] App still not ready, keeping pending navigation"
-              );
             }
           }, 500);
         }
@@ -358,13 +312,6 @@ export const useNotification = (isSignedIn: boolean) => {
             }, 1000);
           }
         }
-
-        console.log("useNotification: requesting notification permission");
-        const notificationPermission = await requestNotificationPermission();
-        console.log(
-          "useNotification: notification permission granted",
-          notificationPermission
-        );
 
         // Отправка токена при каждом заходе в приложение
         await refreshAndSendToken();

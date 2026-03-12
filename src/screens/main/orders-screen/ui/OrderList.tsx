@@ -8,6 +8,7 @@ import DateHeader from './DateHeader';
 
 interface OrderListProps {
   orders: OrderResponseDto[];
+  distancesByOrderId?: Record<string, number | null>;
   isLoading?: boolean;
   isRefreshing?: boolean;
   onRefresh?: () => void;
@@ -18,6 +19,7 @@ interface OrderListProps {
 
 const OrderList: React.FC<OrderListProps> = ({
   orders,
+  distancesByOrderId,
   isLoading = false,
   isRefreshing = false,
   onRefresh,
@@ -99,6 +101,7 @@ const OrderList: React.FC<OrderListProps> = ({
     return (
       <OrderCard
         order={item.order}
+        distance={distancesByOrderId?.[item.order.id] ?? null}
         onPress={onOrderPress}
         onAction={onOrderAction}
       />

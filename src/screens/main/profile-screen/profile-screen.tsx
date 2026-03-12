@@ -11,10 +11,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UserRole } from "@/src/shared/api/types/data-contracts";
 // import { ArrowBackIcon } from "../../../shared/components/icons";
 import { queryClient } from "@/src/shared/api/configs/query-client-config";
-import { QueryKey } from "@/src/shared/api/constants/api-keys/query-key";
 import { router } from "expo-router";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
+import { setManualLogoutInProgress } from "@/src/shared/api/configs/config";
 import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import LogoutConfirmationModal from "@/src/shared/components/modals/LogoutConfirmationModal";
 
@@ -49,9 +49,11 @@ const ProfileScreen: React.FC = () => {
   const handleLogoutConfirm = async () => {
     setLogoutModalVisible(false);
     try {
+      setManualLogoutInProgress(true);
+      await queryClient.cancelQueries();
+      queryClient.clear();
       await removeToken();
       await removeRefreshToken();
-      queryClient.invalidateQueries({ queryKey: [QueryKey.GET_ME] });
       router.replace("/(auth)");
     } catch (error) {
       console.error("Ошибка выхода:", error);

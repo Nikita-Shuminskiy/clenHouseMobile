@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { setRefreshToken, setToken, removeToken, removeRefreshToken } from '@/src/shared/utils/token';
 import { requestLocationPermission, checkLocationPermission } from '@/src/shared/utils/location-permission';
 import { UserRole } from '@/src/shared/api/types/data-contracts';
+import { setManualLogoutInProgress } from '@/src/shared/api/configs/config';
 
 export const useVerifySms = () => {
     const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ export const useVerifySms = () => {
             }
 
             try {
+                setManualLogoutInProgress(false);
                 // Сохраняем токены в localStorage
                 await setToken(data.accessToken);
                 await setRefreshToken(data.refreshToken);
