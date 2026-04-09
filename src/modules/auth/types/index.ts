@@ -5,6 +5,18 @@ export interface SendSmsRequest {
   isDev?: boolean;
 }
 
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
+export interface LoginEmailRequest {
+  email: string;
+  password: string;
+}
+
 export interface SendSmsResponse {
   message: string;
   code?: string;

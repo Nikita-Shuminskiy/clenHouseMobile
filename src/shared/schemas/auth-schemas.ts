@@ -70,6 +70,11 @@ export const signInSoftSchema = yup.object({
     }),
 });
 
+export const signInEmailSchema = yup.object({
+  email: yup.string().required('Email обязателен'),
+  password: yup.string().required('Пароль обязателен'),
+});
+
 export const signUpSchema = yup.object({
   email: yup
     .string()
@@ -91,31 +96,21 @@ export type ResetPasswordRequestFormData = yup.InferType<typeof resetPasswordReq
 export type VerifyResetCodeFormData = yup.InferType<typeof verifyResetCodeSchema>;
 export type ResetPasswordFormData = yup.InferType<typeof resetPasswordSchema>;
 export type SignInSoftFormData = yup.InferType<typeof signInSoftSchema>;
+export type SignInEmailFormData = yup.InferType<typeof signInEmailSchema>;
 
 // Схема для регистрации данных
 export const registrationDataSchema = yup.object({
   name: yup
     .string()
-    .required('ФИО обязательно')
-    .min(2, 'ФИО должно содержать минимум 2 символа'),
+    .required('Имя обязательно')
+    .min(2, 'Имя должно содержать минимум 2 символа'),
   email: yup
     .string()
-    .required('Email обязателен')
-    .email('Некорректный email'),
-  password: yup
+    .required('Email обязателен'),
+  phone: yup
     .string()
-    .required('Пароль обязателен')
-    .min(8, 'Минимум 8 символов')
-    .matches(/\d/, 'Используйте хотя бы одну цифру')
-    .matches(/[A-ZА-Я]/, 'Используйте хотя бы одну заглавную букву'),
-  confirmPassword: yup
-    .string()
-    .required('Подтверждение пароля обязательно')
-    .oneOf([yup.ref('password')], 'Пароли должны совпадать'),
-  agreeToTerms: yup
-    .boolean()
-    .required('')
-    .oneOf([true], '')
+    .required('Номер телефона обязателен'),
+  password: yup.string().required('Пароль обязателен'),
 });
 
 export type RegistrationDataFormData = yup.InferType<typeof registrationDataSchema>;

@@ -1,8 +1,8 @@
-import { useSendSms } from "@/src/modules/auth/hooks/useSendSms";
-import PhoneInput from "@/src/shared/components/ui-kit/phone-input";
+import { useLoginByEmail } from "@/src/modules/auth/hooks/useLoginByEmail";
+import ControlledInput from "@/src/shared/components/ui-kit/controlled-input";
 import {
-  SignInSoftFormData,
-  signInSoftSchema,
+  SignInEmailFormData,
+  signInEmailSchema,
 } from "@/src/shared/schemas/auth-schemas";
 import {
   ThemeColors,
@@ -10,13 +10,18 @@ import {
   ThemeWeights,
   useTheme,
 } from "@/src/shared/use-theme";
+import {
+  getSavedAuthCredentials,
+  SavedAuthCredentials,
+} from "@/src/modules/auth/utils/saved-auth";
 import Button from "@components/ui-kit/button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner-native";
+import { useForm } from "react-hook-form";
 import {
   Image,
   StyleSheet,
@@ -30,25 +35,43 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SMALL_SCREEN_WIDTH = 380;
 
+const getQuickLoginLabel = (login: string): string => {
+  const trimmed = login.trim();
+  if (trimmed.length <= 24) {
+    return trimmed;
+  }
+  return `${trimmed.slice(0, 21)}...`;
+};
+
 const AuthScreen: React.FC = () => {
   const { width: screenWidth } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { colors, sizes, fonts, weights } = useTheme();
-  const { mutateAsync: signInWithSms, isPending } = useSendSms();
+  const { mutateAsync: signInWithEmail, isPending: isEmailPending } =
+    useLoginByEmail();
+  const [savedCredentials, setSavedCredentials] =
+    React.useState<SavedAuthCredentials | null>(null);
   const isSmallScreen = screenWidth < SMALL_SCREEN_WIDTH;
 
   const {
-    control,
-    handleSubmit,
-    formState: { isValid },
-    watch,
-  } = useForm<SignInSoftFormData>({
-    resolver: yupResolver(signInSoftSchema),
+    control: emailControl,
+    handleSubmit: handleEmailSubmit,
+    formState: { isValid: isEmailValid },
+    watch: watchEmail,
+    setValue: setEmailValue,
+  } = useForm<SignInEmailFormData>({
+    resolver: yupResolver(signInEmailSchema),
     mode: "onChange",
     reValidateMode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const phoneValue = watch("phone");
+  const watchedEmail = watchEmail("email");
+  const watchedPassword = watchEmail("password");
+  const isQuickLoginPending = isEmailPending;
   const styles = createStyles({
     colors,
     sizes,
@@ -58,34 +81,68 @@ const AuthScreen: React.FC = () => {
     isSmallScreen,
   });
 
-  const onSubmit = async (data: SignInSoftFormData) => {
+  const onEmailSubmit = async (data: SignInEmailFormData) => {
     try {
-      const phoneNumber = `+7${data.phone}`;
-      const res = await signInWithSms({
-        phoneNumber,
-        isDev: true,
-      });
-      router.push({
-        pathname: "/(auth)/confirm-code",
-        params: { phoneNumber },
+      await signInWithEmail({
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
       });
     } catch (error) {
-      console.error("Ошибка входа:", error);
+      console.error("Ошибка входа по email:", error);
     }
+  };
+
+  React.useEffect(() => {
+    const loadSavedCredentials = async () => {
+      const saved = await getSavedAuthCredentials();
+      setSavedCredentials(saved);
+    };
+
+    loadSavedCredentials();
+  }, []);
+
+  const handleQuickLogin = async () => {
+    if (!savedCredentials || isQuickLoginPending) {
+      return;
+    }
+
+    if (savedCredentials.method !== "email") {
+      toast.error("Вход по телефону отключен", {
+        description: "Используйте вход по email и паролю.",
+        duration: 5000,
+      });
+      return;
+    }
+
+    if (!savedCredentials.password) {
+      toast.error("Быстрый вход недоступен", {
+        description:
+          "Для email входа нужен сохраненный пароль. Войдите вручную один раз.",
+        duration: 5000,
+      });
+      return;
+    }
+
+    setEmailValue("email", savedCredentials.login);
+    setEmailValue("password", savedCredentials.password);
+
+    await onEmailSubmit({
+      email: savedCredentials.login,
+      password: savedCredentials.password,
+    });
   };
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      
-      {/* Декоративный градиентный фон */}
+
       <LinearGradient
         colors={[colors.primary500, colors.primary400, colors.primary300]}
         style={styles.backgroundGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
-      
+
       <KeyboardAwareScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -95,47 +152,66 @@ const AuthScreen: React.FC = () => {
         enableAutomaticScroll={true}
         extraScrollHeight={20}
       >
-        {/* Верхняя секция с логотипом */}
         <View style={styles.topSection}>
           <View style={styles.logoWrapper}>
             <Image style={styles.logoImage} source={Logo} resizeMode="contain" />
           </View>
         </View>
 
-        {/* Карточка с формой */}
         <View style={styles.formCard}>
           <View style={styles.formHeader}>
-            <Text style={styles.titleText}>Вход в аккаунт</Text>
+            <Text style={styles.titleText}>Вход по почте</Text>
             <Text style={styles.subtitleText}>
-              Войдите с помощью номера телефона и кода из SMS
+              Введите email и пароль для входа
             </Text>
           </View>
 
           <View style={styles.formContent}>
             <View style={styles.inputsContainer}>
-              <Controller
-                control={control}
-                name="phone"
-                render={({ field: { onChange, value } }) => (
-                  <PhoneInput
-                    label="Номер телефона"
-                    value={value}
-                    onChangeText={(masked, unmasked) => onChange(unmasked)}
-                    validateOnBlur={true}
-                    required={true}
-                  />
-                )}
+              <ControlledInput
+                control={emailControl}
+                name="email"
+                label="Email"
+                placeholder="Введите email"
+                type="mail"
+              />
+              <ControlledInput
+                control={emailControl}
+                name="password"
+                label="Пароль"
+                placeholder="Введите пароль"
+                type="password"
               />
             </View>
 
             <View style={styles.actionsContainer}>
               <Button
                 type="primary"
-                onPress={handleSubmit(onSubmit)}
-                disabled={isPending || !isValid || !phoneValue}
-                isLoading={isPending}
+                onPress={handleEmailSubmit(onEmailSubmit)}
+                disabled={
+                  isEmailPending || !isEmailValid || !watchedEmail || !watchedPassword
+                }
+                isLoading={isEmailPending}
               >
-                {isPending ? "Вход..." : "Войти"}
+                {isEmailPending ? "Вход..." : "Войти"}
+              </Button>
+              {savedCredentials?.method === "email" && (
+                <Button
+                  type="secondary"
+                  onPress={handleQuickLogin}
+                  disabled={isQuickLoginPending}
+                >
+                  {`Войти как ${getQuickLoginLabel(savedCredentials.login)}`}
+                </Button>
+              )}
+              {/* Вход по SMS отключен. Главный метод: email + пароль. */}
+              <Button
+                type="text"
+                onPress={() => router.push("/(auth)/registration-profile")}
+                containerStyle={styles.registerButton}
+                textStyle={styles.registerButtonText}
+              >
+                Регистрация по почте
               </Button>
             </View>
           </View>
@@ -257,6 +333,13 @@ const createStyles = ({
     },
     actionsContainer: {
       paddingTop: sizes.md,
+      gap: sizes.s,
+    },
+    registerButton: {
+      alignSelf: "center",
+    },
+    registerButtonText: {
+      color: colors.primary500,
     },
   });
 

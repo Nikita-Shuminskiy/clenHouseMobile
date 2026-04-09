@@ -7,10 +7,28 @@ import {
   RefreshTokensRequest,
   RefreshTokensResponse,
   GetMeResponse,
+  RegisterRequest,
+  LoginEmailRequest,
 } from "../types";
 import { IUserDto } from "@/src/shared/api/types/data-contracts";
 
 export const authApi = {
+  register: async (data: RegisterRequest): Promise<AuthResponse> => {
+    const payload = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+    };
+    const response = await instance.post("/auth/register", payload);
+    return response.data;
+  },
+
+  login: async (data: LoginEmailRequest): Promise<AuthResponse> => {
+    const response = await instance.post("/auth/email/login", data);
+    return response.data;
+  },
+
   // Отправка SMS кода
   sendSms: async (data: SendSmsRequest): Promise<SendSmsResponse> => {
     const payload = {

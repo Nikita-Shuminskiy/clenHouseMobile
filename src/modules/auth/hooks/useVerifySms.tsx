@@ -7,13 +7,17 @@ import { setRefreshToken, setToken, removeToken, removeRefreshToken } from '@/sr
 import { requestLocationPermission, checkLocationPermission } from '@/src/shared/utils/location-permission';
 import { UserRole } from '@/src/shared/api/types/data-contracts';
 import { setManualLogoutInProgress } from '@/src/shared/api/configs/config';
+import {
+    getSavedAuthCredentials,
+    saveSavedAuthCredentials,
+} from '../utils/saved-auth';
 
 export const useVerifySms = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (data: VerifySmsRequest) => authApi.verifySms(data),
-        onSuccess: async (data) => {
+        onSuccess: async (data, variables) => {
             // Валидация данных ответа - проверяем что все обязательные поля присутствуют
             if (!data || !data.accessToken || !data.refreshToken || !data.user) {
                 console.error('Некорректные данные ответа:', data);
@@ -42,6 +46,13 @@ export const useVerifySms = () => {
                 // Сохраняем токены в localStorage
                 await setToken(data.accessToken);
                 await setRefreshToken(data.refreshToken);
+
+                const existingCredentials = await getSavedAuthCredentials();
+                await saveSavedAuthCredentials({
+                    method: 'phone',
+                    login: variables.phoneNumber,
+                    password: existingCredentials?.password ?? '',
+                });
 
                 // Устанавливаем данные пользователя в кэш БЕЗ перезапроса
                 // Это предотвращает возможную 401 ошибку при refetch сразу после логина
