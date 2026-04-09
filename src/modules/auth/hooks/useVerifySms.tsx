@@ -84,11 +84,15 @@ export const useVerifySms = () => {
                 throw error;
             }
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Ошибка верификации SMS:', error);
 
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
+            const typedError = error as {
+                response?: { data?: { message?: string } };
+                message?: string;
+            };
+            const errorMessage = typedError.response?.data?.message ||
+                typedError.message ||
                 'Неверный код подтверждения';
 
             toast.error('Ошибка входа', {
