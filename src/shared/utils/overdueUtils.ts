@@ -1,7 +1,7 @@
 /**
  * Форматирует время просрочки в читаемый формат
  * @param minutes - количество минут просрочки
- * @returns строка в формате "N мин/ч/дн"
+ * @returns строка в формате "N мин/ч/дн/\"больше 3 дней\""
  */
 export const formatOverdueTime = (minutes: number | undefined): string => {
   if (!minutes || minutes < 0) {
@@ -18,5 +18,10 @@ export const formatOverdueTime = (minutes: number | undefined): string => {
   }
 
   const days = Math.floor(minutes / 1440);
+
+  if (days > 3) {
+    return "больше 3 дней";
+  }
+
   return `${days} дн`;
 };

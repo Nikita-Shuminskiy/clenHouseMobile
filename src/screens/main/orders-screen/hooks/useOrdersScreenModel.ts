@@ -6,6 +6,9 @@ import { OrderResponseDto, OrderStatus } from "@/src/modules/orders/types/orders
 
 export type OrderTabType = "new" | "my" | "overdue";
 
+/** Интервал автообновления списка заказов (30 сек) */
+const ORDERS_POLLING_INTERVAL_MS = 60 * 1000;
+
 interface UseOrdersScreenModelParams {
   userId?: string;
 }
@@ -45,7 +48,7 @@ export const useOrdersScreenModel = ({ userId }: UseOrdersScreenModelParams) => 
       },
       {
         enabled: activeTab === "new",
-        pollingIntervalMs: activeTab === "new" ? 2 * 60 * 1000 : false,
+        pollingIntervalMs: activeTab === "new" ? ORDERS_POLLING_INTERVAL_MS : false,
       }
     );
 
@@ -64,7 +67,7 @@ export const useOrdersScreenModel = ({ userId }: UseOrdersScreenModelParams) => 
       enabled: !!userId && activeTab === "my" && myOrdersStatusFilter === undefined,
       pollingIntervalMs:
         !!userId && activeTab === "my" && myOrdersStatusFilter === undefined
-          ? 2 * 60 * 1000
+          ? ORDERS_POLLING_INTERVAL_MS
           : false,
     }
   );
@@ -84,7 +87,7 @@ export const useOrdersScreenModel = ({ userId }: UseOrdersScreenModelParams) => 
       enabled: !!userId && activeTab === "my" && myOrdersStatusFilter === undefined,
       pollingIntervalMs:
         !!userId && activeTab === "my" && myOrdersStatusFilter === undefined
-          ? 2 * 60 * 1000
+          ? ORDERS_POLLING_INTERVAL_MS
           : false,
     }
   );
@@ -99,7 +102,7 @@ export const useOrdersScreenModel = ({ userId }: UseOrdersScreenModelParams) => 
         enabled: !!userId && activeTab === "my" && myOrdersStatusFilter !== undefined,
         pollingIntervalMs:
           !!userId && activeTab === "my" && myOrdersStatusFilter !== undefined
-            ? 2 * 60 * 1000
+            ? ORDERS_POLLING_INTERVAL_MS
             : false,
       }
     );
@@ -117,7 +120,7 @@ export const useOrdersScreenModel = ({ userId }: UseOrdersScreenModelParams) => 
     },
     {
       enabled: activeTab === "overdue",
-      pollingIntervalMs: activeTab === "overdue" ? 2 * 60 * 1000 : false,
+      pollingIntervalMs: activeTab === "overdue" ? ORDERS_POLLING_INTERVAL_MS : false,
     }
   );
 
