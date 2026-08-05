@@ -25,10 +25,7 @@
         ],
         "NSUserNotificationsEnabled": true,
         "FirebaseAppDelegateProxyEnabled": true
-      },
-      "backgroundModes": [
-        "remote-notification"
-      ]
+      }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -88,7 +85,11 @@
           "locationWhenInUsePermission": "Приложению требуется доступ к вашей геолокации для предоставления услуг."
         }
       ],
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-font",
+      "expo-web-browser",
+      "./plugins/withFirebaseModularHeaders",
+      "react-native-edge-to-edge"
     ],
     "splash": {
       "image": "./assets/images/splash-icon.png",

@@ -7,6 +7,7 @@ import { setRefreshToken, setToken, removeToken, removeRefreshToken } from '@/sr
 import { requestLocationPermission, checkLocationPermission } from '@/src/shared/utils/location-permission';
 import { UserRole } from '@/src/shared/api/types/data-contracts';
 import { setManualLogoutInProgress } from '@/src/shared/api/configs/config';
+import { handleApiError } from '@/src/shared/utils/errorHandler';
 import {
     getSavedAuthCredentials,
     saveSavedAuthCredentials,
@@ -84,19 +85,9 @@ export const useVerifySms = () => {
                 throw error;
             }
         },
-        onError: (error: unknown) => {
-            console.error('Ошибка верификации SMS:', error);
-
-            const typedError = error as {
-                response?: { data?: { message?: string } };
-                message?: string;
-            };
-            const errorMessage = typedError.response?.data?.message ||
-                typedError.message ||
-                'Неверный код подтверждения';
-
+        onError: (error) => {
             toast.error('Ошибка входа', {
-                description: errorMessage,
+                description: handleApiError(error, 'Неверный код подтверждения'),
                 duration: 5000,
             });
         },

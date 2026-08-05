@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner-native';
 import { authApi } from '../api';
 import { SendSmsRequest } from '../types';
+import { handleApiError } from '@/src/shared/utils/errorHandler';
 
 export const useSendSms = () => {
     return useMutation({
@@ -15,15 +16,9 @@ export const useSendSms = () => {
                 duration: 5000,
             });
         },
-        onError: (error: any) => {
-            console.error('Ошибка отправки SMS:', error);
-
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                'Произошла ошибка при отправке SMS кода';
-
+        onError: (error) => {
             toast.error('Ошибка отправки SMS', {
-                description: errorMessage,
+                description: handleApiError(error, 'Не удалось отправить SMS-код. Попробуйте ещё раз.'),
                 duration: 5000,
             });
         },

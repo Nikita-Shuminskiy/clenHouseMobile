@@ -9,6 +9,7 @@ import {
   ensurePushTokenRegistered,
   getPushNotificationStatus,
 } from "@/src/shared/hooks/useNotification/utils";
+import { useTheme } from "@/src/shared/use-theme";
 
 interface ProfileSettingsProps {
   onEditProfile?: () => void;
@@ -25,6 +26,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   onPrivacy,
   onSupport,
 }) => {
+  const { colors } = useTheme();
   const [isPushEnabled, setIsPushEnabled] = useState<boolean | null>(null);
   const [isLoadingPushStatus, setIsLoadingPushStatus] = useState(false);
 
@@ -94,19 +96,19 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     //   onPress: onChangePassword,
     // },
     {
-      icon: <NotificationIcon width={20} height={20} color="#FF5E00" />,
+      icon: <NotificationIcon width={20} height={20} color={colors.primary500 as string} />,
       title: "Уведомления",
       subtitle: notificationSubtitle,
       onPress: handleNotificationsPress,
     },
     {
-      icon: <PrivacyIcon width={20} height={20} color="#FF5E00" />,
+      icon: <PrivacyIcon width={20} height={20} color={colors.primary500 as string} />,
       title: "Конфиденциальность",
       subtitle: "Управление данными",
       onPress: onPrivacy,
     },
     {
-      icon: <SupportIcon width={20} height={20} color="#FF5E00" />,
+      icon: <SupportIcon width={20} height={20} color={colors.primary500 as string} />,
       title: "Поддержка",
       subtitle: "Связаться с нами",
       onPress: onSupport,
@@ -114,14 +116,15 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   ];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Настройки</Text>
+    <View style={[styles.container, { backgroundColor: colors.white }]}>
+      <Text style={[styles.title, { color: colors.textPrimary }]}>Настройки</Text>
       <View style={styles.settingsList}>
         {settingsItems.map((item, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.settingItem,
+              { borderBottomColor: colors.background },
               index === settingsItems.length - 1 && styles.lastItem,
             ]}
             onPress={item.onPress}
@@ -131,11 +134,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
             <View style={styles.settingContent}>
               <View style={styles.settingIcon}>{item.icon}</View>
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>{item.title}</Text>
-                <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+                <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>{item.title}</Text>
+                <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>{item.subtitle}</Text>
               </View>
             </View>
-            <Text style={styles.arrow}>›</Text>
+            <Text style={[styles.arrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -145,7 +148,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 20,
@@ -160,7 +162,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 18,
     lineHeight: 24,
-    color: '#1A1A1A',
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 16,
@@ -174,7 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F3F3',
   },
   lastItem: {
     borderBottomWidth: 0,
@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
     lineHeight: 24,
-    color: '#1A1A1A',
     marginBottom: 2,
   },
   settingSubtitle: {
@@ -203,13 +202,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 14,
     lineHeight: 20,
-    color: '#5A6E8A',
   },
   arrow: {
     fontFamily: 'Onest',
     fontWeight: '400',
     fontSize: 20,
-    color: '#5A6E8A',
   },
 });
 

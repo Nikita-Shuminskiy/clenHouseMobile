@@ -6,17 +6,10 @@ import { RegisterRequest } from '../types';
 import { setRefreshToken, setToken } from '@/src/shared/utils/token';
 import { setManualLogoutInProgress } from '@/src/shared/api/configs/config';
 import { saveSavedAuthCredentials } from '../utils/saved-auth';
+import { handleApiError } from '@/src/shared/utils/errorHandler';
 
-const getErrorMessage = (error: unknown, fallback: string): string => {
-  if (error && typeof error === 'object') {
-    const typedError = error as {
-      response?: { data?: { message?: string } };
-      message?: string;
-    };
-    return typedError.response?.data?.message || typedError.message || fallback;
-  }
-  return fallback;
-};
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  handleApiError(error, fallback);
 
 export const useRegisterByEmail = () => {
   const queryClient = useQueryClient();

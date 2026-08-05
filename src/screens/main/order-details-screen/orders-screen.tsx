@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Linking,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
@@ -19,7 +20,8 @@ import { useOrder, useUpdateOrderStatus, useCancelOrder } from "@/src/modules/or
 import { OrderStatus, OrderResponseDto } from "@/src/modules/orders/types/orders";
 import Button from "@/src/shared/components/ui-kit/button";
 import useTheme from "@/src/shared/use-theme/use-theme";
-import { BackArrowIcon, PhoneIcon, TelegramIcon } from "@/src/shared/components/icons";
+import { ThemeColors } from "@/src/shared/use-theme";
+import { BackArrowIcon, PhoneIcon, TelegramIcon, ResetIcon } from "@/src/shared/components/icons";
 import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
 import { formatOverdueTime } from "@/src/shared/utils/overdueUtils";
 import { normalizeOrderId, isValidUUID } from "@/src/shared/utils/uuidValidation";
@@ -63,6 +65,7 @@ const OrderDetailsScreen: React.FC = () => {
   const { orderId: rawOrderId } = useLocalSearchParams<{ orderId: string | string[] }>();
   const { data: user } = useGetMe();
   const { colors } = useTheme();
+  const styles = makeStyles(colors);
 
   // Нормализуем orderId (обрабатываем массив и пустые значения)
   const normalizedOrderId = normalizeOrderId(rawOrderId);
@@ -147,16 +150,21 @@ const OrderDetailsScreen: React.FC = () => {
     refetch();
   }, [refetch]);
 
-  const renderHeaderRefreshButton = (disabled: boolean) => (
-    <Button
-      type="secondary"
-      size="small"
+  const renderHeaderRefreshButton = (loading: boolean) => (
+    <TouchableOpacity
       onPress={handleManualRefresh}
-      disabled={disabled}
-      containerStyle={styles.headerRefreshButton}
+      disabled={loading}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel="Обновить заказ"
+      style={[styles.headerRefreshButton, { backgroundColor: colors.grey100 }]}
     >
-      🔄
-    </Button>
+      {loading ? (
+        <ActivityIndicator size="small" color={colors.primary500} />
+      ) : (
+        <ResetIcon width={20} height={20} color={colors.grey700} />
+      )}
+    </TouchableOpacity>
   );
 
   const handleOpenMaps = useCallback(() => {
@@ -258,7 +266,7 @@ const OrderDetailsScreen: React.FC = () => {
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+            <BackArrowIcon width={24} height={24} color={colors.textPrimary as string} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Детали заказа</Text>
@@ -285,7 +293,7 @@ const OrderDetailsScreen: React.FC = () => {
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+            <BackArrowIcon width={24} height={24} color={colors.textPrimary as string} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Детали заказа</Text>
@@ -312,7 +320,7 @@ const OrderDetailsScreen: React.FC = () => {
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+            <BackArrowIcon width={24} height={24} color={colors.textPrimary as string} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Детали заказа</Text>
@@ -344,7 +352,7 @@ const OrderDetailsScreen: React.FC = () => {
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+          <BackArrowIcon width={24} height={24} color={colors.textPrimary as string} />
         </TouchableOpacity>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Детали заказа</Text>
@@ -498,12 +506,12 @@ const OrderDetailsScreen: React.FC = () => {
           ) : null}
 
           {order.isOverdue && (
-            <View style={[styles.overdueContainer, { backgroundColor: colors.error || '#FFEBEE' }]}>
-              <Text style={[styles.overdueLabel, { color: colors.error || '#DC2626' }]}>
+            <View style={[styles.overdueContainer, { backgroundColor: colors.destructiveLight }]}>
+              <Text style={[styles.overdueLabel, { color: colors.destructive }]}>
                 ⚠️ Заказ просрочен
               </Text>
               {order.overdueMinutes !== undefined && (
-                <Text style={[styles.overdueMinutes, { color: colors.error || '#DC2626' }]}>
+                <Text style={[styles.overdueMinutes, { color: colors.destructive }]}>
                   Просрочка: {formatOverdueTime(order.overdueMinutes)}
                 </Text>
               )}
@@ -544,13 +552,13 @@ const OrderDetailsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
   },
   header: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
@@ -573,8 +581,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
   titleContainer: {
     flex: 1,
@@ -586,7 +594,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 28,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     textAlign: "center",
   },
   content: {
@@ -597,7 +605,7 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   orderDetails: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 20,
     shadowColor: "#1A1A1A",
@@ -610,7 +618,7 @@ const styles = StyleSheet.create({
   },
   orderDetailsOverdue: {
     borderLeftWidth: 3,
-    borderLeftColor: '#F44336',
+    borderLeftColor: colors.destructive,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -619,7 +627,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   overdueBadge: {
-    backgroundColor: '#F44336',
+    backgroundColor: colors.destructive,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -629,20 +637,20 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 12,
     lineHeight: 16,
-    color: '#FFFFFF',
+    color: colors.white,
   },
   overdueText: {
     fontFamily: 'Onest',
     fontWeight: '500',
     fontSize: 14,
     lineHeight: 20,
-    color: '#F44336',
+    color: colors.destructive,
   },
   sectionTitle: {
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 16,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     marginTop: 16,
     marginBottom: 8,
   },
@@ -650,7 +658,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 16,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     lineHeight: 24,
     marginBottom: 16,
   },
@@ -658,7 +666,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
-    color: "#5A6E8A",
+    color: colors.textSecondary,
     lineHeight: 20,
     marginBottom: 16,
   },
@@ -666,7 +674,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
-    color: "#5A6E8A",
+    color: colors.textSecondary,
     lineHeight: 20,
     marginBottom: 8,
   },
@@ -678,14 +686,14 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
-    color: "#5A6E8A",
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   customerName: {
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 14,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     lineHeight: 20,
   },
   phoneContainer: {
@@ -704,14 +712,14 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 18,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     lineHeight: 24,
   },
   orderNotes: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
-    color: "#5A6E8A",
+    color: colors.textSecondary,
     lineHeight: 20,
     fontStyle: "italic",
   },
@@ -719,7 +727,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 14,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     lineHeight: 20,
   },
   overdueContainer: {
@@ -751,7 +759,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 16,
-    color: "#5A6E8A",
+    color: colors.textSecondary,
   },
   errorContainer: {
     flex: 1,
@@ -762,12 +770,12 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 16,
-    color: "#FF6B6B",
+    color: colors.destructive,
     textAlign: "center",
     marginBottom: 16,
   },
   backButtonError: {
-    backgroundColor: "#007AFF",
+    backgroundColor: colors.blue,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
@@ -777,11 +785,11 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 16,
-    color: "#FFFFFF",
+    color: colors.white,
     textAlign: "center",
   },
   actionsContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 20,
     marginTop: 16,
@@ -795,7 +803,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 16,
-    color: "#1A1A1A",
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   actionsButtons: {
@@ -818,7 +826,7 @@ const styles = StyleSheet.create({
   packagesBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0F7FF',
+    backgroundColor: colors.surfaceInfo,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
@@ -831,7 +839,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Onest',
     fontWeight: '600',
     fontSize: 16,
-    color: '#1A1A1A',
+    color: colors.textPrimary,
     lineHeight: 24,
   },
 });

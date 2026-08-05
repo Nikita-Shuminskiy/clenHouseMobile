@@ -17,12 +17,14 @@ import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
 import { setManualLogoutInProgress } from "@/src/shared/api/configs/config";
 import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import LogoutConfirmationModal from "@/src/shared/components/modals/LogoutConfirmationModal";
+import { useTheme } from "@/src/shared/use-theme";
 
 // UI Components - временно закомментировано
 import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
 
 const ProfileScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   const { data: user } = useGetMe();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   
@@ -85,10 +87,10 @@ const ProfileScreen: React.FC = () => {
   }, []);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { backgroundColor: colors.white, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={styles.title}>Профиль</Text>
+      <View style={[styles.header, { backgroundColor: colors.white, paddingTop: insets.top + 16 }]}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Профиль</Text>
       </View>
 
       {/* Основной контент */}
@@ -98,19 +100,19 @@ const ProfileScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Информация о пользователе */}
-        <View style={styles.userInfoContainer}>
+        <View style={[styles.userInfoContainer, { backgroundColor: colors.white }]}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
+            <View style={[styles.avatar, { backgroundColor: colors.surfaceInfo }]}>
+              <Text style={[styles.avatarText, { color: colors.textSecondary }]}>
                 {user?.name?.charAt(0) || "П"}
               </Text>
             </View>
           </View>
 
           <View style={styles.userDetails}>
-            <Text style={styles.userName}>{user?.name}</Text>
-            <Text style={styles.userPhone}>{user?.phone}</Text>
-            <Text style={styles.userRole}>
+            <Text style={[styles.userName, { color: colors.textPrimary }]}>{user?.name}</Text>
+            <Text style={[styles.userPhone, { color: colors.textSecondary }]}>{user?.phone}</Text>
+            <Text style={[styles.userRole, { color: colors.textPlaceholder, backgroundColor: colors.surfaceInfo }]}>
               {user?.roles?.includes(UserRole.ADMIN)
                 ? "Администратор"
                 : user?.roles?.includes(UserRole.CUSTOMER)
@@ -129,8 +131,8 @@ const ProfileScreen: React.FC = () => {
       </ScrollView>
 
       {/* Кнопка выхода - прижата к низу */}
-      <View style={styles.logoutContainer}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <View style={[styles.logoutContainer, { backgroundColor: colors.white }]}>
+        <TouchableOpacity style={[styles.logoutButton, { backgroundColor: colors.destructive }]} onPress={handleLogout}>
           <Text style={styles.logoutText}>Выйти</Text>
         </TouchableOpacity>
       </View>
@@ -148,7 +150,6 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   scrollView: {
     flex: 1,
@@ -157,7 +158,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   header: {
-    backgroundColor: "#FFFFFF",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -176,10 +176,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 28,
-    color: "#1A1A1A",
   },
   userInfoContainer: {
-    backgroundColor: "#FFFFFF",
     marginHorizontal: 16,
     marginTop: 24,
     padding: 16,
@@ -197,7 +195,6 @@ const styles = StyleSheet.create({
   avatar: {
     width: 80,
     height: 80,
-    backgroundColor: "#EAF0F6",
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
@@ -207,7 +204,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 32,
     lineHeight: 40,
-    color: "#5A6E8A",
   },
   userDetails: {
     alignItems: "center",
@@ -217,23 +213,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 28,
-    color: "#1A1A1A",
     marginBottom: 4,
-  },
-  userEmail: {
-    fontFamily: "Onest",
-    fontWeight: "400",
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#5A6E8A",
-    marginBottom: 6,
   },
   userPhone: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 16,
     lineHeight: 24,
-    color: "#5A6E8A",
     marginBottom: 4,
   },
   userRole: {
@@ -241,61 +227,15 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 14,
     lineHeight: 20,
-    color: "#7D8EAA",
-    backgroundColor: "#EFF3F8",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
-  menuContainer: {
-    backgroundColor: "#FFFFFF",
-    marginHorizontal: 16,
-    marginTop: 24,
-    borderRadius: 24,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 50,
-    elevation: 6,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F3F3",
-  },
-  menuItemContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
-  },
-  menuIcon: {
-    width: 24,
-    height: 24,
-    color: "#5A6E8A",
-  },
-  menuTitle: {
-    fontFamily: "Onest",
-    fontWeight: "500",
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#1A1A1A",
-  },
-  arrowIcon: {
-    width: 16,
-    height: 16,
-    color: "#5A6E8A",
-    transform: [{ rotate: "180deg" }],
-  },
   logoutContainer: {
     paddingHorizontal: 16,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
   },
   logoutButton: {
-    backgroundColor: "#FF3B30",
     borderRadius: 16,
     padding: 16,
     alignItems: "center",

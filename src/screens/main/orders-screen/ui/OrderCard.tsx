@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { OrderResponseDto } from "@/src/modules/orders/types/orders";
+import { useTheme } from "@/src/shared/use-theme";
 import OrderCardHeader from "./order-card/OrderCardHeader";
 import OrderCardMeta from "./order-card/OrderCardMeta";
 import OrderCardCustomer from "./order-card/OrderCardCustomer";
@@ -19,13 +20,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onAction,
   distance = null,
 }) => {
+  const { colors } = useTheme();
   const isOverdue = order.isOverdue === true;
 
   return (
     <TouchableOpacity
       style={[
         styles.container,
-        isOverdue && styles.containerOverdue,
+        { backgroundColor: colors.white },
+        isOverdue && [styles.containerOverdue, { borderLeftColor: colors.destructive }],
       ]}
       onPress={() => onPress?.(order)}
       activeOpacity={0.7}
@@ -56,7 +59,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -68,7 +70,6 @@ const styles = StyleSheet.create({
   },
   containerOverdue: {
     borderLeftWidth: 3,
-    borderLeftColor: '#F44336',
   },
   customerBlock: {
     marginTop: 8,

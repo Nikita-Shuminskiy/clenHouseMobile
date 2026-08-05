@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { FlatList, View, StyleSheet, RefreshControl } from 'react-native';
 import { OrderResponseDto } from '@/src/modules/orders/types/orders';
+import { useTheme } from '@/src/shared/use-theme';
 import { groupOrdersByDate, flattenOrdersWithHeaders, FlatListItem } from '@/src/shared/utils/groupOrdersByDate';
 import OrderCard from './OrderCard';
 import EmptyOrders from './EmptyOrders';
@@ -27,6 +28,7 @@ const OrderList: React.FC<OrderListProps> = ({
   onOrderAction,
   onLoadMore,
 }) => {
+  const { colors } = useTheme();
   // Состояние для отслеживания открытых/закрытых секций
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
     // По умолчанию все секции открыты
@@ -136,8 +138,8 @@ const OrderList: React.FC<OrderListProps> = ({
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            colors={['#1A1A1A']}
-            tintColor="#1A1A1A"
+            colors={[colors.primary500 as string]}
+            tintColor={colors.primary500 as string}
           />
         ) : undefined
       }

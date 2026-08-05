@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 import { formatPrice } from "@/src/shared/utils/formatting";
+import { useTheme } from "@/src/shared/use-theme";
 import { getOrderStatusUi } from "../../constants/order-status-ui";
 
 interface OrderCardHeaderProps {
@@ -17,14 +18,15 @@ const OrderCardHeader: React.FC<OrderCardHeaderProps> = ({
   price,
   isOverdue,
 }) => {
+  const { colors } = useTheme();
   const statusUi = getOrderStatusUi(status);
 
   return (
     <View style={styles.header}>
       <View style={styles.orderInfo}>
-        <Text style={styles.orderId}>#{id.slice(-8)}</Text>
+        <Text style={[styles.orderId, { color: colors.textPrimary }]}>#{id.slice(-8)}</Text>
         {isOverdue && (
-          <View style={styles.overdueBadge}>
+          <View style={[styles.overdueBadge, { backgroundColor: colors.destructive }]}>
             <Text style={styles.overdueBadgeText}>Просрочено</Text>
           </View>
         )}
@@ -32,7 +34,7 @@ const OrderCardHeader: React.FC<OrderCardHeaderProps> = ({
           <Text style={styles.statusText}>{statusUi.label}</Text>
         </View>
       </View>
-      <Text style={styles.price}>{formatPrice(price)}</Text>
+      <Text style={[styles.price, { color: colors.textPrimary }]}>{formatPrice(price)}</Text>
     </View>
   );
 };
@@ -54,10 +56,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 24,
-    color: "#1A1A1A",
   },
   overdueBadge: {
-    backgroundColor: "#F44336",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 18,
     lineHeight: 24,
-    color: "#1A1A1A",
   },
 });
 

@@ -120,7 +120,7 @@ const OrderStatusSelect: React.FC<OrderStatusSelectProps> = ({ selectedStatus, o
             ]}
             onStartShouldSetResponder={() => true}
           >
-            <View style={styles.modalHeader}>
+            <View style={[styles.modalHeader, { borderBottomColor: colors.grey200 }]}>
               <Text style={[styles.modalTitle, { color: colors.grey900 }]}>
                 Выберите статус
               </Text>
@@ -141,8 +141,9 @@ const OrderStatusSelect: React.FC<OrderStatusSelectProps> = ({ selectedStatus, o
                   key={option.value || 'all'}
                   style={[
                     styles.optionItem,
+                    { borderBottomColor: colors.grey100 },
                     selectedStatus === option.value && {
-                      backgroundColor: 'rgba(255, 94, 0, 0.15)',
+                      backgroundColor: colors.primary500_12,
                     },
                   ]}
                   onPress={() => handleSelect(option.value)}
@@ -220,7 +221,6 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
   modalTitle: {
     fontFamily: 'Onest',
@@ -248,7 +248,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
   },
   optionText: {
     fontFamily: 'Onest',

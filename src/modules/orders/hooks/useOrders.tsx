@@ -1,7 +1,7 @@
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import { toast } from "sonner-native";
+import { handleApiError } from "@/src/shared/utils/errorHandler";
 import { ordersApi } from "../api";
 import {
   CancelOrderDto,
@@ -175,12 +175,9 @@ export const useUpdateOrderStatus = () => {
         queryKey: ["customer-orders", user?.id],
       });
     },
-    onError: (error: AxiosError) => {
-      const errorMessage =
-        (error?.response?.data as { message?: string })?.message ||
-        "Ошибка обновления статуса";
+    onError: (error) => {
       toast.error("Ошибка", {
-        description: errorMessage,
+        description: handleApiError(error, "Не удалось обновить статус заказа"),
         duration: 5000,
       });
     },
@@ -207,12 +204,9 @@ export const useTakeOrder = () => {
         queryKey: ["customer-orders", user?.id],
       });
     },
-    onError: (error: AxiosError) => {
-      const errorMessage =
-        (error?.response?.data as { message?: string })?.message ||
-        "Ошибка принятия заказа";
+    onError: (error) => {
       toast.error("Ошибка", {
-        description: errorMessage,
+        description: handleApiError(error, "Не удалось принять заказ"),
         duration: 5000,
       });
     },
@@ -244,12 +238,9 @@ export const useCancelOrder = () => {
         queryKey: ["customer-orders", user?.id],
       });
     },
-    onError: (error: AxiosError) => {
-      const errorMessage =
-        (error?.response?.data as { message?: string })?.message ||
-        "Ошибка отмены заказа";
+    onError: (error) => {
       toast.error("Ошибка", {
-        description: errorMessage,
+        description: handleApiError(error, "Не удалось отменить заказ"),
         duration: 5000,
       });
     },
@@ -266,12 +257,9 @@ export const useDeleteOrder = () => {
       });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
-    onError: (error: AxiosError) => {
-      const errorMessage =
-        (error?.response?.data as { message?: string })?.message ||
-        "Ошибка удаления заказа";
+    onError: (error) => {
       toast.error("Ошибка", {
-        description: errorMessage,
+        description: handleApiError(error, "Не удалось удалить заказ"),
         duration: 5000,
       });
     },

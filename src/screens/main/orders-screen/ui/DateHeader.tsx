@@ -39,13 +39,17 @@ const DateHeader: React.FC<DateHeaderProps> = ({
   });
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { backgroundColor: theme.colors.white }]}>
       <TouchableOpacity
         activeOpacity={0.75}
         onPress={onPress}
         style={[
           styles.container,
-          isOverdueGroup && styles.containerOverdue,
+          { backgroundColor: theme.colors.white },
+          isOverdueGroup && [
+            styles.containerOverdue,
+            { backgroundColor: theme.colors.destructiveLight, borderLeftColor: theme.colors.destructive },
+          ],
         ]}
       >
         <View style={styles.leftContent}>
@@ -55,14 +59,14 @@ const DateHeader: React.FC<DateHeaderProps> = ({
                 <Ionicons
                   name="alert-circle"
                   size={18}
-                  color="#F44336"
+                  color={theme.colors.destructive as string}
                   style={styles.alertIcon}
                 />
               )}
               <Text style={[
                 styles.title,
                 {
-                  color: isOverdueGroup ? '#C62828' : theme.colors.grey900,
+                  color: isOverdueGroup ? theme.colors.destructive : theme.colors.grey900,
                   fontWeight: isOverdueGroup ? '700' : '600',
                 },
               ]}>
@@ -75,10 +79,9 @@ const DateHeader: React.FC<DateHeaderProps> = ({
                   style={[
                     styles.countBadge,
                     {
-                      backgroundColor: isOverdueGroup
-                        ? 'rgba(244, 67, 54, 0.12)'
-                        : hasOverdue
-                          ? 'rgba(244, 67, 54, 0.1)'
+                      backgroundColor:
+                        isOverdueGroup || hasOverdue
+                          ? theme.colors.destructiveLight
                           : 'rgba(0, 0, 0, 0.06)',
                     },
                   ]}
@@ -89,7 +92,7 @@ const DateHeader: React.FC<DateHeaderProps> = ({
                       {
                         color:
                           isOverdueGroup || hasOverdue
-                            ? '#C62828'
+                            ? theme.colors.destructive
                             : theme.colors.grey600,
                       },
                     ]}
@@ -100,8 +103,8 @@ const DateHeader: React.FC<DateHeaderProps> = ({
                 </View>
               )}
               {hasOverdue && !isOverdueGroup && (
-                <View style={styles.overdueBadge}>
-                  <Ionicons name="alert-circle" size={12} color="#FFFFFF" />
+                <View style={[styles.overdueBadge, { backgroundColor: theme.colors.destructive }]}>
+                  <Ionicons name="alert-circle" size={12} color={theme.colors.white as string} />
                   <Text style={styles.overdueText}>
                     {overdueCount}{' '}
                     {overdueCount === 1 ? 'просрочен' : 'просрочено'}
@@ -116,7 +119,7 @@ const DateHeader: React.FC<DateHeaderProps> = ({
           <Ionicons
             name="chevron-down"
             size={20}
-            color={isOverdueGroup ? '#C62828' : (theme.colors.grey500 ?? theme.colors.grey400)}
+            color={(isOverdueGroup ? theme.colors.destructive : (theme.colors.grey500 ?? theme.colors.grey400)) as string}
           />
         </Animated.View>
       </TouchableOpacity>
@@ -132,7 +135,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -151,12 +153,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
   },
   containerOverdue: {
-    backgroundColor: '#FFF5F5',
     borderLeftWidth: 3,
-    borderLeftColor: '#F44336',
   },
   leftContent: {
     flexDirection: 'row',
@@ -207,7 +206,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
-    backgroundColor: '#F44336',
   },
   overdueText: {
     fontFamily: 'Onest',

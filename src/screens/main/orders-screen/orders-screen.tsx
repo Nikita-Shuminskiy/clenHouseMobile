@@ -1,13 +1,20 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { OrderResponseDto } from "@/src/modules/orders/types/orders";
+import { useTheme } from "@/src/shared/use-theme";
+import { ResetIcon } from "@/src/shared/components/icons";
 import { useOrdersScreenModel } from "./hooks/useOrdersScreenModel";
 import { useOrderActions } from "./hooks/useOrderActions";
-import Button from "@/src/shared/components/ui-kit/button";
 
 // UI Components
 import { OrderSearch, OrderTabs, OrderList, OrderStatusSelect } from "./ui";
@@ -16,6 +23,7 @@ import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
 
 const OrdersScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   const { data: user } = useGetMe();
   const {
     searchQuery,
@@ -55,21 +63,26 @@ const OrdersScreen: React.FC = () => {
   }, [handleRefresh]);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+    <View style={[styles.container, { backgroundColor: colors.white, paddingBottom: insets.bottom }]}>
+      <View style={[styles.header, { backgroundColor: colors.white, paddingTop: insets.top + 16 }]}>
         <View style={styles.headerSide} />
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Ваши заказы</Text>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>Ваши заказы</Text>
         </View>
-        <Button
-          type="secondary"
-          size="small"
+        <TouchableOpacity
           onPress={handleManualRefresh}
           disabled={isFetching}
-          containerStyle={styles.headerRefreshButton}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Обновить список заказов"
+          style={[styles.headerRefreshButton, { backgroundColor: colors.grey100 }]}
         >
-          🔄
-        </Button>
+          {isFetching ? (
+            <ActivityIndicator size="small" color={colors.primary500} />
+          ) : (
+            <ResetIcon width={20} height={20} color={colors.grey700} />
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
@@ -93,8 +106,13 @@ const OrdersScreen: React.FC = () => {
         )}
 
         {ordersError && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>
+          <View
+            style={[
+              styles.errorContainer,
+              { backgroundColor: colors.primary100, borderColor: colors.destructive },
+            ]}
+          >
+            <Text style={[styles.errorText, { color: colors.destructive }]}>
               Ошибка загрузки заказов. Попробуйте обновить список.
             </Text>
           </View>
@@ -128,10 +146,8 @@ const OrdersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   header: {
-    backgroundColor: "#FFFFFF",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -150,7 +166,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 28,
-    color: "#1A1A1A",
   },
   titleContainer: {
     flex: 1,
@@ -164,8 +179,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     flex: 1,
@@ -175,17 +190,14 @@ const styles = StyleSheet.create({
     padding: 16,
     marginHorizontal: 16,
     marginTop: 16,
-    backgroundColor: '#FFEBEE',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#F44336',
   },
   errorText: {
     fontFamily: 'Onest',
     fontWeight: '500',
     fontSize: 14,
     lineHeight: 20,
-    color: '#F44336',
     textAlign: 'center',
   },
 });

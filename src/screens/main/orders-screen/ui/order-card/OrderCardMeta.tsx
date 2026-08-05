@@ -17,26 +17,26 @@ const OrderCardMeta: React.FC<OrderCardMetaProps> = ({ order, distance }) => {
 
   return (
     <View style={styles.content}>
-      <Text style={styles.description} numberOfLines={2}>
+      <Text style={[styles.description, { color: colors.textPrimary }]} numberOfLines={2}>
         {order.description}
       </Text>
 
       <View style={styles.row}>
-        <Text style={styles.label}>Адрес:</Text>
-        <Text style={styles.value}>{order.address}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary }]}>Адрес:</Text>
+        <Text style={[styles.value, { color: colors.textPrimary }]}>{order.address}</Text>
       </View>
 
       {distance !== null && (
         <View style={styles.row}>
-          <Text style={styles.label}>Расстояние:</Text>
-          <Text style={styles.distanceValue}>{formatDistance(distance)}</Text>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>Расстояние:</Text>
+          <Text style={[styles.distanceValue, { color: colors.blue }]}>{formatDistance(distance)}</Text>
         </View>
       )}
 
       {order.numberPackages !== undefined && order.numberPackages > 0 && (
-        <View style={styles.packagesContainer}>
+        <View style={[styles.packagesContainer, { backgroundColor: colors.surfaceInfo }]}>
           <Text style={styles.packagesIcon}>📦</Text>
-          <Text style={styles.packagesText}>
+          <Text style={[styles.packagesText, { color: colors.textPrimary }]}>
             {order.numberPackages}{" "}
             {order.numberPackages === 1
               ? "пакет"
@@ -48,31 +48,31 @@ const OrderCardMeta: React.FC<OrderCardMetaProps> = ({ order, distance }) => {
       )}
 
       <View style={styles.row}>
-        <Text style={styles.label}>Создан:</Text>
-        <Text style={styles.value}>{formatDateString(order.createdAt)}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary }]}>Создан:</Text>
+        <Text style={[styles.value, { color: colors.textPrimary }]}>{formatDateString(order.createdAt)}</Text>
       </View>
 
       {isOverdue && order.overdueMinutes !== undefined ? (
         <View style={styles.row}>
-          <Text style={styles.label}>Просрочено:</Text>
-          <Text style={styles.overdueText}>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>Просрочено:</Text>
+          <Text style={[styles.overdueText, { color: colors.destructive }]}>
             {formatOverdueTime(order.overdueMinutes)}
           </Text>
         </View>
       ) : order.scheduledAt ? (
         <View style={styles.row}>
-          <Text style={styles.label}>Запланирован на:</Text>
-          <Text style={styles.value}>{formatDateString(order.scheduledAt)}</Text>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>Запланирован на:</Text>
+          <Text style={[styles.value, { color: colors.textPrimary }]}>{formatDateString(order.scheduledAt)}</Text>
         </View>
       ) : null}
 
       {isOverdue && (
-        <View style={[styles.overdueContainer, { backgroundColor: colors.error || "#FFEBEE" }]}>
-          <Text style={[styles.overdueLabel, { color: colors.error || "#DC2626" }]}>
+        <View style={[styles.overdueContainer, { backgroundColor: colors.destructiveLight }]}>
+          <Text style={[styles.overdueLabel, { color: colors.destructive }]}>
             ⚠️ Просрочен
           </Text>
           {order.overdueMinutes !== undefined && (
-            <Text style={[styles.overdueMinutes, { color: colors.error || "#DC2626" }]}>
+            <Text style={[styles.overdueMinutes, { color: colors.destructive }]}>
               {formatOverdueTime(order.overdueMinutes)}
             </Text>
           )}
@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#1A1A1A",
   },
   row: {
     flexDirection: "row",
@@ -103,7 +102,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
-    color: "#5A6E8A",
     minWidth: 90,
   },
   value: {
@@ -111,7 +109,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 12,
     lineHeight: 16,
-    color: "#1A1A1A",
     flex: 1,
   },
   distanceValue: {
@@ -119,14 +116,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 12,
     lineHeight: 16,
-    color: "#2196F3",
   },
   overdueText: {
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
-    color: "#F44336",
   },
   overdueContainer: {
     flexDirection: "row",
@@ -153,7 +148,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#F0F7FF",
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
@@ -166,7 +160,6 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 12,
-    color: "#1A1A1A",
     lineHeight: 16,
   },
 });

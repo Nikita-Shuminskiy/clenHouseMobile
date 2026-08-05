@@ -92,7 +92,14 @@ export interface ThemeColors {
     
     // Дополнительные цвета из веб-версии
     destructive: ColorValue; // Для ошибок и предупреждений
+    destructiveLight: ColorValue; // Фон для ошибок/предупреждений
     muted: ColorValue; // Приглушенный текст
+
+    // Семантические токены текста/поверхностей (main/* экраны)
+    textPrimary: ColorValue; // Основной текст
+    textSecondary: ColorValue; // Вторичный текст
+    textPlaceholder: ColorValue; // Плейсхолдеры
+    surfaceInfo: ColorValue; // Светлый фон иконок/чипов
     border: ColorValue; // Границы
     ring: ColorValue; // Фокус кольца
 }

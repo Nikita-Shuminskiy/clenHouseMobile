@@ -24,7 +24,7 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
   const tabs = [
     { key: 'new' as OrderTabType, label: 'Новые', count: counts?.new, activeColor: colors.primary500 },
     { key: 'my' as OrderTabType, label: 'Мои', count: counts?.my, activeColor: colors.primary500 },
-    { key: 'overdue' as OrderTabType, label: overdueLabel, count: counts?.overdue, activeColor: '#DC2626' },
+    { key: 'overdue' as OrderTabType, label: overdueLabel, count: counts?.overdue, activeColor: colors.destructive },
   ];
 
   const renderTab = (tab: (typeof tabs)[number], isFullWidth = false) => {

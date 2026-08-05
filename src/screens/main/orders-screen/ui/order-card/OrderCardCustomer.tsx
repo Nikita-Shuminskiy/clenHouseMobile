@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Alert, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { UserDto } from "@/src/modules/orders/types/orders";
+import { useTheme } from "@/src/shared/use-theme";
 
 interface OrderCardCustomerProps {
   customer: UserDto;
@@ -11,6 +12,7 @@ const OrderCardCustomer: React.FC<OrderCardCustomerProps> = ({
   customer,
   courierName,
 }) => {
+  const { colors } = useTheme();
   const openLink = useCallback(async (url: string, errorText: string) => {
     try {
       const supported = await Linking.canOpenURL(url);
@@ -37,22 +39,22 @@ const OrderCardCustomer: React.FC<OrderCardCustomerProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.label}>Клиент:</Text>
-        <Text style={styles.value}>{customer.name}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary }]}>Клиент:</Text>
+        <Text style={[styles.value, { color: colors.textPrimary }]}>{customer.name}</Text>
         <TouchableOpacity onPress={handlePhonePress} activeOpacity={0.7}>
-          <Text style={styles.phone}>{customer.phone}</Text>
+          <Text style={[styles.phone, { color: colors.textSecondary }]}>{customer.phone}</Text>
         </TouchableOpacity>
         {customer.telegramUsername && (
           <TouchableOpacity onPress={handleTelegramPress} activeOpacity={0.7}>
-            <Text style={styles.telegram}>@{customer.telegramUsername}</Text>
+            <Text style={[styles.telegram, { color: colors.blue }]}>@{customer.telegramUsername}</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {courierName && (
         <View style={styles.row}>
-          <Text style={styles.label}>Курьер:</Text>
-          <Text style={styles.value}>{courierName}</Text>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>Курьер:</Text>
+          <Text style={[styles.value, { color: colors.textPrimary }]}>{courierName}</Text>
         </View>
       )}
     </View>
@@ -74,7 +76,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
-    color: "#5A6E8A",
     minWidth: 90,
   },
   value: {
@@ -82,21 +83,18 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 12,
     lineHeight: 16,
-    color: "#1A1A1A",
   },
   phone: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 12,
     lineHeight: 16,
-    color: "#5A6E8A",
   },
   telegram: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 12,
     lineHeight: 16,
-    color: "#2196F3",
   },
 });
 

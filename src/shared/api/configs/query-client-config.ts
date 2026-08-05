@@ -7,26 +7,28 @@ export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     // @ts-ignore
     onError: (error: AxiosError<{ message: string }>) => {
-      errorLogger('Query error:', error?.response?.data?.message || error.message);
-      
-      // Очищаем токены при 401 ошибке
+      // 401 — ожидаемое состояние "не авторизован": чистим токены без шумного лога
       if (error?.response?.status === 401) {
         removeToken();
         removeRefreshToken();
+        return;
       }
+
+      errorLogger('Query error:', error?.response?.data?.message || error.message);
     }
   }),
   defaultOptions: {
     mutations: {
       // @ts-ignore
       onError: (error: AxiosError<{ message: string }>) => {
-        errorLogger('Mutation error:', error?.response?.data?.message || error.message);
-        
-        // Очищаем токены при 401 ошибке
+        // 401 — ожидаемое состояние "не авторизован": чистим токены без шумного лога
         if (error?.response?.status === 401) {
           removeToken();
           removeRefreshToken();
+          return;
         }
+
+        errorLogger('Mutation error:', error?.response?.data?.message || error.message);
       }
     },
     queries: {
