@@ -8,6 +8,7 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+import { HeartIcon } from '../icons/HeartIcon';
 
 
 interface ClubCardProps {

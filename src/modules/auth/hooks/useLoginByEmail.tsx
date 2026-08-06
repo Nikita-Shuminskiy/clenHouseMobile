@@ -4,8 +4,6 @@ import { router } from 'expo-router';
 import { authApi } from '../api';
 import { LoginEmailRequest } from '../types';
 import {
-  removeRefreshToken,
-  removeToken,
   setRefreshToken,
   setToken,
 } from '@/src/shared/utils/token';
@@ -13,10 +11,13 @@ import {
   checkLocationPermission,
   requestLocationPermission,
 } from '@/src/shared/utils/location-permission';
-import { UserRole } from '@/src/shared/api/types/data-contracts';
 import { setManualLogoutInProgress } from '@/src/shared/api/configs/config';
 import { saveSavedAuthCredentials } from '../utils/saved-auth';
 import { handleApiError } from '@/src/shared/utils/errorHandler';
+import {
+  getHomeRouteForUser,
+  isCourierUser,
+} from '@/src/shared/utils/role-routing';
 
 const getErrorMessage = (error: unknown, fallback: string): string =>
   handleApiError(error, fallback);
@@ -35,16 +36,6 @@ export const useLoginByEmail = () => {
         throw new Error('Некорректный формат ответа от сервера');
       }
 
-      if (!data.user.roles?.includes(UserRole.CURRIER)) {
-        await removeToken();
-        await removeRefreshToken();
-        toast.error('Доступ запрещен', {
-          description: 'Мобильное приложение доступно только для курьеров',
-          duration: 5000,
-        });
-        throw new Error('Доступ разрешен только для курьеров');
-      }
-
       setManualLogoutInProgress(false);
       await setToken(data.accessToken);
       await setRefreshToken(data.refreshToken);
@@ -61,12 +52,14 @@ export const useLoginByEmail = () => {
         duration: 4000,
       });
 
-      const hasPermission = await checkLocationPermission();
-      if (!hasPermission) {
-        await requestLocationPermission();
+      if (isCourierUser(data.user)) {
+        const hasPermission = await checkLocationPermission();
+        if (!hasPermission) {
+          await requestLocationPermission();
+        }
       }
 
-      router.replace('/(protected-tabs)');
+      router.replace(getHomeRouteForUser(data.user));
     },
     onError: (error: unknown) => {
       const errorMessage = getErrorMessage(error, 'Не удалось войти по email');

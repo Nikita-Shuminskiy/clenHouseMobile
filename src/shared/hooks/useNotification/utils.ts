@@ -11,6 +11,7 @@ import { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { instance } from "../../api/configs/config";
 import { isValidUUID } from "@/src/shared/utils/uuidValidation";
+import { UserRole } from "@/src/shared/api/types/data-contracts";
 
 export const addDeviceToken = async (
   token: string
@@ -288,7 +289,10 @@ export const extractOrderIdFromNotification = (
  * @param orderId - Идентификатор заказа
  * @returns Объект маршрута для expo-router с pathname и params
  */
-export const buildOrderDetailsRoute = (orderId: string): { pathname: any; params: { orderId: string } } => {
+export const buildOrderDetailsRoute = (
+  orderId: string,
+  role?: UserRole.CUSTOMER | UserRole.CURRIER | null,
+): { pathname: any; params: { orderId: string } } => {
   if (!orderId) {
     throw new Error("orderId is required to build order details route");
   }
@@ -299,7 +303,10 @@ export const buildOrderDetailsRoute = (orderId: string): { pathname: any; params
   }
   
   return {
-    pathname: '/(protected)/order-details' as any,
+    pathname:
+      role === UserRole.CUSTOMER
+        ? ('/(client)/order-details' as any)
+        : ('/(protected)/order-details' as any),
     params: { orderId }
   };
 };

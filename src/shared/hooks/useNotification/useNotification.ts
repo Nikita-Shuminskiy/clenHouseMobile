@@ -19,6 +19,7 @@ import {
 } from "@/src/shared/utils/pendingNavigation";
 import { isAppReadyForNavigation } from "@/src/shared/utils/navigationReady";
 import { isValidUUID } from "@/src/shared/utils/uuidValidation";
+import { UserRole } from "@/src/shared/api/types/data-contracts";
 
 messaging().setBackgroundMessageHandler(displayNotification);
 
@@ -28,6 +29,10 @@ messaging().setBackgroundMessageHandler(displayNotification);
  */
 let globalIsNavigationReady = false;
 let globalIsAuthorized = false;
+let globalUserRole: UserRole.CUSTOMER | UserRole.CURRIER | null = null;
+
+const getFallbackHomeRoute = (): any =>
+  globalUserRole === UserRole.CUSTOMER ? "/(client-tabs)" : "/(protected-tabs)";
 
 /**
  * Устанавливает глобальное состояние готовности навигации
@@ -38,10 +43,12 @@ let globalIsAuthorized = false;
  */
 export const setNavigationReadyState = (
   isReady: boolean,
-  isAuthorized: boolean
+  isAuthorized: boolean,
+  role?: UserRole.CUSTOMER | UserRole.CURRIER | null,
 ) => {
   globalIsNavigationReady = isReady;
   globalIsAuthorized = isAuthorized;
+  globalUserRole = role ?? null;
 };
 
 /**
@@ -71,7 +78,7 @@ const handleNotificationNavigation = async (
       );
       // Если orderId отсутствует, перенаправляем на главный экран без ошибок
       if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
-        router.replace("/(protected-tabs)");
+        router.replace(getFallbackHomeRoute());
       } else {
         // Если приложение не готово, не сохраняем pending navigation для отсутствующего orderId
       }
@@ -85,7 +92,7 @@ const handleNotificationNavigation = async (
       );
       // Если orderId невалидный, перенаправляем на главный экран
       if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
-        router.replace("/(protected-tabs)");
+        router.replace(getFallbackHomeRoute());
       }
       return;
     }
@@ -120,7 +127,7 @@ const handleNotificationNavigation = async (
     }
 
     // Строим маршрут
-    const route = buildOrderDetailsRoute(orderId);
+    const route = buildOrderDetailsRoute(orderId, globalUserRole);
 
     // Проверяем, находимся ли мы уже на экране деталей заказа
     const currentPath = router.canGoBack() ? "unknown" : "initial";
@@ -153,7 +160,7 @@ const handleNotificationNavigation = async (
         // При ошибке навигации редиректим на главный экран
         if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
           try {
-            router.replace("/(protected-tabs)");
+            router.replace(getFallbackHomeRoute());
           } catch (fallbackError) {
             console.error("[Navigation Error] Failed to navigate to home:", fallbackError);
           }
@@ -175,7 +182,7 @@ const handleNotificationNavigation = async (
     // В случае ошибки перенаправляем на главный экран без белого экрана
     if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
       try {
-        router.replace("/(protected-tabs)");
+        router.replace(getFallbackHomeRoute());
       } catch (navError) {
         console.error(
           "[Navigation Error] Error navigating to home:",
@@ -272,7 +279,7 @@ export const useNotification = (isSignedIn: boolean) => {
           setTimeout(async () => {
             if (isAppReadyForNavigation(globalIsNavigationReady, globalIsAuthorized)) {
               try {
-                const route = buildOrderDetailsRoute(pendingNav.orderId);
+                const route = buildOrderDetailsRoute(pendingNav.orderId, globalUserRole);
                 router.push(route as any);
                 await clearPendingNavigation();
               } catch (error) {
@@ -287,7 +294,7 @@ export const useNotification = (isSignedIn: boolean) => {
                 
                 // Редиректим на главный экран при ошибке
                 try {
-                  router.replace("/(protected-tabs)");
+                  router.replace(getFallbackHomeRoute());
                 } catch (fallbackError) {
                   console.error("[useNotification] Failed to navigate to home:", fallbackError);
                 }

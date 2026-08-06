@@ -55,6 +55,8 @@ export const COLORS: ThemeColors = {
     surfaceInfo: '#EFF3F8', // Светлый фон иконок/чипов
     border: 'rgba(0,0,0,0.08)', // Границы
     ring: 'rgba(255, 94, 0, 0.35)', // Фокус кольца
+    error: '#DC2626',
+    primary: '#FF5E00',
 };
 
 export const GRADIENTS: ThemeGradients = {

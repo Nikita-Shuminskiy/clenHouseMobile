@@ -6,14 +6,13 @@ import "react-native-reanimated";
 import { queryClient } from "@/src/shared/api/configs/query-client-config";
 import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Toaster } from "sonner-native";
+import { Toaster, toast } from "sonner-native";
 import { ThemeProvider } from "../src/shared/use-theme";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { getStorageIsFirstEnter } from "@/src/shared/utils/isFirstEnter";
 import * as SplashScreen from "expo-splash-screen";
-import { requestLocationPermission } from "@/src/shared/utils/location-permission";
 import { requestNotificationPermission , buildOrderDetailsRoute } from "@/src/shared/hooks/useNotification/utils";
 import {
   loadPendingAuthNavigation,
@@ -23,12 +22,15 @@ import { setNavigationReadyState } from "@/src/shared/hooks/useNotification/useN
 import { isValidUUID } from "@/src/shared/utils/uuidValidation";
 import { UserRole } from "@/src/shared/api/types/data-contracts";
 import { removeToken, removeRefreshToken } from "@/src/shared/utils/token";
-import { toast } from "sonner-native";
+import {
+  getHomeRouteForUser,
+  getPrimaryRoleForUser,
+  isCourierUser,
+  isCustomerUser,
+} from "@/src/shared/utils/role-routing";
 
 // Импортируем background handler для регистрации headless tasks
 import "@/src/shared/hooks/useNotification/backgroundHandler";
-// Импортируем useNotification для регистрации handlers на уровне модуля
-import "@/src/shared/hooks/useNotification/useNotification";
 import useUpdate from "@/src/shared/hooks/useUpdate";
 import UpdateAvailableModal from "@/src/shared/components/modals/UpdateAvailableModal";
 
@@ -61,10 +63,6 @@ const RootStack = () => {
       // Ждем минимум 500мс чтобы splash screen успел показаться
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Запрашиваем разрешение на геолокацию в начале приложения
-      // Используется для поиска ближайших заказов курьеру
-      await requestLocationPermission();
-
       // Скрываем splash screen
       await SplashScreen.hideAsync();
       setIsNavigationReady(true);
@@ -77,9 +75,8 @@ const RootStack = () => {
 
   useEffect(() => {
     // Обновляем глобальное состояние готовности навигации
-    const isCourier =
-      Array.isArray(userMe?.roles) && userMe.roles.includes(UserRole.CURRIER);
-    setNavigationReadyState(isNavigationReady, isCourier);
+    const primaryRole = getPrimaryRoleForUser(userMe);
+    setNavigationReadyState(isNavigationReady, !!primaryRole, primaryRole);
 
     if (isAuthBootstrapLoading || isLoadingGetIsFirstEnter || !isNavigationReady) {
       return;
@@ -88,12 +85,7 @@ const RootStack = () => {
     // Проверяем, находимся ли мы уже на нужном экране, чтобы избежать лишних переходов
     const currentPath = router.canGoBack() ? 'unknown' : 'initial';
 
-    const isCourierUser =
-      Array.isArray(userMe?.roles) &&
-      userMe.roles.includes(UserRole.CURRIER);
-
-    if (isCourierUser) {
-      // Пользователь курьер - разрешаем доступ в приложение
+    if (isCourierUser(userMe)) {
       // Проверяем наличие pending navigation после успешной авторизации
       loadPendingAuthNavigation().then((pendingNav) => {
         if (pendingNav) {
@@ -113,7 +105,7 @@ const RootStack = () => {
           setTimeout(async () => {
             let route: ReturnType<typeof buildOrderDetailsRoute> | null = null;
             try {
-              route = buildOrderDetailsRoute(pendingNav.orderId);
+              route = buildOrderDetailsRoute(pendingNav.orderId, UserRole.CURRIER);
               router.push(route as any);
               await clearPendingAuthNavigation();
             } catch (error) {
@@ -149,16 +141,34 @@ const RootStack = () => {
           }
         }
       });
+    } else if (isCustomerUser(userMe)) {
+      loadPendingAuthNavigation().then((pendingNav) => {
+        if (pendingNav && isValidUUID(pendingNav.orderId)) {
+          setTimeout(async () => {
+            try {
+              router.push(buildOrderDetailsRoute(pendingNav.orderId, UserRole.CUSTOMER) as any);
+              await clearPendingAuthNavigation();
+            } catch (error) {
+              console.error("[_layout] Error executing customer pending navigation", error);
+              await clearPendingAuthNavigation();
+              router.replace("/(client-tabs)" as any);
+            }
+          }, 300);
+          return;
+        }
+
+        if (pendingNav) {
+          clearPendingAuthNavigation();
+        }
+        router.replace(getHomeRouteForUser(userMe));
+      });
     } else if (Array.isArray(userMe?.roles) && userMe.roles.length > 0) {
-      // Пользователь не курьер - показываем ошибку и редиректим на логин
       toast.error('Доступ запрещен', {
-        description: 'Это приложение предназначено только для курьеров',
+        description: 'Для этой роли нет мобильного интерфейса',
         duration: 5000,
       });
-      // Очищаем токены
       removeToken();
       removeRefreshToken();
-      // Очищаем кэш пользователя
       queryClient.setQueryData(['me'], null);
       router.replace("/(auth)");
     } else if (!hasToken && isFirstEnter === "true") {
@@ -194,6 +204,8 @@ const RootStack = () => {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(client-tabs)" />
+        <Stack.Screen name="(client)" />
         <Stack.Screen name="(protected-tabs)" />
         <Stack.Screen name="(protected)" />
         <Stack.Screen name="+not-found" />

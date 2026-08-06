@@ -102,6 +102,8 @@ export interface ThemeColors {
     surfaceInfo: ColorValue; // Светлый фон иконок/чипов
     border: ColorValue; // Границы
     ring: ColorValue; // Фокус кольца
+    error: ColorValue;
+    primary: ColorValue;
 }
 
 export interface ThemeGradients {

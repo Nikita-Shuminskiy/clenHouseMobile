@@ -8,6 +8,7 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+import { WarningIcon } from '../icons/WarningIcon';
 
 
 interface CodeFieldProps {

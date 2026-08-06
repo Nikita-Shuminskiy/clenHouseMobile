@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { authApi } from "../api";
 import { IUserDto } from "@/src/shared/api/types/data-contracts";
-import { getToken, removeRefreshToken, removeToken } from "@/src/shared/utils/token";
+import { getToken } from "@/src/shared/utils/token";
 import { useState, useEffect } from "react";
 
 export const useGetMe = () => {

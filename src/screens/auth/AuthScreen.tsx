@@ -24,6 +24,7 @@ import { toast } from "sonner-native";
 import { useForm } from "react-hook-form";
 import {
   Image,
+  Pressable,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -51,6 +52,7 @@ const AuthScreen: React.FC = () => {
     useLoginByEmail();
   const [savedCredentials, setSavedCredentials] =
     React.useState<SavedAuthCredentials | null>(null);
+  const [isCourierMode, setIsCourierMode] = React.useState(false);
   const isSmallScreen = screenWidth < SMALL_SCREEN_WIDTH;
 
   const {
@@ -160,9 +162,16 @@ const AuthScreen: React.FC = () => {
 
         <View style={styles.formCard}>
           <View style={styles.formHeader}>
-            <Text style={styles.titleText}>Вход по почте</Text>
+            <Text style={styles.eyebrowText}>
+              {isCourierMode ? "Режим курьера" : "Для клиентов"}
+            </Text>
+            <Text style={styles.titleText}>
+              {isCourierMode ? "Вход курьера" : "Вход клиента"}
+            </Text>
             <Text style={styles.subtitleText}>
-              Введите email и пароль для входа
+              {isCourierMode
+                ? "Введите рабочий email и пароль курьера"
+                : "Создавайте заказы, оплачивайте и управляйте подпиской"}
             </Text>
           </View>
 
@@ -211,9 +220,25 @@ const AuthScreen: React.FC = () => {
                 containerStyle={styles.registerButton}
                 textStyle={styles.registerButtonText}
               >
-                Регистрация по почте
+                Создать аккаунт клиента
               </Button>
             </View>
+          </View>
+
+          <View style={styles.roleSwitchContainer}>
+            <Pressable
+              onPress={() => setIsCourierMode((value) => !value)}
+              style={({ pressed }) => [
+                styles.roleSwitchButton,
+                pressed && styles.roleSwitchButtonPressed,
+              ]}
+            >
+              <Text style={styles.roleSwitchText}>
+                {isCourierMode
+                  ? "Вернуться ко входу клиента"
+                  : "Вход для курьера"}
+              </Text>
+            </Pressable>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -313,6 +338,15 @@ const createStyles = ({
       color: colors.grey900,
       textAlign: "center",
     },
+    eyebrowText: {
+      fontFamily: fonts.text3,
+      fontWeight: weights.medium,
+      fontSize: 13,
+      lineHeight: 18,
+      color: colors.primary500,
+      textAlign: "center",
+      textTransform: "uppercase",
+    },
     subtitleText: {
       fontFamily: fonts.text2,
       fontWeight: weights.normal,
@@ -340,6 +374,31 @@ const createStyles = ({
     },
     registerButtonText: {
       color: colors.primary500,
+    },
+    roleSwitchContainer: {
+      paddingHorizontal: sizes.xl,
+      paddingBottom: Math.max(insets.bottom, sizes.m) + sizes.m,
+      alignItems: "center",
+    },
+    roleSwitchButton: {
+      minHeight: 44,
+      paddingHorizontal: 18,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.white,
+    },
+    roleSwitchButtonPressed: {
+      opacity: 0.7,
+    },
+    roleSwitchText: {
+      fontFamily: fonts.text3,
+      fontWeight: weights.medium,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.grey700,
     },
   });
 

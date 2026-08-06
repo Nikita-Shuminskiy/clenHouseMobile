@@ -180,7 +180,7 @@ const HomeScreen: React.FC = () => {
 
                     <Text style={styles.orderTime}>
                       📅{" "}
-                      {formatDateStringFull(order.scheduledAt)}
+                      {order.scheduledAt ? formatDateStringFull(order.scheduledAt) : "Без времени"}
                     </Text>
                   </TouchableOpacity>
                 ))}

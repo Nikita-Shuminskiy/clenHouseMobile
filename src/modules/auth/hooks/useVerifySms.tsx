@@ -3,15 +3,18 @@ import { toast } from 'sonner-native';
 import { authApi } from '../api';
 import { VerifySmsRequest } from '../types';
 import { router } from 'expo-router';
-import { setRefreshToken, setToken, removeToken, removeRefreshToken } from '@/src/shared/utils/token';
+import { setRefreshToken, setToken } from '@/src/shared/utils/token';
 import { requestLocationPermission, checkLocationPermission } from '@/src/shared/utils/location-permission';
-import { UserRole } from '@/src/shared/api/types/data-contracts';
 import { setManualLogoutInProgress } from '@/src/shared/api/configs/config';
 import { handleApiError } from '@/src/shared/utils/errorHandler';
 import {
     getSavedAuthCredentials,
     saveSavedAuthCredentials,
 } from '../utils/saved-auth';
+import {
+    getHomeRouteForUser,
+    isCourierUser,
+} from '@/src/shared/utils/role-routing';
 
 export const useVerifySms = () => {
     const queryClient = useQueryClient();
@@ -27,19 +30,6 @@ export const useVerifySms = () => {
                     duration: 5000,
                 });
                 throw new Error('Некорректные данные ответа от сервера');
-            }
-
-            // Проверка роли пользователя - доступ только для курьеров
-            if (!data.user.roles?.includes(UserRole.CURRIER)) {
-                console.warn('Попытка входа пользователя с ролями:', data.user.roles);
-                toast.error('Доступ запрещен', {
-                    description: 'Мобильное приложение доступно только для курьеров',
-                    duration: 5000,
-                });
-                // Очищаем токены если они были сохранены
-                await removeToken();
-                await removeRefreshToken();
-                throw new Error('Доступ разрешен только для курьеров');
             }
 
             try {
@@ -66,16 +56,14 @@ export const useVerifySms = () => {
                     duration: 4000,
                 });
 
-                // Проверяем и запрашиваем разрешение на геолокацию после логина
-                // Используется для поиска ближайших заказов курьеру
-                const hasPermission = await checkLocationPermission();
-                if (!hasPermission) {
-                    // Если разрешения нет, запрашиваем еще раз
-                    await requestLocationPermission();
+                if (isCourierUser(data.user)) {
+                    const hasPermission = await checkLocationPermission();
+                    if (!hasPermission) {
+                        await requestLocationPermission();
+                    }
                 }
 
-                // Перенаправляем в личный кабинет только после успешного сохранения токенов
-                router.replace("/(protected-tabs)");
+                router.replace(getHomeRouteForUser(data.user));
             } catch (error) {
                 console.error('Ошибка при сохранении токенов:', error);
                 toast.error('Ошибка входа', {
