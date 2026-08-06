@@ -12,16 +12,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/src/shared/use-theme";
 
 export const CLIENT_COLORS = {
-  bg: "#F6F7F4",
+  bg: "#FAF7F3",
   card: "#FFFFFF",
-  ink: "#1D2520",
-  muted: "#667069",
-  line: "#E3E8E2",
-  primary: "#1F7A4D",
-  primaryDark: "#155B38",
-  accent: "#FF7A1A",
-  danger: "#D93636",
-  success: "#1F8A5B",
+  ink: "#272624",
+  muted: "#74706A",
+  soft: "#F4EFE8",
+  line: "#E9DED4",
+  primary: "#E85F23",
+  primaryDark: "#B94113",
+  accent: "#C4945C",
+  danger: "#C84A3D",
+  success: "#2E7D5B",
 };
 
 export const ClientScreen = ({
@@ -188,8 +189,8 @@ const styles = StyleSheet.create({
     backgroundColor: CLIENT_COLORS.bg,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: 18,
+    paddingBottom: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -200,9 +201,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Onest",
-    fontWeight: "700",
-    fontSize: 26,
-    lineHeight: 32,
+    fontWeight: "800",
+    fontSize: 24,
+    lineHeight: 30,
     color: CLIENT_COLORS.ink,
   },
   subtitle: {
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontSize: 14,
     lineHeight: 20,
-    color: CLIENT_COLORS.muted,
+    color: "#817B73",
   },
   card: {
     backgroundColor: CLIENT_COLORS.card,
@@ -218,10 +219,10 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    shadowColor: "#1C2A20",
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
+    shadowColor: "#3A2A1E",
+    shadowOpacity: 0.055,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
     elevation: 2,
   },
   sectionTitle: {
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    minHeight: 50,
+    minHeight: 48,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
@@ -241,9 +242,9 @@ const styles = StyleSheet.create({
     backgroundColor: CLIENT_COLORS.primary,
   },
   secondaryButton: {
-    backgroundColor: "#EDF7F1",
+    backgroundColor: "#FFF3EA",
     borderWidth: 1,
-    borderColor: "#CDE6D5",
+    borderColor: "#F3D6C5",
   },
   ghostButton: {
     backgroundColor: "transparent",
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
     color: CLIENT_COLORS.primary,
   },
   fieldWrap: {
-    gap: 7,
+    gap: 6,
   },
   fieldLabel: {
     fontFamily: "Onest",
@@ -278,11 +279,11 @@ const styles = StyleSheet.create({
     color: CLIENT_COLORS.ink,
   },
   input: {
-    minHeight: 50,
+    minHeight: 46,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    backgroundColor: "#FBFCFA",
+    backgroundColor: "#FCFAF7",
     paddingHorizontal: 14,
     fontFamily: "Onest",
     fontSize: 15,
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     color: CLIENT_COLORS.ink,
   },
   inputMultiline: {
-    minHeight: 92,
+    minHeight: 84,
     paddingTop: 12,
     textAlignVertical: "top",
   },
@@ -329,16 +330,16 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: "#EEF1ED",
+    backgroundColor: "#F1ECE5",
   },
   pillSuccess: {
-    backgroundColor: "#E7F7EE",
+    backgroundColor: "#E9F5EE",
   },
   pillWarning: {
-    backgroundColor: "#FFF3E6",
+    backgroundColor: "#FFF0E5",
   },
   pillDanger: {
-    backgroundColor: "#FDEAEA",
+    backgroundColor: "#FBEAE6",
   },
   pillText: {
     fontFamily: "Onest",
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
     color: CLIENT_COLORS.success,
   },
   pillWarningText: {
-    color: "#B85C00",
+    color: CLIENT_COLORS.primaryDark,
   },
   pillDangerText: {
     color: CLIENT_COLORS.danger,

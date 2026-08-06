@@ -62,9 +62,10 @@ const ClientProfileScreen = () => {
 
 const styles = StyleSheet.create({
   content: {
-    padding: 20,
+    paddingHorizontal: 18,
+    paddingTop: 6,
     paddingBottom: 110,
-    gap: 14,
+    gap: 12,
   },
   card: {
     gap: 12,
@@ -72,10 +73,10 @@ const styles = StyleSheet.create({
   },
   avatar: {
     alignSelf: "center",
-    width: 82,
-    height: 82,
-    borderRadius: 41,
-    backgroundColor: "#EAF6EE",
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: "#FFF0E5",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "900",
     fontSize: 34,
-    color: CLIENT_COLORS.primary,
+    color: CLIENT_COLORS.primaryDark,
   },
   name: {
     fontFamily: "Onest",

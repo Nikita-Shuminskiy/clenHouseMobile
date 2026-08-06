@@ -437,12 +437,13 @@ const CreateOrderScreen = () => {
 
 const styles = StyleSheet.create({
   content: {
-    padding: 20,
+    paddingHorizontal: 18,
+    paddingTop: 6,
     paddingBottom: 120,
-    gap: 14,
+    gap: 12,
   },
   formCard: {
-    gap: 14,
+    gap: 12,
   },
   savedList: {
     flexDirection: "row",
@@ -451,11 +452,11 @@ const styles = StyleSheet.create({
   },
   savedAddress: {
     width: 170,
-    minHeight: 62,
+    minHeight: 56,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    backgroundColor: "#F8FAF7",
+    backgroundColor: "#FFFCF8",
     padding: 10,
     justifyContent: "center",
   },
@@ -474,7 +475,7 @@ const styles = StyleSheet.create({
   },
   suggestion: {
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 10,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
     borderBottomColor: CLIENT_COLORS.line,
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
   },
   paymentTab: {
     flex: 1,
-    minHeight: 46,
+    minHeight: 44,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
@@ -504,7 +505,7 @@ const styles = StyleSheet.create({
   },
   paymentTabActive: {
     borderColor: CLIENT_COLORS.primary,
-    backgroundColor: "#EAF6EE",
+    backgroundColor: "#FFF0E5",
   },
   paymentTabDisabled: {
     opacity: 0.42,
@@ -535,7 +536,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "800",
     fontSize: 20,
-    color: CLIENT_COLORS.ink,
+    color: CLIENT_COLORS.primaryDark,
   },
 });
 

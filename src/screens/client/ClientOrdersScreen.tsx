@@ -111,8 +111,8 @@ const ClientOrdersScreen = () => {
 
 const styles = StyleSheet.create({
   filterWrap: {
-    paddingLeft: 20,
-    paddingBottom: 6,
+    paddingLeft: 18,
+    paddingBottom: 8,
   },
   filters: {
     flexDirection: "row",
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 999,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFFCF8",
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
   },
@@ -141,9 +141,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 18,
+    paddingTop: 8,
     paddingBottom: 110,
-    gap: 12,
+    gap: 10,
   },
 });
 

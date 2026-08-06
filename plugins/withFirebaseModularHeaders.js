@@ -21,11 +21,33 @@ const SNIPPET = `
     # with "declaration of 'RCTConvert' must be imported from module ... before it is
     # required". Disabling modules for the RNFB targets resolves it (headers still
     # resolve through HEADER_SEARCH_PATHS). See https://github.com/expo/expo/issues/39607
+    fmt_base_path = File.join(__dir__, 'Pods/fmt/include/fmt/base.h')
+    if File.exist?(fmt_base_path)
+      fmt_base = File.read(fmt_base_path)
+      fmt_base = fmt_base.gsub(
+        '#elif defined(__apple_build_version__) && __apple_build_version__ < 14000029L',
+        '#elif defined(__apple_build_version__)'
+      )
+      File.write(fmt_base_path, fmt_base)
+    end
+
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |build_configuration|
         build_configuration.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
         if target.name.start_with?('RNFB')
           build_configuration.build_settings['CLANG_ENABLE_MODULES'] = 'NO'
+        end
+
+        # Xcode 26 / Apple Clang 21 is stricter about fmt consteval handling.
+        # Keep only fmt on C++17 so React Native pods can still use their own C++ settings.
+        if target.name == 'fmt'
+          build_configuration.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+          flags = build_configuration.build_settings['OTHER_CPLUSPLUSFLAGS'] || '$(inherited)'
+          if flags.is_a?(String)
+            build_configuration.build_settings['OTHER_CPLUSPLUSFLAGS'] = flags.gsub('-std=c++20', '-std=c++17')
+          elsif flags.is_a?(Array)
+            build_configuration.build_settings['OTHER_CPLUSPLUSFLAGS'] = flags.map { |flag| flag == '-std=c++20' ? '-std=c++17' : flag }
+          end
         end
       end
     end

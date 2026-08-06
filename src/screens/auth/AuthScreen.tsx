@@ -1,405 +1,376 @@
-import { useLoginByEmail } from "@/src/modules/auth/hooks/useLoginByEmail";
-import ControlledInput from "@/src/shared/components/ui-kit/controlled-input";
+import React, { useMemo, useState } from 'react';
 import {
-  SignInEmailFormData,
-  signInEmailSchema,
-} from "@/src/shared/schemas/auth-schemas";
-import {
-  ThemeColors,
-  ThemeFonts,
-  ThemeWeights,
-  useTheme,
-} from "@/src/shared/use-theme";
-import {
-  getSavedAuthCredentials,
-  SavedAuthCredentials,
-} from "@/src/modules/auth/utils/saved-auth";
-import Button from "@components/ui-kit/button";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { LinearGradient } from "expo-linear-gradient";
-import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import React from "react";
-import { toast } from "sonner-native";
-import { useForm } from "react-hook-form";
-import {
-  Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
+  TextInput,
   View,
-} from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Logo from "../../../assets/images/logo.png";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import { useLoginByEmail } from '@/src/modules/auth/hooks/useLoginByEmail';
 
-const SMALL_SCREEN_WIDTH = 380;
+type LoginMode = 'customer' | 'courier';
 
-const getQuickLoginLabel = (login: string): string => {
-  const trimmed = login.trim();
-  if (trimmed.length <= 24) {
-    return trimmed;
-  }
-  return `${trimmed.slice(0, 21)}...`;
-};
+export const AuthScreen = () => {
+  const [mode, setMode] = useState<LoginMode>('customer');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [securePassword, setSecurePassword] = useState(true);
+  const loginByEmail = useLoginByEmail();
 
-const AuthScreen: React.FC = () => {
-  const { width: screenWidth } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
-  const { colors, sizes, fonts, weights } = useTheme();
-  const { mutateAsync: signInWithEmail, isPending: isEmailPending } =
-    useLoginByEmail();
-  const [savedCredentials, setSavedCredentials] =
-    React.useState<SavedAuthCredentials | null>(null);
-  const [isCourierMode, setIsCourierMode] = React.useState(false);
-  const isSmallScreen = screenWidth < SMALL_SCREEN_WIDTH;
+  const isCourier = mode === 'courier';
+  const isDisabled =
+    loginByEmail.isPending || email.trim().length === 0 || password.length === 0;
 
-  const {
-    control: emailControl,
-    handleSubmit: handleEmailSubmit,
-    formState: { isValid: isEmailValid },
-    watch: watchEmail,
-    setValue: setEmailValue,
-  } = useForm<SignInEmailFormData>({
-    resolver: yupResolver(signInEmailSchema),
-    mode: "onChange",
-    reValidateMode: "onChange",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const copy = useMemo(
+    () =>
+      isCourier
+        ? {
+            eyebrow: 'для курьеров',
+            title: 'Вход курьера',
+            subtitle: 'Принимайте заказы и обновляйте статусы доставки',
+            switchText: 'Войти как клиент',
+          }
+        : {
+            eyebrow: 'для клиентов',
+            title: 'Вход клиента',
+            subtitle: 'Создавайте заказы, оплачивайте и управляйте подпиской',
+            switchText: 'Вход для курьера',
+          },
+    [isCourier],
+  );
 
-  const watchedEmail = watchEmail("email");
-  const watchedPassword = watchEmail("password");
-  const isQuickLoginPending = isEmailPending;
-  const styles = createStyles({
-    colors,
-    sizes,
-    fonts,
-    weights,
-    insets,
-    isSmallScreen,
-  });
-
-  const onEmailSubmit = async (data: SignInEmailFormData) => {
-    try {
-      await signInWithEmail({
-        email: data.email.trim().toLowerCase(),
-        password: data.password,
-      });
-    } catch (error) {
-      console.error("Ошибка входа по email:", error);
-    }
-  };
-
-  React.useEffect(() => {
-    const loadSavedCredentials = async () => {
-      const saved = await getSavedAuthCredentials();
-      setSavedCredentials(saved);
-    };
-
-    loadSavedCredentials();
-  }, []);
-
-  const handleQuickLogin = async () => {
-    if (!savedCredentials || isQuickLoginPending) {
+  const handleSubmit = () => {
+    if (isDisabled) {
       return;
     }
 
-    if (savedCredentials.method !== "email") {
-      toast.error("Вход по телефону отключен", {
-        description: "Используйте вход по email и паролю.",
-        duration: 5000,
-      });
-      return;
-    }
-
-    if (!savedCredentials.password) {
-      toast.error("Быстрый вход недоступен", {
-        description:
-          "Для email входа нужен сохраненный пароль. Войдите вручную один раз.",
-        duration: 5000,
-      });
-      return;
-    }
-
-    setEmailValue("email", savedCredentials.login);
-    setEmailValue("password", savedCredentials.password);
-
-    await onEmailSubmit({
-      email: savedCredentials.login,
-      password: savedCredentials.password,
+    loginByEmail.mutate({
+      email: email.trim(),
+      password,
     });
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-
-      <LinearGradient
-        colors={[colors.primary500, colors.primary400, colors.primary300]}
-        style={styles.backgroundGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      />
-
-      <KeyboardAwareScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        enableOnAndroid={true}
-        enableAutomaticScroll={true}
-        extraScrollHeight={20}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.keyboard}
       >
-        <View style={styles.topSection}>
-          <View style={styles.logoWrapper}>
-            <Image style={styles.logoImage} source={Logo} resizeMode="contain" />
-          </View>
-        </View>
-
-        <View style={styles.formCard}>
-          <View style={styles.formHeader}>
-            <Text style={styles.eyebrowText}>
-              {isCourierMode ? "Режим курьера" : "Для клиентов"}
-            </Text>
-            <Text style={styles.titleText}>
-              {isCourierMode ? "Вход курьера" : "Вход клиента"}
-            </Text>
-            <Text style={styles.subtitleText}>
-              {isCourierMode
-                ? "Введите рабочий email и пароль курьера"
-                : "Создавайте заказы, оплачивайте и управляйте подпиской"}
-            </Text>
-          </View>
-
-          <View style={styles.formContent}>
-            <View style={styles.inputsContainer}>
-              <ControlledInput
-                control={emailControl}
-                name="email"
-                label="Email"
-                placeholder="Введите email"
-                type="mail"
-              />
-              <ControlledInput
-                control={emailControl}
-                name="password"
-                label="Пароль"
-                placeholder="Введите пароль"
-                type="password"
-              />
-            </View>
-
-            <View style={styles.actionsContainer}>
-              <Button
-                type="primary"
-                onPress={handleEmailSubmit(onEmailSubmit)}
-                disabled={
-                  isEmailPending || !isEmailValid || !watchedEmail || !watchedPassword
-                }
-                isLoading={isEmailPending}
-              >
-                {isEmailPending ? "Вход..." : "Войти"}
-              </Button>
-              {savedCredentials?.method === "email" && (
-                <Button
-                  type="secondary"
-                  onPress={handleQuickLogin}
-                  disabled={isQuickLoginPending}
-                >
-                  {`Войти как ${getQuickLoginLabel(savedCredentials.login)}`}
-                </Button>
-              )}
-              {/* Вход по SMS отключен. Главный метод: email + пароль. */}
-              <Button
-                type="text"
-                onPress={() => router.push("/(auth)/registration-profile")}
-                containerStyle={styles.registerButton}
-                textStyle={styles.registerButtonText}
-              >
-                Создать аккаунт клиента
-              </Button>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.hero}>
+            <View style={styles.brandMark}>
+              <View style={styles.brandIconWrap}>
+                <Text style={styles.brandIcon}>⌂</Text>
+              </View>
+              <View>
+                <Text style={styles.brandTitle}>Чисто дома</Text>
+                <Text style={styles.brandSubtitle}>Вывоз вещей без лишнего шума</Text>
+              </View>
             </View>
           </View>
 
-          <View style={styles.roleSwitchContainer}>
+          <View style={styles.card}>
+            <View style={styles.heading}>
+              <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
+              <Text style={styles.title}>{copy.title}</Text>
+              <Text style={styles.subtitle}>{copy.subtitle}</Text>
+            </View>
+
+            <View style={styles.form}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect={false}
+                  inputMode="email"
+                  keyboardType="email-address"
+                  onChangeText={setEmail}
+                  placeholder="Введите email"
+                  placeholderTextColor="#A4A8AE"
+                  returnKeyType="next"
+                  style={styles.input}
+                  value={email}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Пароль</Text>
+                <View style={styles.passwordRow}>
+                  <TextInput
+                    autoCapitalize="none"
+                    autoComplete="password"
+                    autoCorrect={false}
+                    onChangeText={setPassword}
+                    placeholder="Введите пароль"
+                    placeholderTextColor="#A4A8AE"
+                    returnKeyType="done"
+                    secureTextEntry={securePassword}
+                    style={styles.passwordInput}
+                    value={password}
+                    onSubmitEditing={handleSubmit}
+                  />
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => setSecurePassword((value) => !value)}
+                    style={styles.eyeButton}
+                  >
+                    <Text style={styles.eyeText}>
+                      {securePassword ? 'Показать' : 'Скрыть'}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+
             <Pressable
-              onPress={() => setIsCourierMode((value) => !value)}
+              accessibilityRole="button"
+              disabled={isDisabled}
+              onPress={handleSubmit}
               style={({ pressed }) => [
-                styles.roleSwitchButton,
-                pressed && styles.roleSwitchButtonPressed,
+                styles.primaryButton,
+                isDisabled && styles.primaryButtonDisabled,
+                pressed && !isDisabled && styles.primaryButtonPressed,
               ]}
             >
-              <Text style={styles.roleSwitchText}>
-                {isCourierMode
-                  ? "Вернуться ко входу клиента"
-                  : "Вход для курьера"}
+              <Text style={styles.primaryButtonText}>
+                {loginByEmail.isPending ? 'Входим...' : 'Войти'}
               </Text>
             </Pressable>
+
+            {!isCourier && (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push('/registration-profile')}
+                style={styles.secondaryButton}
+              >
+                <Text style={styles.secondaryButtonText}>Создать аккаунт</Text>
+              </Pressable>
+            )}
           </View>
-        </View>
-      </KeyboardAwareScrollView>
-    </View>
+
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setMode(isCourier ? 'customer' : 'courier')}
+            style={styles.roleSwitch}
+          >
+            <Text style={styles.roleSwitchText}>{copy.switchText}</Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
-const createStyles = ({
-  colors,
-  sizes,
-  fonts,
-  weights,
-  insets,
-  isSmallScreen,
-}: {
-  colors: ThemeColors;
-  sizes: any;
-  fonts: ThemeFonts;
-  weights: ThemeWeights;
-  insets: { top: number; bottom: number };
-  isSmallScreen: boolean;
-}) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    backgroundGradient: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      height: "45%",
-    },
-    scrollView: {
-      flex: 1,
-    },
-    scrollContent: {
-      flexGrow: 1,
-      justifyContent: "space-between",
-    },
-    topSection: {
-      paddingTop: sizes.xxl + Math.max(insets.top, 0),
-      paddingBottom: isSmallScreen ? sizes.m : sizes.xl,
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: isSmallScreen ? 120 : 200,
-    },
-    logoWrapper: {
-      width: isSmallScreen ? 90 : 140,
-      height: isSmallScreen ? 90 : 140,
-      borderRadius: isSmallScreen ? 45 : 70,
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
-      justifyContent: "center",
-      alignItems: "center",
-      shadowColor: colors.black,
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 12,
-      elevation: 5,
-    },
-    logoImage: {
-      width: isSmallScreen ? 64 : 100,
-      height: isSmallScreen ? 64 : 100,
-    },
-    formCard: {
-      backgroundColor: colors.white,
-      borderTopLeftRadius: 40,
-      borderTopRightRadius: 40,
-      marginTop: isSmallScreen ? sizes.m : sizes.xl,
-      ...(isSmallScreen ? { flexGrow: 1 } : { height: "100%" }),
-      shadowColor: colors.black,
-      shadowOffset: {
-        width: 0,
-        height: -8,
-      },
-      shadowOpacity: 0.12,
-      shadowRadius: 24,
-      elevation: 12,
-    },
-    formHeader: {
-      paddingTop: isSmallScreen ? sizes.l : sizes.xxl,
-      paddingHorizontal: sizes.xl,
-      paddingBottom: sizes.l,
-      alignItems: "center",
-      gap: sizes.s,
-    },
-    titleText: {
-      fontFamily: fonts.h1,
-      fontWeight: weights.bold,
-      fontSize: isSmallScreen ? 24 : sizes.h1 || 32,
-      lineHeight: isSmallScreen ? 30 : 40,
-      letterSpacing: -0.8,
-      color: colors.grey900,
-      textAlign: "center",
-    },
-    eyebrowText: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.medium,
-      fontSize: 13,
-      lineHeight: 18,
-      color: colors.primary500,
-      textAlign: "center",
-      textTransform: "uppercase",
-    },
-    subtitleText: {
-      fontFamily: fonts.text2,
-      fontWeight: weights.normal,
-      fontSize: sizes.text2 || 16,
-      lineHeight: 24,
-      letterSpacing: -0.2,
-      color: colors.grey600,
-      textAlign: "center",
-      paddingHorizontal: sizes.m,
-    },
-    formContent: {
-      paddingHorizontal: sizes.xl,
-      paddingBottom: insets.bottom,
-      gap: sizes.xl,
-    },
-    inputsContainer: {
-      gap: sizes.md,
-    },
-    actionsContainer: {
-      paddingTop: sizes.md,
-      gap: sizes.s,
-    },
-    registerButton: {
-      alignSelf: "center",
-    },
-    registerButtonText: {
-      color: colors.primary500,
-    },
-    roleSwitchContainer: {
-      paddingHorizontal: sizes.xl,
-      paddingBottom: Math.max(insets.bottom, sizes.m) + sizes.m,
-      alignItems: "center",
-    },
-    roleSwitchButton: {
-      minHeight: 44,
-      paddingHorizontal: 18,
-      borderRadius: 999,
-      borderWidth: 1,
-      borderColor: colors.border,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: colors.white,
-    },
-    roleSwitchButtonPressed: {
-      opacity: 0.7,
-    },
-    roleSwitchText: {
-      fontFamily: fonts.text3,
-      fontWeight: weights.medium,
-      fontSize: 14,
-      lineHeight: 20,
-      color: colors.grey700,
-    },
-  });
-
 export default AuthScreen;
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FAF7F3',
+  },
+  keyboard: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: 18,
+    paddingBottom: 18,
+  },
+  hero: {
+    paddingTop: 12,
+    paddingBottom: 18,
+  },
+  brandMark: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#F0E3D8',
+    borderRadius: 22,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    minHeight: 82,
+    paddingHorizontal: 18,
+    shadowColor: '#3A2A1E',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.06,
+    shadowRadius: 22,
+  },
+  brandIconWrap: {
+    alignItems: 'center',
+    backgroundColor: '#FFF0E5',
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  brandIcon: {
+    color: '#E85F23',
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  brandTitle: {
+    color: '#272624',
+    fontSize: 22,
+    fontWeight: '800',
+    lineHeight: 26,
+  },
+  brandSubtitle: {
+    color: '#7D776F',
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 26,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 18,
+    shadowColor: '#27140A',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.08,
+    shadowRadius: 28,
+  },
+  heading: {
+    alignItems: 'center',
+    marginBottom: 22,
+  },
+  eyebrow: {
+    color: '#FF5A0A',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0,
+    lineHeight: 14,
+    textTransform: 'uppercase',
+  },
+  title: {
+    color: '#2E2F33',
+    fontSize: 24,
+    fontWeight: '800',
+    lineHeight: 30,
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: '#7D828A',
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 8,
+    maxWidth: 270,
+    textAlign: 'center',
+  },
+  form: {
+    gap: 12,
+  },
+  inputGroup: {
+    gap: 6,
+  },
+  label: {
+    color: '#383A3F',
+    fontSize: 13,
+    fontWeight: '700',
+    lineHeight: 16,
+    paddingHorizontal: 2,
+  },
+  input: {
+    backgroundColor: '#F4F5F7',
+    borderColor: '#ECEEF1',
+    borderRadius: 14,
+    borderWidth: 1,
+    color: '#25272B',
+    fontSize: 15,
+    height: 48,
+    paddingHorizontal: 14,
+  },
+  passwordRow: {
+    alignItems: 'center',
+    backgroundColor: '#F4F5F7',
+    borderColor: '#ECEEF1',
+    borderRadius: 14,
+    borderWidth: 1,
+    flexDirection: 'row',
+    height: 48,
+  },
+  passwordInput: {
+    color: '#25272B',
+    flex: 1,
+    fontSize: 15,
+    height: 48,
+    paddingLeft: 14,
+    paddingRight: 8,
+  },
+  eyeButton: {
+    alignItems: 'center',
+    height: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  eyeText: {
+    color: '#FF5A0A',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  primaryButton: {
+    alignItems: 'center',
+    backgroundColor: '#FF5A0A',
+    borderRadius: 16,
+    height: 50,
+    justifyContent: 'center',
+    marginTop: 18,
+    shadowColor: '#FF5A0A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.22,
+    shadowRadius: 18,
+  },
+  primaryButtonPressed: {
+    transform: [{ scale: 0.99 }],
+  },
+  primaryButtonDisabled: {
+    backgroundColor: '#D7D9DE',
+    shadowOpacity: 0,
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  secondaryButton: {
+    alignItems: 'center',
+    height: 42,
+    justifyContent: 'center',
+    marginTop: 6,
+  },
+  secondaryButtonText: {
+    color: '#555A63',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  roleSwitch: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#F0E4DC',
+    borderRadius: 16,
+    borderWidth: 1,
+    justifyContent: 'center',
+    marginTop: 14,
+    minHeight: 44,
+    paddingHorizontal: 18,
+  },
+  roleSwitchText: {
+    color: '#FF5A0A',
+    fontSize: 14,
+    fontWeight: '800',
+  },
+});

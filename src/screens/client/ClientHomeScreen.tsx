@@ -126,29 +126,31 @@ const ClientHomeScreen = () => {
 
 const styles = StyleSheet.create({
   content: {
-    padding: 20,
+    paddingHorizontal: 18,
+    paddingTop: 6,
     paddingBottom: 110,
-    gap: 18,
+    gap: 14,
   },
   hero: {
-    gap: 14,
-    backgroundColor: "#EAF6EE",
+    gap: 12,
+    backgroundColor: "#FFF7EF",
+    borderColor: "#F4DAC8",
   },
   heroTitle: {
     fontFamily: "Onest",
     fontWeight: "800",
-    fontSize: 25,
-    lineHeight: 31,
+    fontSize: 23,
+    lineHeight: 29,
     color: CLIENT_COLORS.ink,
   },
   heroText: {
     fontFamily: "Onest",
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
     color: CLIENT_COLORS.muted,
   },
   subscriptionCard: {
-    gap: 14,
+    gap: 12,
   },
   row: {
     flexDirection: "row",
@@ -162,14 +164,14 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "700",
     fontSize: 12,
-    color: CLIENT_COLORS.primary,
+    color: CLIENT_COLORS.accent,
     textTransform: "uppercase",
   },
   cardTitle: {
     marginTop: 4,
     fontFamily: "Onest",
     fontWeight: "800",
-    fontSize: 18,
+    fontSize: 17,
     color: CLIENT_COLORS.ink,
   },
   cardText: {

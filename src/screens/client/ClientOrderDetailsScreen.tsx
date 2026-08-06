@@ -122,9 +122,10 @@ const Detail = ({ label, value }: { label: string; value?: string | number | nul
 
 const styles = StyleSheet.create({
   content: {
-    padding: 20,
+    paddingHorizontal: 18,
+    paddingTop: 6,
     paddingBottom: 110,
-    gap: 14,
+    gap: 12,
   },
   card: {
     gap: 12,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "800",
     fontSize: 20,
-    color: CLIENT_COLORS.ink,
+    color: CLIENT_COLORS.primaryDark,
   },
   address: {
     fontFamily: "Onest",
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     gap: 12,
     borderBottomWidth: 1,
     borderBottomColor: CLIENT_COLORS.line,
-    paddingBottom: 8,
+    paddingBottom: 9,
   },
   detailLabel: {
     fontFamily: "Onest",

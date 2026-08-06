@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
     opacity: 0.76,
   },
   card: {
-    gap: 10,
+    gap: 9,
+    backgroundColor: "#FFFCF8",
   },
   top: {
     flexDirection: "row",
@@ -86,13 +87,13 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "800",
     fontSize: 17,
-    color: CLIENT_COLORS.ink,
+    color: CLIENT_COLORS.primaryDark,
   },
   address: {
     fontFamily: "Onest",
     fontWeight: "700",
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 21,
     color: CLIENT_COLORS.ink,
   },
   metaRow: {

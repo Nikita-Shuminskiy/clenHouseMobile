@@ -281,12 +281,13 @@ const ClientSubscriptionScreen = () => {
 
 const styles = StyleSheet.create({
   content: {
-    padding: 20,
+    paddingHorizontal: 18,
+    paddingTop: 6,
     paddingBottom: 120,
-    gap: 18,
+    gap: 14,
   },
   card: {
-    gap: 13,
+    gap: 12,
   },
   row: {
     flexDirection: "row",
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "700",
     fontSize: 12,
-    color: CLIENT_COLORS.primary,
+    color: CLIENT_COLORS.accent,
     textTransform: "uppercase",
   },
   title: {
@@ -318,10 +319,11 @@ const styles = StyleSheet.create({
     color: CLIENT_COLORS.muted,
   },
   list: {
-    gap: 12,
+    gap: 10,
   },
   plan: {
     gap: 12,
+    backgroundColor: "#FFFCF8",
   },
   planName: {
     fontFamily: "Onest",
@@ -333,7 +335,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "900",
     fontSize: 26,
-    color: CLIENT_COLORS.primary,
+    color: CLIENT_COLORS.primaryDark,
   },
   feature: {
     fontFamily: "Onest",
@@ -346,7 +348,7 @@ const styles = StyleSheet.create({
   },
   actionsRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
   },
 });
 
