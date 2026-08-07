@@ -1,5 +1,5 @@
 import { ErrorBoundary } from "@components/ui-kit/error-boundary";
-import { router, Stack } from "expo-router";
+import { router, Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
@@ -47,6 +47,7 @@ const RootStack = () => {
     isTokenChecked,
   } = useGetMe();
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   const { data: isFirstEnter, isLoading: isLoadingGetIsFirstEnter } = useQuery({
     queryKey: ["isFirstEnter"],
@@ -79,6 +80,10 @@ const RootStack = () => {
     setNavigationReadyState(isNavigationReady, !!primaryRole, primaryRole);
 
     if (isAuthBootstrapLoading || isLoadingGetIsFirstEnter || !isNavigationReady) {
+      return;
+    }
+
+    if (hasToken && pathname.startsWith("/payment/result")) {
       return;
     }
 
@@ -183,6 +188,7 @@ const RootStack = () => {
     isFirstEnter,
     isLoadingGetIsFirstEnter,
     isNavigationReady,
+    pathname,
   ]);
 
   if (isAuthBootstrapLoading || isLoadingGetIsFirstEnter || !isNavigationReady) {
@@ -206,6 +212,7 @@ const RootStack = () => {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(client-tabs)" />
         <Stack.Screen name="(client)" />
+        <Stack.Screen name="payment/result" />
         <Stack.Screen name="(protected-tabs)" />
         <Stack.Screen name="(protected)" />
         <Stack.Screen name="+not-found" />

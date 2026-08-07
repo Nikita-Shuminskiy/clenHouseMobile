@@ -35,9 +35,11 @@ export const customerOrdersApi = {
     orderId: string,
     amount: number,
   ): Promise<OrderPaymentResponse> => {
+    const returnUrl = `cleanhousemobile://payment/result?orderId=${encodeURIComponent(orderId)}`;
     const response = await instance.post("/orders/payment/create", {
       orderId,
       amount,
+      returnUrl,
     });
     return response.data;
   },
@@ -122,10 +124,12 @@ export const customerSubscriptionsApi = {
     subscriptionType: "monthly" | "yearly",
     planId: string,
   ): Promise<SubscriptionPaymentResponse> => {
+    const returnUrl = `cleanhousemobile://payment/result?type=subscription&subscriptionId=${encodeURIComponent(subscriptionId)}`;
     const response = await instance.post("/subscriptions/payment/create", {
       subscriptionId,
       subscriptionType,
       planId,
+      returnUrl,
     });
     return response.data;
   },
