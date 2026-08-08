@@ -1,5 +1,6 @@
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface AnchorGreyIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface AnchorGreyIconProps {
 const AnchorGreyIcon: React.FC<AnchorGreyIconProps> = ({
   width = 24,
   height = 24,
-  color = "#A1B0CA"
+  color = HARVEST_COLORS.driftwood
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 25 24" fill="none">

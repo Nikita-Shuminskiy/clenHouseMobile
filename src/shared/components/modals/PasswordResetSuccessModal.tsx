@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/src/shared/components/ui-kit/button';
 import { ThemeColors, ThemeFonts, ThemeWeights, useTheme } from '@/src/shared/use-theme';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 interface PasswordResetSuccessModalProps {
   visible: boolean;
@@ -96,16 +97,12 @@ const createStyles = ({
   },
   bottomSheet: {
     backgroundColor: colors.white,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     paddingTop: 4,
     paddingHorizontal: 16,
     paddingBottom: 34,
-    shadowColor: colors.black,
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.05,
-    shadowRadius: 50,
-    elevation: 6,
+    ...HARVEST_SHADOWS.card,
   },
   handleContainer: {
     alignItems: 'center',
@@ -114,7 +111,7 @@ const createStyles = ({
   handle: {
     width: 48,
     height: 4,
-    backgroundColor: '#EAF0F6',
+    backgroundColor: HARVEST_COLORS.bone,
     borderRadius: 8,
   },
   content: {
@@ -125,7 +122,7 @@ const createStyles = ({
   iconContainer: {
     width: '100%',
     height: 160,
-    backgroundColor: '#EFF3F8',
+    backgroundColor: HARVEST_COLORS.warmPanel,
     borderRadius: 16,
   },
   textContainer: {
@@ -138,7 +135,7 @@ const createStyles = ({
     fontWeight: weights.medium,
     fontSize: 20,
     lineHeight: 28,
-    letterSpacing: -0.5,
+    letterSpacing: 0,
     color: colors.black,
     textAlign: 'center',
   },
@@ -147,7 +144,7 @@ const createStyles = ({
     fontWeight: weights.normal,
     fontSize: 16,
     lineHeight: 24,
-    letterSpacing: -0.5,
+    letterSpacing: 0,
     color: colors.grey900,
     textAlign: 'center',
   },

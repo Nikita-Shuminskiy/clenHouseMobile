@@ -1,4 +1,5 @@
 import { OrderStatus } from "@/src/modules/orders/types/orders";
+import { HARVEST_COLORS } from "@/src/shared/harvest-theme";
 
 interface OrderStatusUi {
   label: string;
@@ -8,27 +9,27 @@ interface OrderStatusUi {
 const ORDER_STATUS_UI: Record<OrderStatus, OrderStatusUi> = {
   [OrderStatus.NEW]: {
     label: "Новый",
-    color: "#4CAF50",
+    color: HARVEST_COLORS.flame,
   },
   [OrderStatus.PAID]: {
     label: "Оплачен",
-    color: "#2196F3",
+    color: HARVEST_COLORS.flame,
   },
   [OrderStatus.ASSIGNED]: {
     label: "Назначен",
-    color: "#FF9800",
+    color: HARVEST_COLORS.flamePressed,
   },
   [OrderStatus.IN_PROGRESS]: {
     label: "В работе",
-    color: "#FFC107",
+    color: HARVEST_COLORS.flamePressed,
   },
   [OrderStatus.DONE]: {
     label: "Завершен",
-    color: "#9E9E9E",
+    color: HARVEST_COLORS.stone,
   },
   [OrderStatus.CANCELED]: {
     label: "Отменен",
-    color: "#F44336",
+    color: HARVEST_COLORS.danger,
   },
 };
 
@@ -36,7 +37,7 @@ export const getOrderStatusUi = (status: OrderStatus): OrderStatusUi => {
   return (
     ORDER_STATUS_UI[status] ?? {
       label: "Неизвестно",
-      color: "#9E9E9E",
+      color: HARVEST_COLORS.stone,
     }
   );
 };

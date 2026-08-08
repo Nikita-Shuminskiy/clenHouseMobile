@@ -18,6 +18,7 @@ import { useSendSms } from '@/src/modules/auth/hooks/useSendSms';
 import Button from '@/src/shared/components/ui-kit/button';
 import { BackArrowIcon } from '@/src/shared/components/icons';
 import { router, useLocalSearchParams } from 'expo-router';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 
 const OTP_CELL_COUNT = 6;
@@ -118,7 +119,7 @@ const ConfirmCodeScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+          <BackArrowIcon width={24} height={24} color={HARVEST_COLORS.ink} />
         </TouchableOpacity>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Подтверждение</Text>
@@ -239,7 +240,7 @@ const ConfirmCodeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFCFE',
+    backgroundColor: HARVEST_COLORS.canvas,
   },
   header: {
 
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 20,
     lineHeight: 28,
-    color: '#1A1A1A',
+    color: HARVEST_COLORS.ink,
     textAlign: 'center',
   },
   content: {
@@ -282,6 +283,12 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     gap: 24,
+    backgroundColor: HARVEST_COLORS.paper,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    padding: 18,
+    ...HARVEST_SHADOWS.card,
   },
   headerContainer: {
     alignItems: 'center',
@@ -290,29 +297,21 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 20,
     lineHeight: 28,
-    letterSpacing: -0.5,
-    color: '#000',
+    letterSpacing: 0,
+    color: HARVEST_COLORS.ink,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     lineHeight: 24,
-    letterSpacing: -0.5,
-    color: '#000',
+    letterSpacing: 0,
+    color: HARVEST_COLORS.stone,
     textAlign: 'center',
   },
   otpContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
-    backgroundColor: 'white',
+    backgroundColor: HARVEST_COLORS.warmPanel,
     borderRadius: 16,
   },
   otpInputContainer: {
@@ -322,15 +321,15 @@ const styles = StyleSheet.create({
   otpInput: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E1EAF0',
-    backgroundColor: '#fff',
+    borderColor: HARVEST_COLORS.bone,
+    backgroundColor: HARVEST_COLORS.paper,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
   otpInputText: {
     fontSize: 18,
-    color: '#000',
+    color: HARVEST_COLORS.ink,
     textAlign: 'center',
     width: '100%',
     height: '100%',
@@ -339,23 +338,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 2,
     height: 20,
-    backgroundColor: '#FC712C',
+    backgroundColor: HARVEST_COLORS.flame,
     borderRadius: 1,
   },
   otpInputFocus: {
-    borderColor: '#FC712C',
+    borderColor: HARVEST_COLORS.flame,
     borderWidth: 1,
     borderRadius: 12,
   },
   otpInputError: {
-    borderColor: '#FF0000',
+    borderColor: HARVEST_COLORS.danger,
     borderWidth: 1,
     borderRadius: 12,
   },
   errorText: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#FF0000',
+    color: HARVEST_COLORS.danger,
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -368,12 +367,12 @@ const styles = StyleSheet.create({
   resendText: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#000',
+    color: HARVEST_COLORS.stone,
   },
   resendButtonText: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#000',
+    color: HARVEST_COLORS.flame,
   },
   autoFillButton: {
     marginTop: 12,

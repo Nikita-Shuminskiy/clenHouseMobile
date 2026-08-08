@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { ThemeColors, ThemeFonts, ThemeWeights, useTheme } from '@/src/shared/use-theme';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface PrivacyPolicyProps {
   containerStyle?: any;
@@ -71,7 +72,7 @@ const createStyles = ({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 16, // 1.33 ratio как в дизайне
-    color: '#7D8EAA',
+    color: HARVEST_COLORS.driftwood,
     textAlign: 'center',
     alignSelf: 'stretch',
   },
@@ -80,7 +81,7 @@ const createStyles = ({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 16,
-    color: '#1A1A1A', // Черный цвет для ссылок
+    color: HARVEST_COLORS.flame,
     textAlign: 'center',
   },
 });

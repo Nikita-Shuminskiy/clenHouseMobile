@@ -9,6 +9,7 @@ import {
     ViewStyle,
 } from 'react-native';
 import { HeartIcon } from '../icons/HeartIcon';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 
 interface ClubCardProps {
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
-    backgroundColor: '#EFF3F8',
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 100,
     paddingVertical: 4,
     paddingHorizontal: 8,
@@ -135,25 +136,25 @@ const styles = StyleSheet.create({
   badgeIcon: {
     width: 16,
     height: 16,
-    color: '#7D8EAA',
+    color: HARVEST_COLORS.driftwood,
   },
   badgeText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#7D8EAA',
+    color: HARVEST_COLORS.driftwood,
   },
   heartButton: {
     position: 'absolute',
     top: 0,
     right: 0,
-    backgroundColor: '#EFF3F8',
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 100,
     padding: 8,
   },
   heartIcon: {
     width: 20,
     height: 20,
-    color: '#A1B0CA',
+    color: HARVEST_COLORS.driftwood,
   },
   contentBlock: {
     alignItems: 'flex-start',
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   bookButton: {
-    backgroundColor: '#EFF3F8',
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 100,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   bookButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#008FD2',
+    color: HARVEST_COLORS.flame,
   },
 });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 interface VerificationStatusProps {
   isPhoneVerified?: boolean;
@@ -74,22 +75,20 @@ const VerificationStatus: React.FC<VerificationStatusProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: HARVEST_COLORS.paper,
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 20,
-    shadowColor: '#1A1A1A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   title: {
     fontFamily: 'Onest',
     fontWeight: '600',
     fontSize: 18,
     lineHeight: 24,
-    color: '#1A1A1A',
+    color: HARVEST_COLORS.ink,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 16,
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
     lineHeight: 24,
-    color: '#1A1A1A',
+    color: HARVEST_COLORS.ink,
     marginBottom: 2,
   },
   verificationValue: {
@@ -129,13 +128,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 14,
     lineHeight: 20,
-    color: '#5A6E8A',
+    color: HARVEST_COLORS.stone,
   },
   verificationStatus: {
     marginLeft: 12,
   },
   verifiedBadge: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: HARVEST_COLORS.flame,
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -145,10 +144,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
     lineHeight: 16,
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.paper,
   },
   verifyButton: {
-    backgroundColor: '#EFF3F8',
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 12,
     lineHeight: 16,
-    color: '#5A6E8A',
+    color: HARVEST_COLORS.stone,
   },
 });
 

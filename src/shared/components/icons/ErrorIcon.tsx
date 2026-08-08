@@ -1,5 +1,6 @@
 import React from 'react';
 import { Svg, Path } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface ErrorIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface ErrorIconProps {
 const ErrorIcon: React.FC<ErrorIconProps> = ({
   width = 12,
   height = 12,
-  color = '#F53F3F',
+  color = HARVEST_COLORS.danger,
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 12 12" fill="none">

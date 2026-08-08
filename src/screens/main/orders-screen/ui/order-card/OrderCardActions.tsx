@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Button from "@/src/shared/components/ui-kit/button";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 import useTheme from "@/src/shared/use-theme/use-theme";
+import { HARVEST_COLORS } from "@/src/shared/harvest-theme";
 
 interface OrderCardActionsProps {
   status: OrderStatus;
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
   },
   actionText: {
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 14,
     lineHeight: 20,
-    color: "#FFFFFF",
+    color: HARVEST_COLORS.paper,
   },
 });
 

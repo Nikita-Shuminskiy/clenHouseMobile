@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from "@/src/shared/components/icons";
 import { ThemeColors, ThemeFonts, ThemeSizes, ThemeWeights, useTheme } from "@/src/shared/use-theme";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 export const TopBar = ({
   title,
@@ -27,7 +28,7 @@ export const TopBar = ({
     <View style={styles.topBar}>
       <View style={badge && maxBadge ? styles.topBarContentWithBadge : styles.topBarContent}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <ArrowLeftIcon width={24} height={24} color={colors.black} />
+          <ArrowLeftIcon width={24} height={24} color={String(colors.black)} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
         {
@@ -61,13 +62,11 @@ const createStyles = ({
     topBar: {
       backgroundColor: colors.white,
       paddingTop: Platform.OS === 'ios' ? insets.top + 2 : insets.top + 1,
-      borderBottomLeftRadius: 24,
-      borderBottomRightRadius: 24,
-      shadowColor: colors.black,
-      shadowOffset: { width: 6, height: 6 },
-      shadowOpacity: 0.05,
-      shadowRadius: 50,
-      elevation: 6,
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.grey300,
+      ...HARVEST_SHADOWS.card,
     },
     topBarContent: {
       flexDirection: "row",
@@ -98,12 +97,12 @@ const createStyles = ({
       fontWeight: weights.medium,
       fontSize: 16,
       lineHeight: 24,
-      letterSpacing: -0.5,
+      letterSpacing: 0,
       color: colors.black,
       textAlign: "center",
     },
     badge: {
-      backgroundColor: colors.grey200,
+      backgroundColor: colors.grey100,
       borderRadius: 100,
       paddingHorizontal: 8,
       paddingVertical: 4,

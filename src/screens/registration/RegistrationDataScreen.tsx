@@ -154,7 +154,7 @@ const createStyles = ({
       fontWeight: weights.medium,
       fontSize: 20,
       lineHeight: 28,
-      letterSpacing: -0.5,
+      letterSpacing: 0,
       textAlign: 'center',
     },
     subtitle: {
@@ -162,7 +162,7 @@ const createStyles = ({
       fontWeight: weights.normal,
       fontSize: 16,
       lineHeight: 24,
-      letterSpacing: -0.5,
+      letterSpacing: 0,
       textAlign: 'center',
     },
     fieldsContainer: {

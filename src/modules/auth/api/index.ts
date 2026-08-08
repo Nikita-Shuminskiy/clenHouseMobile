@@ -1,5 +1,5 @@
 import { instance } from "@/src/shared/api/configs/config";
-import {
+import type {
   SendSmsRequest,
   SendSmsResponse,
   VerifySmsRequest,
@@ -9,8 +9,9 @@ import {
   GetMeResponse,
   RegisterRequest,
   LoginEmailRequest,
+  VerifyTelegramRequest,
 } from "../types";
-import { IUserDto } from "@/src/shared/api/types/data-contracts";
+import type { IUserDto } from "@/src/shared/api/types/data-contracts";
 
 export const authApi = {
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
@@ -26,6 +27,24 @@ export const authApi = {
 
   login: async (data: LoginEmailRequest): Promise<AuthResponse> => {
     const response = await instance.post("/auth/email/login", data);
+    return response.data;
+  },
+
+  verifyTelegram: async (data: VerifyTelegramRequest): Promise<AuthResponse> => {
+    const payload = {
+      id: data.id,
+      first_name: data.first_name,
+      ...(data.last_name && { last_name: data.last_name }),
+      ...(data.username && { username: data.username }),
+      ...(data.photo_url && { photo_url: data.photo_url }),
+      auth_date: data.auth_date,
+      hash: data.hash,
+      ...(data.adToken && { adToken: data.adToken }),
+    };
+    const response = await instance.post(
+      "/auth/telegram/login-widget/verify",
+      payload
+    );
     return response.data;
   },
 

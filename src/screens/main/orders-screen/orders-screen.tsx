@@ -20,6 +20,7 @@ import { useOrderActions } from "./hooks/useOrderActions";
 import { OrderSearch, OrderTabs, OrderList, OrderStatusSelect } from "./ui";
 import CompleteOrderModal from "@/src/shared/components/modals/CompleteOrderModal";
 import StartOrderModal from "@/src/shared/components/modals/StartOrderModal";
+import { HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 const OrdersScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -63,7 +64,7 @@ const OrdersScreen: React.FC = () => {
   }, [handleRefresh]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.white, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
       <View style={[styles.header, { backgroundColor: colors.white, paddingTop: insets.top + 16 }]}>
         <View style={styles.headerSide} />
         <View style={styles.titleContainer}>
@@ -78,9 +79,9 @@ const OrdersScreen: React.FC = () => {
           style={[styles.headerRefreshButton, { backgroundColor: colors.grey100 }]}
         >
           {isFetching ? (
-            <ActivityIndicator size="small" color={colors.primary500} />
+            <ActivityIndicator size="small" color={String(colors.primary500)} />
           ) : (
-            <ResetIcon width={20} height={20} color={colors.grey700} />
+            <ResetIcon width={20} height={20} color={String(colors.grey700)} />
           )}
         </TouchableOpacity>
       </View>
@@ -153,13 +154,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingBottom: 16,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 50,
-    elevation: 6,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
+    ...HARVEST_SHADOWS.card,
   },
   title: {
     fontFamily: "Onest",
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
   headerRefreshButton: {
     width: 40,
     height: 40,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
   },

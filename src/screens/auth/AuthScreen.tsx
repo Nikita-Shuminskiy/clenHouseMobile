@@ -12,6 +12,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useLoginByEmail } from '@/src/modules/auth/hooks/useLoginByEmail';
+import { useLoginByTelegram } from '@/src/modules/auth/hooks/useLoginByTelegram';
+import type { VerifyTelegramRequest } from '@/src/modules/auth/types';
+import { TelegramIcon } from '@/src/shared/components/icons';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
+import { TelegramLoginModal } from './components/TelegramLoginModal';
 
 type LoginMode = 'customer' | 'courier';
 
@@ -20,11 +25,14 @@ export const AuthScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
+  const [isTelegramModalVisible, setIsTelegramModalVisible] = useState(false);
   const loginByEmail = useLoginByEmail();
+  const loginByTelegram = useLoginByTelegram();
 
   const isCourier = mode === 'courier';
+  const isAuthPending = loginByEmail.isPending || loginByTelegram.isPending;
   const isDisabled =
-    loginByEmail.isPending || email.trim().length === 0 || password.length === 0;
+    isAuthPending || email.trim().length === 0 || password.length === 0;
 
   const copy = useMemo(
     () =>
@@ -53,6 +61,11 @@ export const AuthScreen = () => {
       email: email.trim(),
       password,
     });
+  };
+
+  const handleTelegramAuth = (payload: VerifyTelegramRequest) => {
+    setIsTelegramModalVisible(false);
+    loginByTelegram.mutate(payload);
   };
 
   return (
@@ -85,6 +98,43 @@ export const AuthScreen = () => {
               <Text style={styles.subtitle}>{copy.subtitle}</Text>
             </View>
 
+            <Pressable
+              accessibilityRole="button"
+              disabled={isAuthPending}
+              onPress={() => setIsTelegramModalVisible(true)}
+              style={({ pressed }) => [
+                styles.telegramButton,
+                isAuthPending && styles.telegramButtonDisabled,
+                pressed && !isAuthPending && styles.primaryButtonPressed,
+              ]}
+            >
+              <TelegramIcon
+                width={18}
+                height={18}
+                color={
+                  isAuthPending
+                    ? HARVEST_COLORS.smoke
+                    : HARVEST_COLORS.flame
+                }
+              />
+              <Text
+                style={[
+                  styles.telegramButtonText,
+                  isAuthPending && styles.telegramButtonTextDisabled,
+                ]}
+              >
+                {loginByTelegram.isPending
+                  ? 'Входим через Telegram...'
+                  : 'Войти через Telegram'}
+              </Text>
+            </Pressable>
+
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>или</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
             <View style={styles.form}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Email</Text>
@@ -96,7 +146,7 @@ export const AuthScreen = () => {
                   keyboardType="email-address"
                   onChangeText={setEmail}
                   placeholder="Введите email"
-                  placeholderTextColor="#A4A8AE"
+                  placeholderTextColor={HARVEST_COLORS.driftwood}
                   returnKeyType="next"
                   style={styles.input}
                   value={email}
@@ -112,7 +162,7 @@ export const AuthScreen = () => {
                     autoCorrect={false}
                     onChangeText={setPassword}
                     placeholder="Введите пароль"
-                    placeholderTextColor="#A4A8AE"
+                    placeholderTextColor={HARVEST_COLORS.driftwood}
                     returnKeyType="done"
                     secureTextEntry={securePassword}
                     style={styles.passwordInput}
@@ -167,6 +217,12 @@ export const AuthScreen = () => {
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
+      <TelegramLoginModal
+        visible={isTelegramModalVisible}
+        isLoading={loginByTelegram.isPending}
+        onClose={() => setIsTelegramModalVisible(false)}
+        onAuth={handleTelegramAuth}
+      />
     </SafeAreaView>
   );
 };
@@ -176,7 +232,7 @@ export default AuthScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAF7F3',
+    backgroundColor: HARVEST_COLORS.canvas,
   },
   keyboard: {
     flex: 1,
@@ -193,61 +249,57 @@ const styles = StyleSheet.create({
   },
   brandMark: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#F0E3D8',
-    borderRadius: 22,
+    backgroundColor: HARVEST_COLORS.paper,
+    borderColor: HARVEST_COLORS.mist,
+    borderRadius: 20,
     borderWidth: 1,
     flexDirection: 'row',
     gap: 12,
     minHeight: 82,
     paddingHorizontal: 18,
-    shadowColor: '#3A2A1E',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.06,
-    shadowRadius: 22,
+    ...HARVEST_SHADOWS.card,
   },
   brandIconWrap: {
     alignItems: 'center',
-    backgroundColor: '#FFF0E5',
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 22,
     height: 44,
     justifyContent: 'center',
     width: 44,
   },
   brandIcon: {
-    color: '#E85F23',
+    color: HARVEST_COLORS.flame,
     fontSize: 24,
     fontWeight: '800',
   },
   brandTitle: {
-    color: '#272624',
+    color: HARVEST_COLORS.ink,
     fontSize: 22,
     fontWeight: '800',
     lineHeight: 26,
   },
   brandSubtitle: {
-    color: '#7D776F',
+    color: HARVEST_COLORS.stone,
     fontSize: 13,
     lineHeight: 18,
     marginTop: 2,
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 26,
+    backgroundColor: HARVEST_COLORS.paper,
+    borderRadius: 20,
     paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 18,
-    shadowColor: '#27140A',
-    shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 0.08,
-    shadowRadius: 28,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   heading: {
     alignItems: 'center',
     marginBottom: 22,
   },
   eyebrow: {
-    color: '#FF5A0A',
+    color: HARVEST_COLORS.flame,
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0,
@@ -255,7 +307,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   title: {
-    color: '#2E2F33',
+    color: HARVEST_COLORS.ink,
     fontSize: 24,
     fontWeight: '800',
     lineHeight: 30,
@@ -263,12 +315,53 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subtitle: {
-    color: '#7D828A',
+    color: HARVEST_COLORS.stone,
     fontSize: 14,
     lineHeight: 20,
     marginTop: 8,
     maxWidth: 270,
     textAlign: 'center',
+  },
+  telegramButton: {
+    alignItems: 'center',
+    backgroundColor: HARVEST_COLORS.softCream,
+    borderColor: HARVEST_COLORS.marigoldGlow,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    height: 48,
+    justifyContent: 'center',
+  },
+  telegramButtonDisabled: {
+    backgroundColor: HARVEST_COLORS.warmPanel,
+    borderColor: HARVEST_COLORS.mist,
+  },
+  telegramButtonText: {
+    color: HARVEST_COLORS.flame,
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  telegramButtonTextDisabled: {
+    color: HARVEST_COLORS.smoke,
+  },
+  dividerRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    marginVertical: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: HARVEST_COLORS.mist,
+  },
+  dividerText: {
+    color: HARVEST_COLORS.ash,
+    fontSize: 12,
+    fontWeight: '700',
+    lineHeight: 16,
+    textTransform: 'uppercase',
   },
   form: {
     gap: 12,
@@ -277,33 +370,33 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
-    color: '#383A3F',
+    color: HARVEST_COLORS.ink,
     fontSize: 13,
     fontWeight: '700',
     lineHeight: 16,
     paddingHorizontal: 2,
   },
   input: {
-    backgroundColor: '#F4F5F7',
-    borderColor: '#ECEEF1',
-    borderRadius: 14,
+    backgroundColor: HARVEST_COLORS.paper,
+    borderColor: HARVEST_COLORS.bone,
+    borderRadius: 16,
     borderWidth: 1,
-    color: '#25272B',
+    color: HARVEST_COLORS.ink,
     fontSize: 15,
     height: 48,
     paddingHorizontal: 14,
   },
   passwordRow: {
     alignItems: 'center',
-    backgroundColor: '#F4F5F7',
-    borderColor: '#ECEEF1',
-    borderRadius: 14,
+    backgroundColor: HARVEST_COLORS.paper,
+    borderColor: HARVEST_COLORS.bone,
+    borderRadius: 16,
     borderWidth: 1,
     flexDirection: 'row',
     height: 48,
   },
   passwordInput: {
-    color: '#25272B',
+    color: HARVEST_COLORS.ink,
     flex: 1,
     fontSize: 15,
     height: 48,
@@ -317,18 +410,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   eyeText: {
-    color: '#FF5A0A',
+    color: HARVEST_COLORS.flame,
     fontSize: 12,
     fontWeight: '700',
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#FF5A0A',
+    backgroundColor: HARVEST_COLORS.flame,
     borderRadius: 16,
     height: 50,
     justifyContent: 'center',
     marginTop: 18,
-    shadowColor: '#FF5A0A',
+    shadowColor: HARVEST_COLORS.flame,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.22,
     shadowRadius: 18,
@@ -337,11 +430,11 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   primaryButtonDisabled: {
-    backgroundColor: '#D7D9DE',
+    backgroundColor: HARVEST_COLORS.mist,
     shadowOpacity: 0,
   },
   primaryButtonText: {
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.paper,
     fontSize: 16,
     fontWeight: '800',
   },
@@ -352,15 +445,15 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   secondaryButtonText: {
-    color: '#555A63',
+    color: HARVEST_COLORS.stone,
     fontSize: 14,
     fontWeight: '700',
   },
   roleSwitch: {
     alignItems: 'center',
     alignSelf: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#F0E4DC',
+    backgroundColor: HARVEST_COLORS.paper,
+    borderColor: HARVEST_COLORS.mist,
     borderRadius: 16,
     borderWidth: 1,
     justifyContent: 'center',
@@ -369,7 +462,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   roleSwitchText: {
-    color: '#FF5A0A',
+    color: HARVEST_COLORS.flame,
     fontSize: 14,
     fontWeight: '800',
   },

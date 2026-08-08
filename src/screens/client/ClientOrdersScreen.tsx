@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 999,
-    backgroundColor: "#FFFCF8",
+    backgroundColor: CLIENT_COLORS.warmPanel,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
   },
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     color: CLIENT_COLORS.muted,
   },
   filterTextActive: {
-    color: "#FFFFFF",
+    color: CLIENT_COLORS.card,
   },
   content: {
     paddingHorizontal: 18,

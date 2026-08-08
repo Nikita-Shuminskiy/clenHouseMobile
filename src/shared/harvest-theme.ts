@@ -1,0 +1,41 @@
+export const HARVEST_COLORS = {
+  flame: "#fa5d00",
+  flamePressed: "#df5300",
+  marigoldGlow: "#fee3b5",
+  parchmentShadow: "#e3d6c5",
+  ink: "#1d1e1c",
+  paper: "#ffffff",
+  canvas: "#fff8f1",
+  mist: "#d9d9d9",
+  stone: "#615f5c",
+  driftwood: "#8e8b87",
+  ironwood: "#4a4a47",
+  ash: "#777571",
+  bone: "#c0bbb6",
+  smoke: "#a5a19c",
+  graphite: "#999999",
+  softCream: "#fff3ea",
+  warmPanel: "#fffaf5",
+  danger: "#c84a3d",
+  dangerSoft: "#fbeae6",
+  success: "#2e7d5b",
+  successSoft: "#e9f5ee",
+  warningSoft: "#fff0e5",
+} as const;
+
+export const HARVEST_SHADOWS = {
+  card: {
+    shadowColor: HARVEST_COLORS.parchmentShadow,
+    shadowOffset: { width: 6, height: 4 },
+    shadowOpacity: 0.45,
+    shadowRadius: 24,
+    elevation: 3,
+  },
+  button: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+} as const;

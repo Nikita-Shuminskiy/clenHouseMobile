@@ -48,18 +48,18 @@ const Button: React.FC<ButtonProps> = ({
     if (type === "primary") {
       if (buttonState === "disabled") {
         return {
-          backgroundColor: colors.grey100,
+          backgroundColor: colors.grey200,
           color: colors.muted,
         };
       }
       if (buttonState === "press") {
         return {
-          backgroundColor: colors.accent500, // Используем accent цвет для pressed состояния
+          backgroundColor: colors.primary600,
           color: colors.white,
         };
       }
       return {
-        backgroundColor: colors.primary500, // Основной цвет из веб-версии
+        backgroundColor: colors.primary500,
         color: colors.white,
       };
     }
@@ -67,13 +67,13 @@ const Button: React.FC<ButtonProps> = ({
     if (type === "secondary") {
       if (buttonState === "disabled") {
         return {
-          backgroundColor: colors.grey100,
+          backgroundColor: colors.grey200,
           color: colors.muted,
         };
       }
       return {
         backgroundColor: colors.grey100,
-        color: colors.primary500, // Основной цвет из веб-версии
+        color: colors.primary500,
       };
     }
 
@@ -92,7 +92,9 @@ const Button: React.FC<ButtonProps> = ({
       backgroundColor: buttonStyle.backgroundColor,
       paddingVertical: size === "small" ? 8 : 16,
       paddingHorizontal: 16,
-      borderRadius: size === "small" ? 100 : 16,
+      borderRadius: size === "small" ? 999 : 16,
+      borderWidth: type === "secondary" ? 1 : 0,
+      borderColor: type === "secondary" ? colors.grey300 : "transparent",
     },
     containerStyle || style,
   ];
@@ -106,7 +108,7 @@ const Button: React.FC<ButtonProps> = ({
       lineHeight: size === "small" ? 20 : 24,
       fontWeight: weights.button,
       fontFamily: fonts.button,
-      letterSpacing: 0, // Согласно Figma Button: 0px
+      letterSpacing: 0.2,
     },
     textStyle,
   ];

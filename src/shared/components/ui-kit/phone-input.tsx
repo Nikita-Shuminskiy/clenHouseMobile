@@ -12,6 +12,7 @@ import MaskInput from 'react-native-mask-input';
 import { useTheme } from '../../use-theme';
 import { ErrorIcon, PhoneIcon } from '../icons';
 import { validateRussianPhone } from '../../utils/validation';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface PhoneInputProps extends Omit<TextInputProps, 'style' | 'onChangeText'> {
   state?: 'default' | 'error' | 'success' | 'disabled' | 'active' | 'filled';
@@ -102,37 +103,37 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     // Цвета согласно веб-версии
     if (inputState === 'disabled') {
       return {
-        backgroundColor: colors.grey100,
-        borderColor: 'transparent',
-        color: colors.muted, // Используем muted цвет для disabled текста
+        backgroundColor: colors.grey200,
+        borderColor: colors.grey300,
+        color: colors.muted,
       };
     }
     if (inputState === 'error') {
       return {
         backgroundColor: colors.white,
-        borderColor: colors.destructive, // Используем destructive цвет для ошибок
+        borderColor: colors.destructive,
         color: colors.black,
       };
     }
     if (inputState === 'active') {
       return {
         backgroundColor: colors.white,
-        borderColor: colors.ring, // Используем ring цвет для активного состояния
+        borderColor: colors.primary500,
         color: colors.black,
       };
     }
     if (inputState === 'filled') {
       return {
-        backgroundColor: colors.grey200, 
-        borderColor: 'transparent',
+        backgroundColor: colors.white,
+        borderColor: colors.grey300,
         color: colors.black,
       };
     }
     // Default state
     return {
-      backgroundColor: colors.grey100,
-      borderColor: 'transparent',
-      color: colors.muted, // Используем muted цвет для placeholder
+      backgroundColor: colors.white,
+      borderColor: colors.grey300,
+      color: colors.black,
     };
   };
 
@@ -211,7 +212,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             fontWeight: weights.medium,
             fontSize: 12,
             lineHeight: 16,
-            color: colors.grey900,
+            color: colors.textPrimary,
           }]}>
             {label}
           </Text>
@@ -221,7 +222,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         <View style={styles.inputRow}>
           {/* Иконка телефона */}
           <View style={styles.iconContainer}>
-            <PhoneIcon width={20} height={20} color={colors.grey500} />
+            <PhoneIcon width={20} height={20} color={String(colors.grey500)} />
           </View>
           
           {/* Поле ввода с маской */}
@@ -238,7 +239,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
               inputStyle,
             ]}
             placeholder="(___) ___-__-__"
-            placeholderTextColor={colors.grey500}
+            placeholderTextColor={colors.textPlaceholder}
             value={value}
             onChangeText={handleChangeText}
             onFocus={handleFocus}
@@ -283,7 +284,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       {/* Сообщение об ошибке */}
       {finalError && finalError.message && (
         <View style={styles.errorContainer}>
-          <ErrorIcon width={16} height={16} color="#F53F3F" />
+          <ErrorIcon width={16} height={16} color={String(colors.destructive)} />
           <Text style={styles.errorText}>{finalError.message}</Text>
         </View>
       )}
@@ -299,7 +300,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 4,
     padding: 12, 
-    borderRadius: 12, 
+    borderRadius: 16,
+    borderWidth: 1,
   },
   inputRow: {
     flexDirection: 'row',
@@ -346,7 +348,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 16,
-    color: '#F53F3F',
+    color: HARVEST_COLORS.danger,
   },
 });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 
 interface DividerProps {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 0,
     borderTopWidth: 1,
-    borderTopColor: '#EAF0F6',
+    borderTopColor: HARVEST_COLORS.mist,
   },
 });
 

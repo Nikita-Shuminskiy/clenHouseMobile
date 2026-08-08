@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import useTheme from '@/src/shared/use-theme/use-theme';
 import { BackArrowIcon, EmailIcon, PhoneIcon, TelegramIcon } from '@/src/shared/components/icons';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 const SupportScreen: React.FC = () => {
   const theme = useTheme();
@@ -74,29 +75,21 @@ const SupportScreen: React.FC = () => {
   };
 
   const supportOptions = [
-    // {
-    //   icon: <EmailIcon width={20} height={20} color="#FF5E00" />,
-    //   title: 'Email поддержка',
-    //   subtitle: 'chisto.doma1@mail.ru',
-    //   description: 'Напишите нам на почту, и мы ответим в течение 24 часов',
-    //   onPress: handleEmailPress,
-    //   color: '#2196F3'
-    // },
     {
-      icon: <PhoneIcon width={20} height={20} color="#FF5E00" />,
+      icon: <PhoneIcon width={20} height={20} color={String(theme.colors.primary500)} />,
       title: 'Телефон поддержки',
       subtitle: '8-800-775-63-65',
       description: 'Звоните нам с 9:00 до 18:00 по московскому времени',
       onPress: handlePhonePress,
-      color: '#4CAF50'
+      color: String(theme.colors.primary500),
     },
     {
-      icon: <TelegramIcon width={20} height={20} color="#FF5E00" />,
+      icon: <TelegramIcon width={20} height={20} color={String(theme.colors.primary500)} />,
       title: 'Telegram',
       subtitle: '@chistodoma1',
       description: 'Быстрая связь через Telegram',
       onPress: handleTelegramPress,
-      color: '#0088CC'
+      color: String(theme.colors.primary500),
     }
   ];
 
@@ -124,7 +117,7 @@ const SupportScreen: React.FC = () => {
       {/* Заголовок */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <BackArrowIcon width={24} height={24} color="#1A1A1A" />
+          <BackArrowIcon width={24} height={24} color={HARVEST_COLORS.ink} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.grey900 }]}>Поддержка</Text>
         <View style={styles.placeholder} />
@@ -214,7 +207,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: HARVEST_COLORS.mist,
   },
   backButton: {
     padding: 8,
@@ -233,7 +226,7 @@ const styles = StyleSheet.create({
   welcomeCard: {
     marginTop: 20,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 24,
   },
   welcomeTitle: {
@@ -257,16 +250,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   supportOptionContent: {
     flex: 1,
@@ -305,16 +293,11 @@ const styles = StyleSheet.create({
   },
   faqItem: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   faqQuestion: {
     fontSize: 14,
@@ -327,7 +310,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 20,
   },
   infoTitle: {

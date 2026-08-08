@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { formatDateStringMonthYear } from '@/src/shared/utils/formatting';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 interface UserStatsProps {
   totalOrders?: number;
@@ -56,23 +57,21 @@ const UserStats: React.FC<UserStatsProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: HARVEST_COLORS.paper,
     marginHorizontal: 16,
     marginTop: 24,
     padding: 20,
     borderRadius: 20,
-    shadowColor: '#1A1A1A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   title: {
     fontFamily: 'Onest',
     fontWeight: '600',
     fontSize: 18,
     lineHeight: 24,
-    color: '#1A1A1A',
+    color: HARVEST_COLORS.ink,
     marginBottom: 16,
   },
   statsGrid: {
@@ -85,8 +84,8 @@ const styles = StyleSheet.create({
     minWidth: '45%',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
+    backgroundColor: HARVEST_COLORS.softCream,
+    borderRadius: 16,
   },
   statIcon: {
     fontSize: 20,
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 20,
     lineHeight: 24,
-    color: '#1A1A1A',
+    color: HARVEST_COLORS.ink,
     marginBottom: 4,
   },
   statLabel: {
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 16,
-    color: '#5A6E8A',
+    color: HARVEST_COLORS.stone,
     textAlign: 'center',
   },
 });

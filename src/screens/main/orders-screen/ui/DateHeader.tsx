@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Platform } from 'react-native';
 import useTheme from '@/src/shared/use-theme/use-theme';
 import { Ionicons } from '@expo/vector-icons';
+import { HARVEST_COLORS } from '@/src/shared/harvest-theme';
 
 interface DateHeaderProps {
   title: string;
@@ -82,7 +83,7 @@ const DateHeader: React.FC<DateHeaderProps> = ({
                       backgroundColor:
                         isOverdueGroup || hasOverdue
                           ? theme.colors.destructiveLight
-                          : 'rgba(0, 0, 0, 0.06)',
+                          : theme.colors.grey100,
                     },
                   ]}
                 >
@@ -133,11 +134,11 @@ const styles = StyleSheet.create({
   wrapper: {
     marginBottom: 10,
     marginHorizontal: 4,
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: HARVEST_COLORS.parchmentShadow,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.06,
         shadowRadius: 4,
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     textTransform: 'capitalize',
-    letterSpacing: -0.2,
+    letterSpacing: 0,
   },
   badges: {
     flexDirection: 'row',
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   countBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 999,
   },
   countText: {
     fontFamily: 'Onest',
@@ -205,14 +206,14 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 999,
   },
   overdueText: {
     fontFamily: 'Onest',
     fontWeight: '600',
     fontSize: 11,
     lineHeight: 14,
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.paper,
   },
   chevronWrapper: {
     width: 36,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    backgroundColor: HARVEST_COLORS.softCream,
     marginLeft: 8,
   },
   divider: {
@@ -232,4 +233,3 @@ const styles = StyleSheet.create({
 });
 
 export default DateHeader;
-

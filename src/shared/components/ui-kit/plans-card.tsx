@@ -6,6 +6,7 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 
 interface PlansCardProps {
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   selectButton: {
-    backgroundColor: '#EFF3F8',
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 100,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   selectButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#008FD2',
+    color: HARVEST_COLORS.flame,
   },
 });
 

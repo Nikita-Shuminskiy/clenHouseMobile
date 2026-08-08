@@ -6,6 +6,7 @@ import OrderCardHeader from "./order-card/OrderCardHeader";
 import OrderCardMeta from "./order-card/OrderCardMeta";
 import OrderCardCustomer from "./order-card/OrderCardCustomer";
 import OrderCardActions from "./order-card/OrderCardActions";
+import { HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 interface OrderCardProps {
   order: OrderResponseDto;
@@ -59,14 +60,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#1A1A1A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
+    ...HARVEST_SHADOWS.card,
   },
   containerOverdue: {
     borderLeftWidth: 3,

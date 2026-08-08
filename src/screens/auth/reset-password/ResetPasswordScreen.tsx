@@ -67,14 +67,14 @@ const ResetPasswordScreen: React.FC = () => {
   // Функция для получения иконки валидации
   const getValidationIcon = (isValid: boolean) => {
     if (isValid) {
-      return <CheckIcon width={16} height={16} color="#4ADE80" />;
+      return <CheckIcon width={16} height={16} color={String(colors.primary500)} />;
     }
-    return <InfoCircleIcon width={16} height={16} color="#A1B0CA" />;
+    return <InfoCircleIcon width={16} height={16} color={String(colors.grey500)} />;
   };
 
   // Функция для получения иконки ошибки
   const getErrorIcon = () => {
-    return <ErrorIcon width={16} height={16} color="#F53F3F" />;
+    return <ErrorIcon width={16} height={16} color={String(colors.destructive)} />;
   };
 
   const onSubmit = async (data: ResetPasswordFormData) => {
@@ -243,7 +243,7 @@ const createStyles = ({
     fontWeight: weights.medium,
     fontSize: 20,
     lineHeight: 28,
-    letterSpacing: -0.5,
+    letterSpacing: 0,
     color: colors.black,
     textAlign: 'center',
   },
@@ -252,7 +252,7 @@ const createStyles = ({
     fontWeight: weights.normal,
     fontSize: 16,
     lineHeight: 24,
-    letterSpacing: -0.5,
+    letterSpacing: 0,
     color: colors.grey900,
     textAlign: 'center',
   },
@@ -283,7 +283,7 @@ const createStyles = ({
     fontWeight: weights.normal,
     fontSize: 12,
     lineHeight: 16,
-    color: '#F53F3F',
+    color: String(colors.destructive),
   },
   buttonContainer: {
     gap: 16,

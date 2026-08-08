@@ -9,20 +9,24 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HARVEST_COLORS, HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 import { useTheme } from "@/src/shared/use-theme";
 
 export const CLIENT_COLORS = {
-  bg: "#FAF7F3",
-  card: "#FFFFFF",
-  ink: "#272624",
-  muted: "#74706A",
-  soft: "#F4EFE8",
-  line: "#E9DED4",
-  primary: "#E85F23",
-  primaryDark: "#B94113",
-  accent: "#C4945C",
-  danger: "#C84A3D",
-  success: "#2E7D5B",
+  bg: HARVEST_COLORS.canvas,
+  card: HARVEST_COLORS.paper,
+  ink: HARVEST_COLORS.ink,
+  muted: HARVEST_COLORS.stone,
+  soft: HARVEST_COLORS.softCream,
+  line: HARVEST_COLORS.mist,
+  primary: HARVEST_COLORS.flame,
+  primaryDark: HARVEST_COLORS.flamePressed,
+  accent: HARVEST_COLORS.flame,
+  danger: HARVEST_COLORS.danger,
+  success: HARVEST_COLORS.success,
+  placeholder: HARVEST_COLORS.driftwood,
+  border: HARVEST_COLORS.bone,
+  warmPanel: HARVEST_COLORS.warmPanel,
 };
 
 export const ClientScreen = ({
@@ -88,7 +92,7 @@ export const PrimaryButton = ({
     ]}
   >
     {loading ? (
-      <ActivityIndicator color={variant === "secondary" ? CLIENT_COLORS.primary : "#FFFFFF"} />
+        <ActivityIndicator color={variant === "secondary" ? CLIENT_COLORS.primary : HARVEST_COLORS.paper} />
     ) : (
       <Text
         style={[
@@ -115,7 +119,7 @@ export const Field = ({
       <TextInput
         {...props}
         multiline={multiline}
-        placeholderTextColor="#98A29A"
+        placeholderTextColor={CLIENT_COLORS.placeholder}
         onFocus={(event) => {
           setFocused(true);
           props.onFocus?.(event);
@@ -211,19 +215,15 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontSize: 14,
     lineHeight: 20,
-    color: "#817B73",
+    color: CLIENT_COLORS.muted,
   },
   card: {
     backgroundColor: CLIENT_COLORS.card,
-    borderRadius: 18,
+    borderRadius: 20,
     padding: 16,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    shadowColor: "#3A2A1E",
-    shadowOpacity: 0.055,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 2,
+    ...HARVEST_SHADOWS.card,
   },
   sectionTitle: {
     fontFamily: "Onest",
@@ -235,16 +235,17 @@ const styles = StyleSheet.create({
   },
   button: {
     minHeight: 48,
-    borderRadius: 14,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
     backgroundColor: CLIENT_COLORS.primary,
+    ...HARVEST_SHADOWS.button,
   },
   secondaryButton: {
-    backgroundColor: "#FFF3EA",
+    backgroundColor: CLIENT_COLORS.soft,
     borderWidth: 1,
-    borderColor: "#F3D6C5",
+    borderColor: CLIENT_COLORS.border,
   },
   ghostButton: {
     backgroundColor: "transparent",
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 15,
     lineHeight: 20,
-    color: "#FFFFFF",
+    color: HARVEST_COLORS.paper,
   },
   secondaryButtonText: {
     color: CLIENT_COLORS.primary,
@@ -280,10 +281,10 @@ const styles = StyleSheet.create({
   },
   input: {
     minHeight: 46,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: CLIENT_COLORS.line,
-    backgroundColor: "#FCFAF7",
+    borderColor: CLIENT_COLORS.border,
+    backgroundColor: HARVEST_COLORS.paper,
     paddingHorizontal: 14,
     fontFamily: "Onest",
     fontSize: 15,
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
   },
   inputFocused: {
     borderColor: CLIENT_COLORS.primary,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
   },
   inputError: {
     borderColor: CLIENT_COLORS.danger,
@@ -330,16 +331,16 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: "#F1ECE5",
+    backgroundColor: CLIENT_COLORS.soft,
   },
   pillSuccess: {
-    backgroundColor: "#E9F5EE",
+    backgroundColor: HARVEST_COLORS.successSoft,
   },
   pillWarning: {
-    backgroundColor: "#FFF0E5",
+    backgroundColor: HARVEST_COLORS.warningSoft,
   },
   pillDanger: {
-    backgroundColor: "#FBEAE6",
+    backgroundColor: HARVEST_COLORS.dangerSoft,
   },
   pillText: {
     fontFamily: "Onest",

@@ -1,5 +1,6 @@
 import React from 'react';
 import Svg, { Circle } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface DotIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface DotIconProps {
 const DotIcon: React.FC<DotIconProps> = ({ 
   width = 4, 
   height = 4, 
-  color = '#F53F3F' 
+  color = HARVEST_COLORS.danger
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 4 4" fill="none">

@@ -46,7 +46,7 @@ const OrderCardCustomer: React.FC<OrderCardCustomerProps> = ({
         </TouchableOpacity>
         {customer.telegramUsername && (
           <TouchableOpacity onPress={handleTelegramPress} activeOpacity={0.7}>
-            <Text style={[styles.telegram, { color: colors.blue }]}>@{customer.telegramUsername}</Text>
+            <Text style={[styles.telegram, { color: colors.primary500 }]}>@{customer.telegramUsername}</Text>
           </TouchableOpacity>
         )}
       </View>

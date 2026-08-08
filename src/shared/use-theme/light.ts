@@ -1,84 +1,66 @@
 import { Platform, StatusBar } from "react-native";
+import { HARVEST_COLORS } from "../harvest-theme";
 import { THEME as commonTheme } from "./theme";
 import { ITheme, ThemeColors, ThemeGradients, ThemeSizes, ThemeSpacing, } from "./types/theme";
 
 export const COLORS: ThemeColors = {
     // Neutral colors
-    white: '#FFFFFF',
-    black: '#000000',
-    background: '#F3F3F3', // Обновлено согласно веб-версии
-    grey100: '#F5F5F5',
-    grey200: '#E8E8E8',
-    grey300: '#D1D1D1',
-    grey400: '#999999', // Обновлено согласно веб-версии
-    grey500: '#9E9E9E',
-    grey600: '#757575',
-    grey700: '#616161',
-    grey800: '#424242',
-    grey900: '#2C2C2C',
+    white: HARVEST_COLORS.paper,
+    black: HARVEST_COLORS.ink,
+    background: HARVEST_COLORS.canvas,
+    grey100: HARVEST_COLORS.warmPanel,
+    grey200: HARVEST_COLORS.softCream,
+    grey300: HARVEST_COLORS.mist,
+    grey400: HARVEST_COLORS.graphite,
+    grey500: HARVEST_COLORS.driftwood,
+    grey600: HARVEST_COLORS.ash,
+    grey700: HARVEST_COLORS.stone,
+    grey800: HARVEST_COLORS.ironwood,
+    grey900: HARVEST_COLORS.ink,
     
     // Primary colors (обновлено согласно cleanHouseWeb)
-    primary100: '#FFE0D6',
-    primary200: '#FFC4A3',
-    primary300: '#FFA370',
-    primary400: '#FF8A4D',
-    primary500: '#FF5E00', // Основной цвет из веб-версии
-    primary500_12: 'rgba(255, 94, 0, 0.12)',
-    primary600: '#FF8000', // Accent цвет из веб-версии
-    primary700: '#E55A2B',
-    primary800: '#B23A17',
-    primary900: '#992A0D',
+    primary100: HARVEST_COLORS.warningSoft,
+    primary200: HARVEST_COLORS.marigoldGlow,
+    primary300: '#ffc28f',
+    primary400: '#ff8a45',
+    primary500: HARVEST_COLORS.flame,
+    primary500_12: 'rgba(250, 93, 0, 0.12)',
+    primary600: HARVEST_COLORS.flamePressed,
+    primary700: HARVEST_COLORS.flamePressed,
+    primary800: '#b94400',
+    primary900: '#873200',
     
     // Accent colors (обновлено согласно веб-версии)
-    accent500: '#FF8000', // Accent цвет из веб-версии
-    accent500_12: 'rgba(255, 128, 0, 0.12)',
+    accent500: HARVEST_COLORS.flame,
+    accent500_12: 'rgba(250, 93, 0, 0.12)',
     
     // Additional colors for the theme
-    orange: '#FF5E00', // Обновлено согласно веб-версии
-    orangeLight: '#FF8000', // Accent цвет
-    orangeDark: '#E55A2B',
+    orange: HARVEST_COLORS.flame,
+    orangeLight: HARVEST_COLORS.marigoldGlow,
+    orangeDark: HARVEST_COLORS.flamePressed,
     
     // Palette colors (обновлено согласно веб-версии)
-    red: '#DC2626', // Destructive цвет из веб-версии
-    blue: '#2196F3',
-    green: '#4CAF50',
+    red: HARVEST_COLORS.danger,
+    blue: HARVEST_COLORS.stone,
+    green: HARVEST_COLORS.success,
     
     // Дополнительные цвета из веб-версии
-    destructive: '#DC2626', // Для ошибок и предупреждений
-    destructiveLight: '#FEECEC', // Фон для ошибок/предупреждений
-    muted: 'rgba(0,0,0,0.7)', // Приглушенный текст
+    destructive: HARVEST_COLORS.danger,
+    destructiveLight: HARVEST_COLORS.dangerSoft,
+    muted: HARVEST_COLORS.stone,
 
     // Семантические токены текста/поверхностей (main/* экраны)
-    textPrimary: '#1A1A1A', // Основной текст
-    textSecondary: '#5A6E8A', // Вторичный текст
-    textPlaceholder: '#7D8EAA', // Плейсхолдеры
-    surfaceInfo: '#EFF3F8', // Светлый фон иконок/чипов
-    border: 'rgba(0,0,0,0.08)', // Границы
-    ring: 'rgba(255, 94, 0, 0.35)', // Фокус кольца
-    error: '#DC2626',
-    primary: '#FF5E00',
+    textPrimary: HARVEST_COLORS.ink,
+    textSecondary: HARVEST_COLORS.stone,
+    textPlaceholder: HARVEST_COLORS.driftwood,
+    surfaceInfo: HARVEST_COLORS.softCream,
+    border: HARVEST_COLORS.mist,
+    ring: 'rgba(250, 93, 0, 0.35)',
+    error: HARVEST_COLORS.danger,
+    primary: HARVEST_COLORS.flame,
 };
 
 export const GRADIENTS: ThemeGradients = {
-    /* primary: ["#FF0080", "#7928CA"],
-     secondary: ["#A8B8D8", "#627594"],
-     info: ["#21D4FD", "#2152FF"],
-     success: ["#98EC2D", "#17AD37"],
-     warning: ["#FBCF33", "#F53939"],
-     danger: ["#FF667C", "#EA0606"],
-
-     light: ["#EBEFF4", "#CED4DA"],
-     dark: ["#3A416F", "#141727"],
-
-   /!*  white: [String(COLORS.white), "#EBEFF4"],
-     black: [String(COLORS.black), "#141727"],*!/
-
-     divider: ["rgba(255,255,255,0.3)", "rgba(102, 116, 142, 0.6)"],
-     menu: [
-       "rgba(255, 255, 255, 0.2)",
-       "rgba(112, 125, 149, 0.5)",
-       "rgba(255, 255, 255, 0.2)",
-     ],*/
 };
 
 export const SIZES: ThemeSizes = {
@@ -98,7 +80,7 @@ export const SIZES: ThemeSizes = {
 
     // button sizes
     buttonBorder: 1,
-    buttonRadius: 8,
+    buttonRadius: 16,
 
     // button shadow
     shadowOffsetWidth: 0,
@@ -110,7 +92,7 @@ export const SIZES: ThemeSizes = {
     // input sizes
     inputHeight: 46,
     inputBorder: 1,
-    inputRadius: 8,
+    inputRadius: 16,
     inputPadding: 12,
     
     // TopBar sizes 

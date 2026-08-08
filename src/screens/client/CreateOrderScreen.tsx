@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    backgroundColor: "#FFFCF8",
+    backgroundColor: CLIENT_COLORS.warmPanel,
     padding: 10,
     justifyContent: "center",
   },
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   suggestion: {
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: CLIENT_COLORS.card,
     borderBottomWidth: 1,
     borderBottomColor: CLIENT_COLORS.line,
   },
@@ -501,11 +501,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: CLIENT_COLORS.card,
   },
   paymentTabActive: {
     borderColor: CLIENT_COLORS.primary,
-    backgroundColor: "#FFF0E5",
+    backgroundColor: CLIENT_COLORS.soft,
   },
   paymentTabDisabled: {
     opacity: 0.42,

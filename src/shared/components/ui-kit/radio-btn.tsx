@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { Palette } from "../../theme";
+import { HARVEST_COLORS } from "../../harvest-theme";
 import Typography from "./typography";
 
 interface IRadioBtn {
@@ -23,7 +23,8 @@ const RadioBtn: React.FC<IRadioBtn> = ({ onPress, val, title, disabled }) => {
                 style={{
                     width: 20,
                     height: 20,
-                    backgroundColor: '#F8F8F8',
+                    backgroundColor: HARVEST_COLORS.paper,
+                    borderColor: HARVEST_COLORS.bone,
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderWidth: 1,
@@ -36,12 +37,12 @@ const RadioBtn: React.FC<IRadioBtn> = ({ onPress, val, title, disabled }) => {
                             width: 10,
                             height: 10,
                             borderRadius: 5,
-                            backgroundColor: Palette.red,
+                            backgroundColor: HARVEST_COLORS.flame,
                         }}
                     />
                 )}
             </View>
-            <Typography style={{ color: '#3D3D3D', flex: 1, flexShrink: 1 }} size={14} weight="600">
+            <Typography style={{ color: HARVEST_COLORS.ink, flex: 1, flexShrink: 1 }} size={14} weight="600">
                 {title}
             </Typography>
         </TouchableOpacity>

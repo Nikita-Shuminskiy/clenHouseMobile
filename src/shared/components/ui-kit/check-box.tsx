@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../theme';
 import { DoneIcon } from '../../icons/icons/done-icon';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface CheckBoxProps {
   isActive?: boolean;
@@ -14,7 +15,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({ onClick, isActive = false }) => {
   return (
     <TouchableOpacity onPress={onClick} style={[styles.wrapper, activeClass]}>
       {isActive ? (
-        <DoneIcon width={12} height={8} color={colors.orange} />
+        <DoneIcon width={12} height={8} color={String(colors.orange)} />
       ) : null}
     </TouchableOpacity>
   );
@@ -29,10 +30,10 @@ const styles = StyleSheet.create({
     height: 24,
     borderWidth: 1,
     borderRadius: 6,
-    borderColor: '#C9C7C7',
+    borderColor: HARVEST_COLORS.bone,
   },
   active: {
-    borderColor: '#FF7A00',
+    borderColor: HARVEST_COLORS.flame,
   },
 });
 export default CheckBox;

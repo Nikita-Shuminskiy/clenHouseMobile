@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, StyleSheet, Text, TextStyle } from "react-native";
 import { Typography as TypographyStyles } from "../../theme";
+import { HARVEST_COLORS } from "../../harvest-theme";
 
 interface TypographyProps {
     id?: string;
@@ -70,7 +71,7 @@ const Typography = (props: TypographyProps) => {
         {
             // Базовые стили из темы
             ...TypographyStyles[variant],
-            color: color || '#1A1A1A', // Используем цвет из props или дефолтный
+            color: color || HARVEST_COLORS.ink,
 
             ...(marginBottom && {marginBottom}),
             ...(marginTop && {marginTop}),

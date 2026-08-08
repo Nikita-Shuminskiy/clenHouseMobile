@@ -29,7 +29,7 @@ const OrderCardMeta: React.FC<OrderCardMetaProps> = ({ order, distance }) => {
       {distance !== null && (
         <View style={styles.row}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>Расстояние:</Text>
-          <Text style={[styles.distanceValue, { color: colors.blue }]}>{formatDistance(distance)}</Text>
+          <Text style={[styles.distanceValue, { color: colors.primary500 }]}>{formatDistance(distance)}</Text>
         </View>
       )}
 
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 16,
     marginTop: 8,
   },
   overdueLabel: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 16,
     alignSelf: "flex-start",
   },
   packagesIcon: {

@@ -33,6 +33,7 @@ import {
 import "@/src/shared/hooks/useNotification/backgroundHandler";
 import useUpdate from "@/src/shared/hooks/useUpdate";
 import UpdateAvailableModal from "@/src/shared/components/modals/UpdateAvailableModal";
+import { HARVEST_COLORS } from "@/src/shared/harvest-theme";
 
 
 // Сохраняем splash screen видимым до готовности приложения
@@ -84,6 +85,10 @@ const RootStack = () => {
     }
 
     if (hasToken && pathname.startsWith("/payment/result")) {
+      return;
+    }
+
+    if (pathname.startsWith("/telegram-auth")) {
       return;
     }
 
@@ -198,10 +203,10 @@ const RootStack = () => {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FFFFFF",
+          backgroundColor: HARVEST_COLORS.canvas,
         }}
       >
-        <ActivityIndicator size="large" color="#FF5E00" />
+        <ActivityIndicator size="large" color={HARVEST_COLORS.flame} />
       </View>
     );
   }
@@ -213,6 +218,7 @@ const RootStack = () => {
         <Stack.Screen name="(client-tabs)" />
         <Stack.Screen name="(client)" />
         <Stack.Screen name="payment/result" />
+        <Stack.Screen name="telegram-auth" />
         <Stack.Screen name="(protected-tabs)" />
         <Stack.Screen name="(protected)" />
         <Stack.Screen name="+not-found" />
@@ -230,7 +236,7 @@ const RootStack = () => {
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: HARVEST_COLORS.canvas }}>
         <ThemeProvider>
           <ErrorBoundary>
             <Toaster
@@ -255,14 +261,14 @@ export default function RootLayout() {
                   justifyContent: "center",
                 },
                 titleStyle: {
-                  color: "#363636",
+                  color: HARVEST_COLORS.ink,
                   fontSize: 16,
                   lineHeight: 20,
                 },
                 descriptionStyle: {
                   fontSize: 12,
                   lineHeight: 14,
-                  color: "#8E8E8E",
+                  color: HARVEST_COLORS.stone,
                 },
               }}
               style={{
@@ -277,7 +283,7 @@ export default function RootLayout() {
               position="top-center"
             />
             <RootStack />
-            <StatusBar style="dark" backgroundColor="#FFFFFF" />
+            <StatusBar style="dark" backgroundColor={HARVEST_COLORS.canvas} />
           </ErrorBoundary>
         </ThemeProvider>
       </GestureHandlerRootView>

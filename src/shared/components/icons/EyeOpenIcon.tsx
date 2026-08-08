@@ -1,5 +1,6 @@
 import React from 'react';
 import { Svg, Path } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface EyeOpenIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface EyeOpenIconProps {
 const EyeOpenIcon: React.FC<EyeOpenIconProps> = ({
   width = 20,
   height = 20,
-  color = '#A1B0CA',
+  color = HARVEST_COLORS.driftwood,
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">

@@ -10,7 +10,7 @@ import {
 import notifee, { EventType } from "@notifee/react-native";
 import * as Updates from "expo-updates";
 import { router } from "expo-router";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import {
   savePendingNavigation,
   savePendingAuthNavigation,
@@ -21,7 +21,11 @@ import { isAppReadyForNavigation } from "@/src/shared/utils/navigationReady";
 import { isValidUUID } from "@/src/shared/utils/uuidValidation";
 import { UserRole } from "@/src/shared/api/types/data-contracts";
 
-messaging().setBackgroundMessageHandler(displayNotification);
+const canUseNativeNotifications = Platform.OS !== "web";
+
+if (canUseNativeNotifications) {
+  messaging().setBackgroundMessageHandler(displayNotification);
+}
 
 /**
  * Глобальное состояние готовности приложения к навигации
@@ -200,7 +204,7 @@ export { handleNotificationNavigation };
 const navigationTimeoutRef: { current: ReturnType<typeof setTimeout> | null } = { current: null };
 
 const handleNotificationEvent = async ({ type, detail }: any) => {
-  const { notification, pressAction, input } = detail;
+  const { notification, pressAction } = detail;
 
   switch (type) {
     case EventType.DISMISSED:
@@ -232,8 +236,10 @@ const handleNotificationEvent = async ({ type, detail }: any) => {
   }
 };
 
-notifee.onBackgroundEvent(handleNotificationEvent);
-notifee.onForegroundEvent(handleNotificationEvent);
+if (canUseNativeNotifications) {
+  notifee.onBackgroundEvent(handleNotificationEvent);
+  notifee.onForegroundEvent(handleNotificationEvent);
+}
 
 /**
  * Получает FCM токен и отправляет на сервер. Вызывается при каждом заходе в приложение.
@@ -253,7 +259,7 @@ export const useNotification = (isSignedIn: boolean) => {
     // Обновляем глобальное состояние авторизации
     globalIsAuthorized = isSignedIn;
 
-    if (!isSignedIn) {
+    if (!isSignedIn || !canUseNativeNotifications) {
       return;
     }
 

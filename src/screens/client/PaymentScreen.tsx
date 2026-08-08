@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: CLIENT_COLORS.card,
   },
   loading: {
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: CLIENT_COLORS.card,
   },
   actions: {
     paddingHorizontal: 20,

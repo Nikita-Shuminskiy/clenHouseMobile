@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
 import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
 import { CLIENT_COLORS } from "@/src/screens/client/components/ClientUI";
+import { HARVEST_COLORS, HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 const iconByRoute: Record<string, keyof typeof Ionicons.glyphMap> = {
   index: "home-outline",
@@ -69,22 +70,18 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingHorizontal: 14,
     paddingTop: 8,
-    backgroundColor: "rgba(250,247,243,0.94)",
+    backgroundColor: "rgba(255,248,241,0.94)",
   },
   bar: {
     minHeight: 64,
     borderRadius: 20,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
     borderWidth: 1,
     borderColor: CLIENT_COLORS.line,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    shadowColor: "#3A2A1E",
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 5,
+    ...HARVEST_SHADOWS.card,
   },
   item: {
     minWidth: 62,
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   itemActive: {
-    backgroundColor: "#FFF0E5",
+    backgroundColor: HARVEST_COLORS.softCream,
   },
   label: {
     fontFamily: "Onest",

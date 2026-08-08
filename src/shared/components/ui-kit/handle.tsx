@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 
 interface HandleProps {
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   line: {
     width: 48,
     height: 4,
-    backgroundColor: '#EAF0F6',
+    backgroundColor: HARVEST_COLORS.bone,
     borderRadius: 8,
   },
 });

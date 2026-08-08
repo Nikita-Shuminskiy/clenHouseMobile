@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface Props {
   children: ReactNode;
@@ -122,7 +123,7 @@ export class ErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: HARVEST_COLORS.canvas,
   },
   content: {
     justifyContent: 'center',
@@ -132,53 +133,53 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: HARVEST_COLORS.ink,
     marginBottom: 16,
     textAlign: 'center',
   },
   errorContainer: {
-    backgroundColor: '#ffebee',
+    backgroundColor: HARVEST_COLORS.dangerSoft,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 16,
     width: '100%',
     borderLeftWidth: 4,
-    borderLeftColor: '#f44336',
+    borderLeftColor: HARVEST_COLORS.danger,
   },
   errorTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#d32f2f',
+    color: HARVEST_COLORS.danger,
     marginBottom: 4,
   },
   errorMessage: {
     fontSize: 14,
-    color: '#c62828',
+    color: HARVEST_COLORS.danger,
     fontFamily: 'monospace',
   },
   message: {
     fontSize: 16,
-    color: '#666',
+    color: HARVEST_COLORS.stone,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: 32,
   },
   debugContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: HARVEST_COLORS.paper,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 32,
     width: '100%',
   },
   debugTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: HARVEST_COLORS.ink,
     marginBottom: 8,
   },
   debugText: {
     fontSize: 12,
-    color: '#666',
+    color: HARVEST_COLORS.stone,
     fontFamily: 'monospace',
   },
   buttonContainer: {
@@ -186,24 +187,24 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: HARVEST_COLORS.flame,
     paddingVertical: 16,
     paddingHorizontal: 24,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: HARVEST_COLORS.paper,
     fontSize: 16,
     fontWeight: '600',
   },
   reportButton: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: HARVEST_COLORS.flame,
   },
   reportButtonText: {
-    color: '#007AFF',
+    color: HARVEST_COLORS.flame,
   },
 });
 

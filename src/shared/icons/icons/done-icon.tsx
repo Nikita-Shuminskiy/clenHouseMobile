@@ -1,11 +1,12 @@
 import React from "react";
 import type { ColorValue } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { HARVEST_COLORS } from "../../harvest-theme";
 
 export const DoneIcon = ({
   width = 12,
   height = 8,
-  color = "#FF5E00",
+  color = HARVEST_COLORS.flame,
 }: {
   width?: number;
   height?: number;

@@ -18,7 +18,7 @@ const EmptyOrders: React.FC<EmptyOrdersProps> = ({
   return (
     <View style={styles.container}>
       <View style={[styles.iconContainer, { backgroundColor: colors.surfaceInfo }]}>
-        <DocumentIcon width={32} height={32} color={colors.grey400} />
+        <DocumentIcon width={32} height={32} color={String(colors.grey400)} />
       </View>
       <Text style={[styles.message, { color: colors.textPrimary }]}>{message}</Text>
       <Text style={[styles.description, { color: colors.textSecondary }]}>{description}</Text>

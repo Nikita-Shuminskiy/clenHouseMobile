@@ -16,6 +16,7 @@ import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import { OrderStatus } from "@/src/modules/orders/types/orders";
 import { formatDateStringFull, formatPrice } from "@/src/shared/utils/formatting";
 import * as Location from 'expo-location';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useGetMe();
@@ -78,11 +79,11 @@ const HomeScreen: React.FC = () => {
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.ASSIGNED:
-        return "#FFA500";
+        return HARVEST_COLORS.flame;
       case OrderStatus.IN_PROGRESS:
-        return "#4CAF50";
+        return HARVEST_COLORS.flamePressed;
       default:
-        return "#5A6E8A";
+        return HARVEST_COLORS.stone;
     }
   };
 
@@ -96,8 +97,8 @@ const HomeScreen: React.FC = () => {
             <RefreshControl
               refreshing={ordersLoading}
               onRefresh={refetchOrders}
-              colors={["#1A1A1A"]}
-              tintColor="#1A1A1A"
+              colors={[HARVEST_COLORS.flame]}
+              tintColor={HARVEST_COLORS.flame}
             />
           ) : undefined
         }
@@ -132,7 +133,7 @@ const HomeScreen: React.FC = () => {
 
             {ordersLoading ? (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color="#5A6E8A" />
+                <ActivityIndicator size="small" color={HARVEST_COLORS.flame} />
                 <Text style={styles.loadingText}>Загрузка заказов...</Text>
               </View>
             ) : activeOrders.length > 0 ? (
@@ -205,25 +206,23 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.canvas,
   },
   scrollContent: {
     paddingBottom: 34,
   },
   header: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 16,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 50,
-    elevation: 6,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   headerTop: {
     flexDirection: "row",
@@ -239,14 +238,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 28,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   subtitle: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 16,
     lineHeight: 24,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   headerActions: {
     flexDirection: "row",
@@ -258,13 +257,15 @@ const styles = StyleSheet.create({
   headerIcon: {
     width: 24,
     height: 24,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   searchContainer: {
     marginBottom: 20,
   },
   searchInput: {
-    backgroundColor: "#F3F3F3",
+    backgroundColor: HARVEST_COLORS.paper,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.bone,
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 16,
@@ -275,14 +276,14 @@ const styles = StyleSheet.create({
   searchIcon: {
     width: 20,
     height: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   searchPlaceholder: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 16,
     lineHeight: 24,
-    color: "#7D8EAA",
+    color: HARVEST_COLORS.driftwood,
     flex: 1,
   },
   cityContainer: {
@@ -294,25 +295,25 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "#EFF3F8",
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 12,
   },
   cityIcon: {
     width: 16,
     height: 16,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   cityText: {
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 14,
     lineHeight: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   cityArrow: {
     width: 16,
     height: 16,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
     transform: [{ rotate: "90deg" }],
   },
   mainContent: {
@@ -333,32 +334,28 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     lineHeight: 28,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   seeAllText: {
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 16,
     lineHeight: 24,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   clubsContainer: {
     gap: 16,
     paddingRight: 16,
   },
   clubCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
     borderRadius: 20,
     width: 280,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 30,
-    elevation: 4,
+    ...HARVEST_SHADOWS.card,
   },
   clubImage: {
     height: 160,
-    backgroundColor: "#EAF0F6",
+    backgroundColor: HARVEST_COLORS.softCream,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     alignItems: "center",
@@ -369,7 +366,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
     textAlign: "center",
     paddingHorizontal: 16,
   },
@@ -382,14 +379,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 24,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   clubLocation: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   clubRating: {
     flexDirection: "row",
@@ -401,14 +398,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 14,
     lineHeight: 20,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   ratingLabel: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 12,
     lineHeight: 16,
-    color: "#7D8EAA",
+    color: HARVEST_COLORS.driftwood,
   },
   quickActions: {
     flexDirection: "row",
@@ -416,21 +413,17 @@ const styles = StyleSheet.create({
   },
   quickAction: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
     borderRadius: 20,
     padding: 20,
     alignItems: "center",
     gap: 12,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 30,
-    elevation: 4,
+    ...HARVEST_SHADOWS.card,
   },
   quickActionIcon: {
     width: 48,
     height: 48,
-    backgroundColor: "#EFF3F8",
+    backgroundColor: HARVEST_COLORS.softCream,
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
@@ -438,14 +431,14 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 24,
     height: 24,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   quickActionText: {
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 14,
     lineHeight: 20,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
     textAlign: "center",
   },
   // Стили для заказов
@@ -453,14 +446,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   orderCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
     borderRadius: 16,
     padding: 16,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   orderHeader: {
     flexDirection: "row",
@@ -473,7 +464,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 24,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -485,14 +476,14 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
-    color: "#FFFFFF",
+    color: HARVEST_COLORS.paper,
   },
   orderDescription: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
     marginBottom: 12,
   },
   orderInfo: {
@@ -506,7 +497,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
     flex: 1,
     marginRight: 8,
   },
@@ -515,20 +506,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 24,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
   },
   orderTime: {
     fontFamily: "Onest",
     fontWeight: "400",
     fontSize: 12,
     lineHeight: 16,
-    color: "#7D8EAA",
+    color: HARVEST_COLORS.driftwood,
   },
   packagesContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#F0F7FF",
+    backgroundColor: HARVEST_COLORS.softCream,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
@@ -542,7 +533,7 @@ const styles = StyleSheet.create({
     fontFamily: "Onest",
     fontWeight: "600",
     fontSize: 12,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
     lineHeight: 16,
   },
   loadingContainer: {
@@ -557,25 +548,23 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#5A6E8A",
+    color: HARVEST_COLORS.stone,
   },
   emptyState: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: HARVEST_COLORS.paper,
     borderRadius: 16,
     padding: 24,
     alignItems: "center",
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   emptyStateText: {
     fontFamily: "Onest",
     fontWeight: "500",
     fontSize: 16,
     lineHeight: 24,
-    color: "#1A1A1A",
+    color: HARVEST_COLORS.ink,
     textAlign: "center",
     marginBottom: 4,
   },
@@ -584,7 +573,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 14,
     lineHeight: 20,
-    color: "#7D8EAA",
+    color: HARVEST_COLORS.driftwood,
     textAlign: "center",
   },
 });

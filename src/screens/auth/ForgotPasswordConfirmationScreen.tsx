@@ -104,7 +104,7 @@ const ForgotPasswordConfirmationScreen: React.FC = () => {
               onPress={handleEditEmail}
             >
               <View style={styles.editIconContainer}>
-                <PenIcon color={colors.grey500} />
+                <PenIcon color={String(colors.grey500)} />
               </View>
             </TouchableOpacity>
           </View>
@@ -203,7 +203,7 @@ const createStyles = ({
       fontWeight: weights.medium,
       fontSize: 20,
       lineHeight: 28,
-      letterSpacing: -0.5,
+      letterSpacing: 0,
       color: colors.black,
       textAlign: "center",
     },
@@ -212,7 +212,7 @@ const createStyles = ({
       fontWeight: weights.normal,
       fontSize: 16,
       lineHeight: 24,
-      letterSpacing: -0.5,
+      letterSpacing: 0,
       color: colors.grey900,
       textAlign: "center",
     },
@@ -231,7 +231,7 @@ const createStyles = ({
       fontWeight: weights.medium,
       fontSize: 16,
       lineHeight: 24,
-      letterSpacing: -0.5,
+      letterSpacing: 0,
       color: colors.primary600,
       textAlign: "center",
     },

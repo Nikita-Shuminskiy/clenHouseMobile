@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
   },
   hero: {
     gap: 12,
-    backgroundColor: "#FFF7EF",
-    borderColor: "#F4DAC8",
+    backgroundColor: CLIENT_COLORS.warmPanel,
+    borderColor: CLIENT_COLORS.border,
   },
   heroTitle: {
     fontFamily: "Onest",

@@ -1,5 +1,6 @@
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface CheckBoxIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface CheckBoxIconProps {
 const CheckBoxIcon: React.FC<CheckBoxIconProps> = ({
   width = 18,
   height = 18,
-  color = '#19A7E9'
+  color = HARVEST_COLORS.flame,
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 18 18" fill="none">

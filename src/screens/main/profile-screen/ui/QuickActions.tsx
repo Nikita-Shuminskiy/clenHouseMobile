@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 interface QuickActionsProps {
   onViewOrders?: () => void;
@@ -20,28 +21,28 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       title: 'Мои заказы',
       subtitle: 'Просмотр заказов',
       onPress: onViewOrders,
-      color: '#2196F3'
+      color: HARVEST_COLORS.flame,
     },
     {
       icon: '➕',
       title: 'Создать заказ',
       subtitle: 'Новый заказ',
       onPress: onCreateOrder,
-      color: '#4CAF50'
+      color: HARVEST_COLORS.flame,
     },
     {
       icon: '📊',
       title: 'История',
       subtitle: 'Статистика',
       onPress: onViewHistory,
-      color: '#FF9800'
+      color: HARVEST_COLORS.flame,
     },
     {
       icon: '👥',
       title: 'Пригласить друзей',
       subtitle: 'Поделиться приложением',
       onPress: onInviteFriends,
-      color: '#9C27B0'
+      color: HARVEST_COLORS.flame,
     }
   ];
 
@@ -52,7 +53,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
         {actions.map((action, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.actionItem, { backgroundColor: action.color }]}
+            style={styles.actionItem}
             onPress={action.onPress}
             activeOpacity={0.8}
           >
@@ -68,23 +69,21 @@ const QuickActions: React.FC<QuickActionsProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: HARVEST_COLORS.paper,
     marginHorizontal: 16,
     marginTop: 16,
     padding: 20,
     borderRadius: 20,
-    shadowColor: '#1A1A1A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   title: {
     fontFamily: 'Onest',
     fontWeight: '600',
     fontSize: 18,
     lineHeight: 24,
-    color: '#1A1A1A',
+    color: HARVEST_COLORS.ink,
     marginBottom: 16,
   },
   actionsGrid: {
@@ -98,6 +97,9 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     alignItems: 'center',
+    backgroundColor: HARVEST_COLORS.softCream,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
   },
   actionIcon: {
     fontSize: 24,
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
     lineHeight: 20,
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.ink,
     textAlign: 'center',
     marginBottom: 4,
   },
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 16,
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.stone,
     textAlign: 'center',
     opacity: 0.9,
   },

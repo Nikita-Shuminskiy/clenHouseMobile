@@ -10,6 +10,7 @@ import {
   getPushNotificationStatus,
 } from "@/src/shared/hooks/useNotification/utils";
 import { useTheme } from "@/src/shared/use-theme";
+import { HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 interface ProfileSettingsProps {
   onEditProfile?: () => void;
@@ -116,7 +117,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.white }]}>
+    <View style={[styles.container, { backgroundColor: colors.white, borderColor: colors.grey300 }]}>
       <Text style={[styles.title, { color: colors.textPrimary }]}>Настройки</Text>
       <View style={styles.settingsList}>
         {settingsItems.map((item, index) => (
@@ -124,7 +125,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
             key={index}
             style={[
               styles.settingItem,
-              { borderBottomColor: colors.background },
+              { borderBottomColor: colors.grey300 },
               index === settingsItems.length - 1 && styles.lastItem,
             ]}
             onPress={item.onPress}
@@ -151,11 +152,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 20,
-    shadowColor: '#1A1A1A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    ...HARVEST_SHADOWS.card,
   },
   title: {
     fontFamily: 'Onest',

@@ -7,6 +7,7 @@ import {
   ViewStyle
 } from 'react-native';
 import { useTheme } from '../../use-theme';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '../../harvest-theme';
 
 interface TabItem {
   id: string;
@@ -59,7 +60,7 @@ const Tabs: React.FC<TabsProps> = ({
   const getTabItemStyle = (tabState: 'default' | 'active' | 'disabled') => {
     if (type === 'type3') {
       if (tabState === 'active') {
-        return { backgroundColor: '#EFF3F8' };
+        return { backgroundColor: colors.grey100 };
       }
       return { backgroundColor: 'transparent' };
     }
@@ -73,9 +74,9 @@ const Tabs: React.FC<TabsProps> = ({
   const getTabTextStyle = (tabState: 'default' | 'active' | 'disabled') => {
     if (type === 'type3') {
       if (tabState === 'active') {
-        return { color: '#1A1A1A', fontWeight: '500' as any };
+        return { color: colors.textPrimary, fontWeight: '500' as any };
       }
-      return { color: '#A1B0CA', fontWeight: '500' as any };
+      return { color: colors.textPlaceholder, fontWeight: '500' as any };
     }
     
     if (tabState === 'active') {
@@ -106,14 +107,12 @@ const Tabs: React.FC<TabsProps> = ({
   const getContainerStyle = () => {
     if (type === 'type3') {
       return {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 24,
+        backgroundColor: colors.white,
+        borderRadius: 20,
         padding: 8,
-        shadowColor: '#1A1A1A',
-        shadowOffset: { width: 6, height: 6 },
-        shadowOpacity: 0.05,
-        shadowRadius: 50,
-        elevation: 6,
+        borderWidth: 1,
+        borderColor: colors.grey300,
+        ...HARVEST_SHADOWS.card,
       };
     }
     return {};
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
-    color: '#A1B0CA', // Цвет иконки по умолчанию
+    color: HARVEST_COLORS.driftwood,
   },
   textContainer: {
     alignItems: 'center',
@@ -247,7 +246,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   notificationText: {
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.paper,
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,

@@ -71,8 +71,8 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
 
 const getStyles = (colors: any, fonts: any, weights: any) => StyleSheet.create({
   imgCard: {
-    width: 500,
-    height: 480,
+    width: Math.min(width * 1.1, 420),
+    height: 420,
 
   },
   container: {
@@ -110,13 +110,14 @@ const getStyles = (colors: any, fonts: any, weights: any) => StyleSheet.create({
     alignSelf: 'stretch',
     gap: 8,
     marginBottom: 24,
+    paddingHorizontal: 24,
   },
   title: {
     fontFamily: fonts.h2,
     fontWeight: weights.h2,
     fontSize: 20,
     lineHeight: 28,
-    letterSpacing: -0.5,
+    letterSpacing: 0,
     textAlign: 'center',
     color: colors.black,
   },
@@ -125,7 +126,7 @@ const getStyles = (colors: any, fonts: any, weights: any) => StyleSheet.create({
     fontWeight: weights.text2,
     fontSize: 16,
     lineHeight: 24,
-    letterSpacing: -0.5,
+    letterSpacing: 0,
     textAlign: 'center',
     color: colors.grey900,
   },

@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   card: {
     gap: 9,
-    backgroundColor: "#FFFCF8",
+    backgroundColor: CLIENT_COLORS.warmPanel,
   },
   top: {
     flexDirection: "row",

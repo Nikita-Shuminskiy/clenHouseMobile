@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 interface OnboardingPaginationProps {
   totalSlides: number;
@@ -34,16 +35,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: HARVEST_COLORS.paper,
     borderRadius: 100,
-    shadowColor: '#1A1A1A',
-    shadowOffset: {
-      width: 6,
-      height: 6,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 50,
-    elevation: 6,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   dot: {
     borderRadius: 100,
@@ -51,12 +47,12 @@ const styles = StyleSheet.create({
   activeDot: {
     width: 24,
     height: 6,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: HARVEST_COLORS.flame,
   },
   inactiveDot: {
     width: 6,
     height: 6,
-    backgroundColor: '#C8D2E5',
+    backgroundColor: HARVEST_COLORS.bone,
   },
 });
 

@@ -18,6 +18,7 @@ import { setManualLogoutInProgress } from "@/src/shared/api/configs/config";
 import { useOrderByLocation } from "@/src/modules/orders/hooks/useOrders";
 import LogoutConfirmationModal from "@/src/shared/components/modals/LogoutConfirmationModal";
 import { useTheme } from "@/src/shared/use-theme";
+import { HARVEST_COLORS, HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 // UI Components - временно закомментировано
 import { UserStats, ProfileSettings, VerificationStatus, QuickActions } from "./ui";
@@ -87,7 +88,7 @@ const ProfileScreen: React.FC = () => {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.white, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.white, paddingTop: insets.top + 16 }]}>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Профиль</Text>
@@ -100,10 +101,10 @@ const ProfileScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Информация о пользователе */}
-        <View style={[styles.userInfoContainer, { backgroundColor: colors.white }]}>
+        <View style={[styles.userInfoContainer, { backgroundColor: colors.white, borderColor: colors.grey300 }]}>
           <View style={styles.avatarContainer}>
-            <View style={[styles.avatar, { backgroundColor: colors.surfaceInfo }]}>
-              <Text style={[styles.avatarText, { color: colors.textSecondary }]}>
+            <View style={[styles.avatar, { backgroundColor: colors.grey100 }]}>
+              <Text style={[styles.avatarText, { color: colors.primary500 }]}>
                 {user?.name?.charAt(0) || "П"}
               </Text>
             </View>
@@ -112,7 +113,7 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.userDetails}>
             <Text style={[styles.userName, { color: colors.textPrimary }]}>{user?.name}</Text>
             <Text style={[styles.userPhone, { color: colors.textSecondary }]}>{user?.phone}</Text>
-            <Text style={[styles.userRole, { color: colors.textPlaceholder, backgroundColor: colors.surfaceInfo }]}>
+            <Text style={[styles.userRole, { color: colors.primary500, backgroundColor: colors.grey100 }]}>
               {user?.roles?.includes(UserRole.ADMIN)
                 ? "Администратор"
                 : user?.roles?.includes(UserRole.CUSTOMER)
@@ -131,7 +132,7 @@ const ProfileScreen: React.FC = () => {
       </ScrollView>
 
       {/* Кнопка выхода - прижата к низу */}
-      <View style={[styles.logoutContainer, { backgroundColor: colors.white }]}>
+      <View style={[styles.logoutContainer, { backgroundColor: colors.background }]}>
         <TouchableOpacity style={[styles.logoutButton, { backgroundColor: colors.destructive }]} onPress={handleLogout}>
           <Text style={styles.logoutText}>Выйти</Text>
         </TouchableOpacity>
@@ -163,13 +164,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 16,
     paddingBottom: 16,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 50,
-    elevation: 6,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.card,
   },
   title: {
     fontFamily: "Onest",
@@ -181,13 +180,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 24,
     padding: 16,
-    borderRadius: 24,
+    borderRadius: 20,
     alignItems: "center",
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 50,
-    elevation: 6,
+    borderWidth: 1,
+    ...HARVEST_SHADOWS.card,
   },
   avatarContainer: {
     marginBottom: 10,
@@ -245,7 +241,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 24,
-    color: "#FFFFFF",
+    color: HARVEST_COLORS.paper,
   },
 });
 

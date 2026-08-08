@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useRef, useState } from "react";
 import { KeyboardTypeOptions, Pressable, StyleSheet, Text, TextInput, TextInputProps, View, } from "react-native";
+import { HARVEST_COLORS } from "@/src/shared/harvest-theme";
 
 interface ITextInputProps extends TextInputProps {
     value: string;
@@ -36,18 +37,18 @@ const Input: React.FC<ITextInputProps> = ({
 
     // Цвета для разных состояний
     const borderColor = error
-        ? '#FC3C3C' // красный
+        ? HARVEST_COLORS.danger
         : isDisabled
-            ? '#E1EAF0' // светло-серый
-            : '#E1EAF0'; // обычный серый
+            ? HARVEST_COLORS.mist
+            : HARVEST_COLORS.bone;
 
     const textColor = error
-        ? '#FC3C3C'
+        ? HARVEST_COLORS.danger
         : isDisabled
-            ? '#BFC9D1'
-            : '#3D3D3D';
+            ? HARVEST_COLORS.smoke
+            : HARVEST_COLORS.ink;
 
-    const placeholderTextColor = isDisabled ? '#BFC9D1' : '#8B97A1';
+    const placeholderTextColor = isDisabled ? HARVEST_COLORS.smoke : HARVEST_COLORS.driftwood;
 
     const handleFocus = () => {
         onPress?.();
@@ -76,7 +77,7 @@ const Input: React.FC<ITextInputProps> = ({
                 <Ionicons
                     name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
                     size={24}
-                    color={isDisabled ? '#BFC9D1' : '#3D3D3D'}
+                    color={isDisabled ? HARVEST_COLORS.smoke : HARVEST_COLORS.ink}
                 />
             </Pressable>
         );
@@ -109,7 +110,7 @@ const Input: React.FC<ITextInputProps> = ({
                         { color: textColor },
                         error && styles.isErrorText,
                     ]}
-                    cursorColor="#FC712C"
+                    cursorColor={HARVEST_COLORS.flame}
                     {...rest}
                 />
                 {renderPasswordIcon()}
@@ -133,16 +134,16 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         borderRadius: 16,
-        backgroundColor: '#fff',
+        backgroundColor: HARVEST_COLORS.paper,
     },
     isErrorText: {
-        color: "#FC3C3C",
+        color: HARVEST_COLORS.danger,
         fontWeight: '600',
     },
     input: {
         fontSize: 18,
         flex: 1,
-        color: "#3D3D3D",
+        color: HARVEST_COLORS.ink,
         fontWeight: '500',
     },
     passwordIcon: {

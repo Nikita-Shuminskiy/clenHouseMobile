@@ -25,6 +25,7 @@ import { BackArrowIcon, PhoneIcon, TelegramIcon, ResetIcon } from "@/src/shared/
 import { formatPrice, formatDateStringFull } from "@/src/shared/utils/formatting";
 import { formatOverdueTime } from "@/src/shared/utils/overdueUtils";
 import { normalizeOrderId, isValidUUID } from "@/src/shared/utils/uuidValidation";
+import { HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 // Вспомогательные функции для определения доступных действий
 const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
@@ -160,9 +161,9 @@ const OrderDetailsScreen: React.FC = () => {
       style={[styles.headerRefreshButton, { backgroundColor: colors.grey100 }]}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={colors.primary500} />
+        <ActivityIndicator size="small" color={String(colors.primary500)} />
       ) : (
-        <ResetIcon width={20} height={20} color={colors.grey700} />
+        <ResetIcon width={20} height={20} color={String(colors.grey700)} />
       )}
     </TouchableOpacity>
   );
@@ -451,7 +452,7 @@ const OrderDetailsScreen: React.FC = () => {
             activeOpacity={0.7}
             style={styles.phoneContainer}
           >
-            <PhoneIcon width={16} height={16} color={colors.primary500} />
+            <PhoneIcon width={16} height={16} color={String(colors.primary500)} />
             <Text style={[styles.customerPhone, { color: colors.primary500 }]}>{order.customer.phone}</Text>
           </TouchableOpacity>
           {order.customer.telegramUsername && (
@@ -460,7 +461,7 @@ const OrderDetailsScreen: React.FC = () => {
               activeOpacity={0.7}
               style={styles.phoneContainer}
             >
-              <TelegramIcon width={16} height={16} color={colors.primary500} />
+              <TelegramIcon width={16} height={16} color={String(colors.primary500)} />
               <Text style={[styles.customerPhone, { color: colors.primary500 }]}>
                 @{order.customer.telegramUsername}
               </Text>
@@ -555,7 +556,7 @@ const OrderDetailsScreen: React.FC = () => {
 const makeStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.background,
   },
   header: {
     backgroundColor: colors.white,
@@ -563,13 +564,11 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingBottom: 8,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 50,
-    elevation: 6,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    ...HARVEST_SHADOWS.card,
   },
   backButton: {
     padding: 10,
@@ -580,7 +579,7 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
   headerRefreshButton: {
     width: 40,
     height: 40,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -606,13 +605,11 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   orderDetails: {
     backgroundColor: colors.white,
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    ...HARVEST_SHADOWS.card,
     position: 'relative',
     overflow: 'hidden',
   },
@@ -775,7 +772,7 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     marginBottom: 16,
   },
   backButtonError: {
-    backgroundColor: colors.blue,
+    backgroundColor: colors.primary500,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
@@ -790,14 +787,12 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   actionsContainer: {
     backgroundColor: colors.white,
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
     marginTop: 16,
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    ...HARVEST_SHADOWS.card,
   },
   actionsTitle: {
     fontFamily: "Onest",

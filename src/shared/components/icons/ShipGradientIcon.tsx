@@ -22,8 +22,8 @@ const ShipGradientIcon: React.FC<ShipGradientIconProps> = ({
           y2="-7.49228e-07"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop stopColor="#15CDCA" />
-          <Stop offset="1" stopColor="#81ECEA" />
+          <Stop stopColor="#fa5d00" />
+          <Stop offset="1" stopColor="#fee3b5" />
         </LinearGradient>
         <ClipPath id="clip0_3130_704">
           <Rect width="24" height="24" fill="white" />
@@ -40,7 +40,7 @@ const ShipGradientIcon: React.FC<ShipGradientIconProps> = ({
           fillRule="evenodd"
           clipRule="evenodd"
           d="M0.857148 15.4286C0.576022 15.4286 0.312768 15.5665 0.15264 15.7975C-0.00748736 16.0286 -0.0441298 16.3235 0.05458 16.5867L1.79174 21.2191C2.41901 22.8919 4.0181 24 5.80457 24H18.1954C19.9819 24 21.581 22.8919 22.2082 21.2191L23.9455 16.5867C24.0441 16.3235 24.0075 16.0286 23.8474 15.7975C23.6873 15.5665 23.424 15.4286 23.1429 15.4286H0.857148Z"
-          fill="#15CDCA"
+          fill="#fa5d00"
         />
       </G>
     </Svg>

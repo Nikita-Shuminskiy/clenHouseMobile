@@ -15,6 +15,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNotification } from "@/src/shared/hooks/useNotification/useNotification";
 import { useGetMe } from "@/src/modules/auth/hooks/useGetMe";
+import { HARVEST_COLORS, HARVEST_SHADOWS } from "@/src/shared/harvest-theme";
 
 
 export default function ProtectedLayout() {
@@ -37,10 +38,10 @@ export default function ProtectedLayout() {
         tabBar={({ state, descriptors, navigation }) => {
           return (
             <View
-              style={{ position: "relative", backgroundColor: "#FFFFFF" }}
+              style={{ position: "relative", backgroundColor: HARVEST_COLORS.canvas }}
             >
               <LinearGradient
-                colors={["#FFFFFF", "#FFFFFF"]}
+                colors={[HARVEST_COLORS.canvas, HARVEST_COLORS.canvas]}
               >
                 <BlurView
                   intensity={20}
@@ -56,18 +57,20 @@ export default function ProtectedLayout() {
                 style={{
                   backgroundColor: theme.colors.white,
                   zIndex: 1000,
-                  boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
                   position: "absolute",
                   width: "90%",
                   top: -insets.bottom + 10,
                   left: screenWidth * 0.5,
                   transform: [{ translateX: -(screenWidth * 0.45) }],
                   borderRadius: 24,
+                  borderWidth: 1,
+                  borderColor: theme.colors.grey300,
                   flexDirection: "row",
                   gap: 40,
                   justifyContent: "space-evenly",
                   paddingVertical: 12,
                   paddingHorizontal: 16,
+                  ...HARVEST_SHADOWS.card,
                 }}
               >
                 {state.routes.map((route, index) => {

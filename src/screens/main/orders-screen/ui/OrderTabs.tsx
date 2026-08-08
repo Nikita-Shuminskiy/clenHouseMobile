@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import useTheme from '@/src/shared/use-theme/use-theme';
+import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
 
 const NARROW_SCREEN_WIDTH = 360;
 
@@ -24,7 +25,7 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, counts })
   const tabs = [
     { key: 'new' as OrderTabType, label: 'Новые', count: counts?.new, activeColor: colors.primary500 },
     { key: 'my' as OrderTabType, label: 'Мои', count: counts?.my, activeColor: colors.primary500 },
-    { key: 'overdue' as OrderTabType, label: overdueLabel, count: counts?.overdue, activeColor: colors.destructive },
+    { key: 'overdue' as OrderTabType, label: overdueLabel, count: counts?.overdue, activeColor: colors.primary600 },
   ];
 
   const renderTab = (tab: (typeof tabs)[number], isFullWidth = false) => {
@@ -113,14 +114,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: HARVEST_COLORS.mist,
+    ...HARVEST_SHADOWS.button,
   },
   fullWidthTab: {
     flex: 1,
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 11,
     lineHeight: 16,
-    color: '#FFFFFF',
+    color: HARVEST_COLORS.paper,
   },
 });
 

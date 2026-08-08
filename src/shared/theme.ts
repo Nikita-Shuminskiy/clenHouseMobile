@@ -1,28 +1,29 @@
 import { useTheme as useCurrentTheme } from "./use-theme";
+import { HARVEST_COLORS } from "./harvest-theme";
 
 export const Neutral = {
-  white: "#FFFFFF",
-  black: "#000000",
-  grey: "#667069",
-  background: "#F6F7F4",
+  white: HARVEST_COLORS.paper,
+  black: HARVEST_COLORS.ink,
+  grey: HARVEST_COLORS.stone,
+  background: HARVEST_COLORS.canvas,
 };
 
 export const Primary = {
-  primary: "#FF5E00",
-  orange: "#FF5E00",
-  green: "#1F7A4D",
+  primary: HARVEST_COLORS.flame,
+  orange: HARVEST_COLORS.flame,
+  green: HARVEST_COLORS.success,
 };
 
 export const Accent = {
-  red: "#DC2626",
-  blue: "#2196F3",
-  orange: "#FF8000",
+  red: HARVEST_COLORS.danger,
+  blue: HARVEST_COLORS.stone,
+  orange: HARVEST_COLORS.flame,
 };
 
 export const Palette = {
-  red: "#DC2626",
-  orange: "#FF5E00",
-  green: "#1F7A4D",
+  red: HARVEST_COLORS.danger,
+  orange: HARVEST_COLORS.flame,
+  green: HARVEST_COLORS.success,
 };
 
 export const Typography = {

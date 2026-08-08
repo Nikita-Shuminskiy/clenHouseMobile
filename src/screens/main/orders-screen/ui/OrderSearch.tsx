@@ -20,7 +20,7 @@ const OrderSearch: React.FC<OrderSearchProps> = ({
   return (
     <View style={styles.container}>
       <View style={[styles.field, { backgroundColor: colors.background }]}>
-        <SearchIcon width={20} height={20} color={colors.grey500} />
+        <SearchIcon width={20} height={20} color={String(colors.grey500)} />
         <TextInput
           style={[styles.input, { color: colors.grey900 }]}
           value={value}
@@ -38,7 +38,7 @@ const OrderSearch: React.FC<OrderSearchProps> = ({
             accessibilityRole="button"
             accessibilityLabel="Очистить поиск"
           >
-            <CloseLineIcon width={18} height={18} color={colors.grey500} />
+            <CloseLineIcon width={18} height={18} color={String(colors.grey500)} />
           </TouchableOpacity>
         )}
       </View>

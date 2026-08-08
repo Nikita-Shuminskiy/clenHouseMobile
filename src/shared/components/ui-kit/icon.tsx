@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface IconProps {
   name: keyof typeof iconMapping;
@@ -52,7 +53,7 @@ const iconMapping = {
   eye: 'eye',
 } as const;
 
-export const Icon: React.FC<IconProps> = ({ name, size = 24, color = '#1A1A1A', style }) => {
+export const Icon: React.FC<IconProps> = ({ name, size = 24, color = HARVEST_COLORS.ink, style }) => {
   const iconName = iconMapping[name];
   
   if (!iconName) {

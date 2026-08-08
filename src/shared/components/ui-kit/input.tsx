@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../../use-theme';
 import { ErrorIcon, EyeOpenIcon, LockKeyIcon, MailIcon, SearchIcon, UserIcon, XCircle20Icon } from '../icons';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface InputProps extends Omit<TextInputProps, 'style'> {
   state?: 'default' | 'error' | 'success' | 'disabled' | 'active' | 'filled';
@@ -85,37 +86,37 @@ const Input: React.FC<InputProps> = ({
     // Цвета согласно веб-версии
     if (inputState === 'disabled') {
       return {
-        backgroundColor: colors.grey100,
-        borderColor: 'transparent',
-        color: colors.muted, // Используем muted цвет для disabled текста
+        backgroundColor: colors.grey200,
+        borderColor: colors.grey300,
+        color: colors.muted,
       };
     }
     if (inputState === 'error') {
       return {
         backgroundColor: colors.white,
-        borderColor: colors.destructive, // Используем destructive цвет для ошибок
+        borderColor: colors.destructive,
         color: colors.black,
       };
     }
     if (inputState === 'active') {
       return {
         backgroundColor: colors.white,
-        borderColor: colors.ring, // Используем ring цвет для активного состояния
+        borderColor: colors.primary500,
         color: colors.black,
       };
     }
     if (inputState === 'filled') {
       return {
-        backgroundColor: colors.grey200, 
-        borderColor: 'transparent',
+        backgroundColor: colors.white,
+        borderColor: colors.grey300,
         color: colors.black,
       };
     }
     // Default state
     return {
-      backgroundColor: colors.grey100,
-      borderColor: 'transparent',
-      color: colors.muted, // Используем muted цвет для placeholder
+      backgroundColor: colors.white,
+      borderColor: colors.grey300,
+      color: colors.black,
     };
   };
 
@@ -144,13 +145,13 @@ const Input: React.FC<InputProps> = ({
     
     switch (type) {
       case 'mail':
-        return <MailIcon width={20} height={20} color={colors.muted} />;
+        return <MailIcon width={20} height={20} color={String(colors.muted)} />;
       case 'password':
-        return <LockKeyIcon width={20} height={20} color={colors.muted} />;
+        return <LockKeyIcon width={20} height={20} color={String(colors.muted)} />;
       case 'search':
-        return <SearchIcon width={20} height={20} color={colors.muted} />;
+        return <SearchIcon width={20} height={20} color={String(colors.muted)} />;
       case 'name':
-        return <UserIcon width={20} height={20} color={colors.muted} />;
+        return <UserIcon width={20} height={20} color={String(colors.muted)} />;
       default:
         return null;
     }
@@ -170,7 +171,7 @@ const Input: React.FC<InputProps> = ({
             fontWeight: weights.medium,
             fontSize: 12,
             lineHeight: 16,
-            color: colors.grey900,
+            color: colors.textPrimary,
           }]}>
             {label}
           </Text>
@@ -190,7 +191,7 @@ const Input: React.FC<InputProps> = ({
                         inputStyle,
                       ]}
                       placeholder={placeholder}
-                      placeholderTextColor={colors.grey500} // #A1B0CA
+                      placeholderTextColor={colors.textPlaceholder}
                       value={value}
                       onChangeText={onChangeText}
                       onFocus={handleFocus}
@@ -209,7 +210,7 @@ const Input: React.FC<InputProps> = ({
                       onPress={togglePasswordVisibility}
                       disabled={disabled}
                     >
-                      <EyeOpenIcon width={20} height={20} color="#A1B0CA" />
+                      <EyeOpenIcon width={20} height={20} color={String(colors.grey500)} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -218,7 +219,7 @@ const Input: React.FC<InputProps> = ({
       {/* Сообщение об ошибке */}
       {error && error.message && (
         <View style={styles.errorContainer}>
-          <ErrorIcon width={16} height={16} color="#F53F3F" />
+          <ErrorIcon width={16} height={16} color={String(colors.destructive)} />
           <Text style={styles.errorText}>{error.message}</Text>
         </View>
       )}
@@ -234,7 +235,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 4,
     padding: 12, 
-    borderRadius: 12, 
+    borderRadius: 16,
+    borderWidth: 1,
   },
   inputRow: {
     flexDirection: 'row',
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 16,
-    color: '#F53F3F',
+    color: HARVEST_COLORS.danger,
   },
 });
 

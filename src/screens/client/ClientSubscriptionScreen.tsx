@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   },
   plan: {
     gap: 12,
-    backgroundColor: "#FFFCF8",
+    backgroundColor: CLIENT_COLORS.warmPanel,
   },
   planName: {
     fontFamily: "Onest",

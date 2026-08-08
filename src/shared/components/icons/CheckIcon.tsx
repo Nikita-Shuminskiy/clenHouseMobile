@@ -1,5 +1,6 @@
 import React from 'react';
 import { Svg, Path } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface CheckIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface CheckIconProps {
 const CheckIcon: React.FC<CheckIconProps> = ({
   width = 12,
   height = 12,
-  color = '#4ADE80',
+  color = HARVEST_COLORS.flame,
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 12 12" fill="none">

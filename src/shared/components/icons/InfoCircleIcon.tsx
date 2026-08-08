@@ -1,5 +1,6 @@
 import React from 'react';
 import { Svg, Path } from 'react-native-svg';
+import { HARVEST_COLORS } from '../../harvest-theme';
 
 interface InfoCircleIconProps {
   width?: number;
@@ -10,7 +11,7 @@ interface InfoCircleIconProps {
 const InfoCircleIcon: React.FC<InfoCircleIconProps> = ({
   width = 12,
   height = 12,
-  color = '#A1B0CA',
+  color = HARVEST_COLORS.driftwood,
 }) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 12 12" fill="none">

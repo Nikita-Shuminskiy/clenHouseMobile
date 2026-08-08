@@ -4,6 +4,7 @@ import { OrderStatus } from "@/src/modules/orders/types/orders";
 import { formatPrice } from "@/src/shared/utils/formatting";
 import { useTheme } from "@/src/shared/use-theme";
 import { getOrderStatusUi } from "../../constants/order-status-ui";
+import { HARVEST_COLORS } from "@/src/shared/harvest-theme";
 
 interface OrderCardHeaderProps {
   id: string;
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
-    color: "#FFFFFF",
+    color: HARVEST_COLORS.paper,
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
-    color: "#FFFFFF",
+    color: HARVEST_COLORS.paper,
   },
   price: {
     fontFamily: "Onest",
