@@ -21,7 +21,10 @@ import { TelegramLoginModal } from './components/TelegramLoginModal';
 type LoginMode = 'customer' | 'courier';
 
 export const AuthScreen = () => {
-  const [mode, setMode] = useState<LoginMode>('customer');
+  // TODO: клиент (пользователь) временно отключён — в мобилке оставлен только курьер.
+  // Чтобы вернуть клиентский вход, поменяйте 'courier' обратно на 'customer'
+  // и раскомментируйте переключатель роли ниже.
+  const [mode, setMode] = useState<LoginMode>('courier');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
@@ -208,6 +211,8 @@ export const AuthScreen = () => {
             )}
           </View>
 
+          {/* TODO: клиент (пользователь) временно отключён — оставлен только курьер.
+              Раскомментируйте переключатель роли, чтобы вернуть вход клиента.
           <Pressable
             accessibilityRole="button"
             onPress={() => setMode(isCourier ? 'customer' : 'courier')}
@@ -215,6 +220,7 @@ export const AuthScreen = () => {
           >
             <Text style={styles.roleSwitchText}>{copy.switchText}</Text>
           </Pressable>
+          */}
         </ScrollView>
       </KeyboardAvoidingView>
       <TelegramLoginModal

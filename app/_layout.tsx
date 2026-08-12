@@ -151,7 +151,10 @@ const RootStack = () => {
           }
         }
       });
-    } else if (isCustomerUser(userMe)) {
+    }
+    /* КЛИЕНТ (ПОЛЬЗОВАТЕЛЬ) ВРЕМЕННО ОТКЛЮЧЁН — в мобилке оставлен только курьер.
+       Раскомментируйте этот блок, чтобы вернуть маршрутизацию клиента.
+    else if (isCustomerUser(userMe)) {
       loadPendingAuthNavigation().then((pendingNav) => {
         if (pendingNav && isValidUUID(pendingNav.orderId)) {
           setTimeout(async () => {
@@ -172,7 +175,9 @@ const RootStack = () => {
         }
         router.replace(getHomeRouteForUser(userMe));
       });
-    } else if (Array.isArray(userMe?.roles) && userMe.roles.length > 0) {
+    }
+    */
+    else if (Array.isArray(userMe?.roles) && userMe.roles.length > 0) {
       toast.error('Доступ запрещен', {
         description: 'Для этой роли нет мобильного интерфейса',
         duration: 5000,
