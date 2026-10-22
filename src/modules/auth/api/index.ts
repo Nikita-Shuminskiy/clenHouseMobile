@@ -83,6 +83,16 @@ export const authApi = {
     return response.data;
   },
 
+  // Фиксация согласий пользователя (оферта, обработка ПДн, рекламная рассылка)
+  saveConsents: async (data: {
+    terms: boolean;
+    personalData: boolean;
+    marketing: boolean;
+    revision?: string;
+  }): Promise<void> => {
+    await instance.post("/user/me/consents", data);
+  },
+
   // Получение данных текущего пользователя
   getMe: async (): Promise<IUserDto> => {
     const response = await instance.get<GetMeResponse>("/auth/me");
