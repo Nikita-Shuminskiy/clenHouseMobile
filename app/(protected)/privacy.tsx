@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import useTheme from '@/src/shared/use-theme/use-theme';
 import { BackArrowIcon, EmailIcon, PhoneIcon, AddressIcon } from '@/src/shared/components/icons';
 import { HARVEST_COLORS, HARVEST_SHADOWS } from '@/src/shared/harvest-theme';
+import { LEGAL_DOCUMENTS_LIST, LEGAL_REVISION } from '@/src/shared/legal/legal-documents';
 
 const PrivacyScreen: React.FC = () => {
   const theme = useTheme();
@@ -59,40 +60,11 @@ const PrivacyScreen: React.FC = () => {
       });
   };
 
-  const privacySections = [
-    {
-      title: '1. Сбор информации',
-      content: 'Мы собираем только необходимую информацию для предоставления наших услуг:\n\n• Имя и контактные данные\n• Информация о заказах\n• Данные для доставки\n• История взаимодействий с приложением'
-    },
-    {
-      title: '2. Использование данных',
-      content: 'Ваши данные используются для:\n\n• Обработки и выполнения заказов\n• Связи с вами по вопросам заказов\n• Улучшения качества сервиса\n• Предоставления технической поддержки\n• Соблюдения правовых требований'
-    },
-    {
-      title: '3. Защита данных',
-      content: 'Мы применяем современные методы защиты:\n\n• Шифрование данных при передаче\n• Безопасное хранение информации\n• Ограниченный доступ к данным\n• Регулярные проверки безопасности\n• Соответствие стандартам защиты'
-    },
-    {
-      title: '4. Передача данных третьим лицам',
-      content: 'Мы не продаем ваши данные. Передача возможна только:\n\n• Службам доставки для выполнения заказов\n• Платежным системам для обработки платежей\n• При требовании государственных органов\n• При вашем явном согласии'
-    },
-    {
-      title: '5. Ваши права',
-      content: 'Вы имеете право:\n\n• Получить копию ваших данных\n• Исправить неточную информацию\n• Удалить ваши данные\n• Ограничить обработку данных\n• Отозвать согласие на обработку\n• Подать жалобу в надзорные органы'
-    },
-    {
-      title: '6. Cookies и аналитика',
-      content: 'Мы используем:\n\n• Технические cookies для работы приложения\n• Аналитические данные для улучшения сервиса\n• Данные о производительности приложения\n• Информацию об ошибках для их исправления'
-    },
-    {
-      title: '7. Хранение данных',
-      content: 'Данные хранятся:\n\n• В течение срока действия договора\n• 3 года после последней активности\n• До отзыва согласия на обработку\n• В соответствии с требованиями законодательства'
-    },
-    {
-      title: '8. Изменения в политике',
-      content: 'Мы можем обновлять данную политику:\n\n• При изменении законодательства\n• При улучшении сервиса\n• При добавлении новых функций\n• Уведомляем о значимых изменениях\n• Публикуем обновленную версию'
-    }
-  ];
+  const handleOpenDocument = (url: string) => {
+    Linking.openURL(url).catch(() => {
+      Alert.alert('Ошибка', 'Не удалось открыть документ');
+    });
+  };
 
   const contactInfo = {
     email: 'chisto.doma1@mail.ru',
@@ -107,7 +79,7 @@ const PrivacyScreen: React.FC = () => {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <BackArrowIcon width={24} height={24} color={HARVEST_COLORS.ink} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.grey900 }]}>Конфиденциальность</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.grey900 }]}>Документы</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -128,25 +100,30 @@ const PrivacyScreen: React.FC = () => {
             Политика конфиденциальности
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.grey600 }]}>
-            Последнее обновление: {new Date().toLocaleDateString('ru-RU')}
+            Редакция от {LEGAL_REVISION}
           </Text>
           <Text style={[styles.infoDescription, { color: theme.colors.grey600 }]}>
-            Данная политика описывает, как мы собираем, используем и защищаем вашу персональную информацию при использовании приложения Mussor.
+            Политика описывает, какие персональные данные обрабатывает ООО «ЧИСТО ДОМА», с какой целью и на каком основании. Полные тексты документов опубликованы на сайте.
           </Text>
         </View>
 
-        {/* Разделы политики */}
+        {/* Документы сервиса */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Основные положения</Text>
-          {privacySections.map((section, index) => (
-            <View key={index} style={[styles.privacySection, { backgroundColor: theme.colors.white }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.grey900 }]}>Документы</Text>
+          {LEGAL_DOCUMENTS_LIST.map((document) => (
+            <TouchableOpacity
+              key={document.key}
+              style={[styles.privacySection, { backgroundColor: theme.colors.white }]}
+              onPress={() => handleOpenDocument(document.url)}
+              activeOpacity={0.7}
+            >
               <Text style={[styles.sectionTitleText, { color: theme.colors.grey900 }]}>
-                {section.title}
+                {document.title}
               </Text>
               <Text style={[styles.sectionContent, { color: theme.colors.grey600 }]}>
-                {section.content}
+                Открыть на сайте
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 

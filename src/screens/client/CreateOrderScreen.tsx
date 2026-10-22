@@ -30,6 +30,10 @@ import {
   StatusPill,
 } from "./components/ClientUI";
 import { formatMoney } from "./components/OrderSummaryCard";
+import LegalConsents, {
+  EMPTY_LEGAL_CONSENTS,
+  LegalConsentsState,
+} from "@/src/shared/components/legal/LegalConsents";
 
 type OrderForm = {
   addressQuery: string;
@@ -138,7 +142,15 @@ const CreateOrderScreen = () => {
     ...(data.domophone.trim() && { domophone: data.domophone.trim() }),
   });
 
+  // Акцепт оферты перед оформлением и оплатой заказа
+  const [offerAccepted, setOfferAccepted] =
+    React.useState<LegalConsentsState>(EMPTY_LEGAL_CONSENTS);
+
   const onSubmit = async (data: OrderForm) => {
+    if (!offerAccepted.terms) {
+      toast.error("Примите условия оферты, чтобы оформить заказ");
+      return;
+    }
     if (!selectedAddress) {
       toast.error("Выберите адрес из списка");
       return;
@@ -424,7 +436,16 @@ const CreateOrderScreen = () => {
           </View>
         </Card>
 
+        <View style={styles.consents}>
+          <LegalConsents
+            variant="order"
+            value={offerAccepted}
+            onChange={setOfferAccepted}
+          />
+        </View>
+
         <PrimaryButton
+          disabled={!offerAccepted.terms}
           loading={createOrder.isPending || createPayment.isPending || saveAddress.isPending}
           onPress={form.handleSubmit(onSubmit)}
         >
@@ -436,6 +457,10 @@ const CreateOrderScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  consents: {
+    paddingHorizontal: 4,
+    paddingBottom: 12,
+  },
   content: {
     paddingHorizontal: 18,
     paddingTop: 6,

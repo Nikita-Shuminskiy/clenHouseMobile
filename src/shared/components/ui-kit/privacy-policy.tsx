@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     Dimensions,
+    Linking,
     StyleSheet,
     Text,
     View
@@ -8,6 +9,7 @@ import {
 
 import { ThemeColors, ThemeFonts, ThemeWeights, useTheme } from '@/src/shared/use-theme';
 import { HARVEST_COLORS } from '../../harvest-theme';
+import { LEGAL_DOCUMENTS } from '@/src/shared/legal/legal-documents';
 
 interface PrivacyPolicyProps {
   containerStyle?: any;
@@ -20,13 +22,15 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ containerStyle }) => {
   const isSmallScreen = screenHeight < 700;
   const styles = createStyles({ colors, sizes, fonts, weights });
 
-  const handleOpenPrivacyPolicy = () => {
-    // Заглушка - ничего не делаем
+  const openDocument = (url: string) => {
+    Linking.openURL(url).catch(() => {
+      // документ можно открыть на сайте вручную
+    });
   };
 
-  const handleOpenTerms = () => {
-    // Заглушка - ничего не делаем
-  };
+  const handleOpenPrivacyPolicy = () => openDocument(LEGAL_DOCUMENTS.privacyPolicy.url);
+
+  const handleOpenTerms = () => openDocument(LEGAL_DOCUMENTS.termsOfService.url);
 
   return (
     <View style={[

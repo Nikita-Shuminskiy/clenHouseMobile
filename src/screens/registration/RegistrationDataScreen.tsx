@@ -14,11 +14,21 @@ import {
 import { useTheme } from '@/src/shared/use-theme';
 import { KeyboardScrollView } from '../auth/ui/KeyboardScrollView';
 import { useRegisterByEmail } from '@/src/modules/auth/hooks/useRegisterByEmail';
+import { authApi } from '@/src/modules/auth/api';
+import LegalConsents, {
+  EMPTY_LEGAL_CONSENTS,
+  hasRequiredConsents,
+  LegalConsentsState,
+} from '@/src/shared/components/legal/LegalConsents';
+import { LEGAL_REVISION } from '@/src/shared/legal/legal-documents';
 
 export const RegistrationDataScreen: React.FC = () => {
   const { colors, fonts, weights, sizes } = useTheme();
   const styles = createStyles({ colors, fonts, weights, sizes });
   const { mutateAsync: registerByEmail, isPending } = useRegisterByEmail();
+  // Согласия даются до передачи персональных данных
+  const [consents, setConsents] =
+    React.useState<LegalConsentsState>(EMPTY_LEGAL_CONSENTS);
 
   const {
     control,
@@ -43,9 +53,14 @@ export const RegistrationDataScreen: React.FC = () => {
     watchedFields.email.trim() !== '' &&
     watchedFields.phone.trim() !== '' &&
     watchedFields.password.trim() !== '' &&
+    hasRequiredConsents(consents) &&
     isValid;
 
   const onSubmit = async (data: RegistrationDataFormData) => {
+    if (!hasRequiredConsents(consents)) {
+      return;
+    }
+
     const phoneDigits = data.phone.replace(/\D/g, '');
     await registerByEmail({
       name: data.name.trim(),
@@ -53,6 +68,18 @@ export const RegistrationDataScreen: React.FC = () => {
       phone: `+7${phoneDigits}`,
       password: data.password.trim(),
     });
+
+    // Фиксируем дату и состав согласий после успешной регистрации
+    authApi
+      .saveConsents({
+        terms: consents.terms,
+        personalData: consents.personalData,
+        marketing: consents.marketing,
+        revision: LEGAL_REVISION,
+      })
+      .catch((error) => {
+        console.error('Не удалось сохранить согласия пользователя:', error);
+      });
   };
 
   return (
@@ -108,6 +135,10 @@ export const RegistrationDataScreen: React.FC = () => {
               error={errors.password}
             />
           </View>
+        </View>
+
+        <View style={styles.consentsContainer}>
+          <LegalConsents value={consents} onChange={setConsents} />
         </View>
 
         <View style={styles.buttonContainer}>
@@ -168,6 +199,9 @@ const createStyles = ({
     fieldsContainer: {
       gap: 16,
       width: '100%',
+    },
+    consentsContainer: {
+      paddingBottom: 16,
     },
     buttonContainer: {
       paddingBottom: 16,
