@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -73,8 +72,11 @@ export const AuthScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* На Android включён edge-to-edge: окно не сжимается под клавиатуру,
+          и `adjustResize` из манифеста больше не поднимает поля — курьер не
+          видел, что набирает. Поэтому отступ считаем сами на обеих системах */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior="padding"
         style={styles.keyboard}
       >
         <ScrollView

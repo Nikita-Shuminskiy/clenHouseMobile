@@ -1,13 +1,17 @@
 
 import React, { PropsWithChildren } from 'react'
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, ScrollView } from 'react-native';
 
+/**
+ * На Android включён edge-to-edge: окно не сжимается под клавиатуру, поэтому
+ * `height` ничего не поднимал и поля оказывались под ней. Отступ считаем сами
+ * на обеих системах.
+ */
 export const KeyboardScrollView: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingContainer}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      behavior="padding"
     >
       <ScrollView
         style={styles.content}
