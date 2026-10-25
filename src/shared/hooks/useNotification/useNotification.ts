@@ -23,9 +23,7 @@ import { UserRole } from "@/src/shared/api/types/data-contracts";
 
 const canUseNativeNotifications = Platform.OS !== "web";
 
-if (canUseNativeNotifications) {
-  messaging().setBackgroundMessageHandler(displayNotification);
-}
+
 
 /**
  * Глобальное состояние готовности приложения к навигации
