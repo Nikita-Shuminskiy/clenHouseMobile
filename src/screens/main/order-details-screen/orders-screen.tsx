@@ -35,9 +35,9 @@ const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
   const isAssignedCourier = order.currier?.id === userId;
 
   switch (order.status) {
-    case OrderStatus.NEW:
-      actions.push({ key: 'accept', label: 'Принять заказ', type: 'primary' });
-      break;
+    // Неоплаченный заказ брать нельзя: сервер отвечает «можно взять только
+    // оплаченные». Кнопка была, и курьер упирался в ошибку — просроченных
+    // неоплаченных заказов в списке хватает
     case OrderStatus.PAID:
       actions.push({ key: 'accept', label: 'Принять заказ', type: 'primary' });
       break;
@@ -53,8 +53,12 @@ const getAvailableActions = (order: OrderResponseDto, userId?: string) => {
       break;
   }
 
-  // Кнопка отмены доступна для всех статусов кроме завершенных
-  if (order.status !== OrderStatus.DONE && order.status !== OrderStatus.CANCELED) {
+  // Отменить можно только свой заказ: ничейный отменяет администратор
+  if (
+    isAssignedCourier &&
+    order.status !== OrderStatus.DONE &&
+    order.status !== OrderStatus.CANCELED
+  ) {
     actions.push({ key: 'cancel', label: 'Отменить', type: 'secondary' });
   }
 
