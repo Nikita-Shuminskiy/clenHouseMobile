@@ -160,8 +160,16 @@ export const displayNotification = async (remoteMessage: any) => {
   const chatId = remoteMessage?.data?.chatId;
   const groupKey = isChatNotification && chatId ? `Chats` : "";
 
+  // Устойчивый идентификатор: если одно и то же событие дойдёт дважды,
+  // система заменит уведомление, а не положит рядом второе такое же
+  const notificationId =
+    [remoteMessage?.data?.type, remoteMessage?.data?.orderId]
+      .filter(Boolean)
+      .join(":") || undefined;
+
   // Сохраняем все данные уведомления, включая orderId для навигации
   await notifee.displayNotification({
+    ...(notificationId && { id: notificationId }),
     title:
       remoteMessage?.data?.title || remoteMessage?.title || "Default title",
     body: remoteMessage?.data?.body || remoteMessage?.body || "Default body",

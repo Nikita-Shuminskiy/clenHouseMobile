@@ -1,22 +1,16 @@
 import messaging from "@react-native-firebase/messaging";
-import { AppRegistry, Platform } from "react-native";
+import { Platform } from "react-native";
 import { displayNotification } from "./utils";
 
-// Регистрация background message handler для Firebase
-// Этот handler вызывается когда приложение в background или killed
+/**
+ * Единственная регистрация обработчика фоновых сообщений: он вызывается,
+ * когда приложение свёрнуто или закрыто.
+ *
+ * Регистрация была в двух местах — здесь и в `useNotification`, — а рядом
+ * вручную заводилась задача `ReactNativeFirebaseMessagingHeadlessTask`,
+ * которую библиотека создаёт сама. Из-за этого одно сообщение показывалось
+ * дважды, и курьер получал два одинаковых уведомления на заказ.
+ */
 if (Platform.OS !== "web") {
-  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    await displayNotification(remoteMessage);
-  });
-
-  // Регистрация headless task для React Native Firebase
-  // Это нужно для обработки уведомлений в killed состоянии на Android
-  // Важно: этот task должен быть зарегистрирован до того, как приложение закроется
-  AppRegistry.registerHeadlessTask(
-    "ReactNativeFirebaseMessagingHeadlessTask",
-    () => async (remoteMessage: any) => {
-      await displayNotification(remoteMessage);
-      return Promise.resolve();
-    }
-  );
+  messaging().setBackgroundMessageHandler(displayNotification);
 }
